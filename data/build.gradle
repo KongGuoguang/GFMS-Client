@@ -36,5 +36,8 @@ dependencies {
 
     compile 'org.greenrobot:eventbus:3.0.0'
 
-    compile 'org.litepal.android:core:1.6.0'
+    annotationProcessor "com.github.Raizlabs.DBFlow:dbflow-processor:4.1.2"
+    compile "com.github.Raizlabs.DBFlow:dbflow-core:4.1.2"
+    compile "com.github.Raizlabs.DBFlow:dbflow:4.1.2"
+    compile "com.github.Raizlabs.DBFlow:dbflow-rx2:4.1.2"
 }

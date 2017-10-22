@@ -1,15 +1,12 @@
 package com.zzu.gfms.data;
 
-import org.litepal.annotation.Column;
-import org.litepal.crud.DataSupport;
 
 /**
  * Created by Administrator on 2017/10/22.
  */
 
-public class Worker extends DataSupport {
+public class Worker{
 
-    @Column(unique = true, nullable = false)
     private long workerID;
 
 //    @Column
