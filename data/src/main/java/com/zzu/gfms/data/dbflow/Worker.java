@@ -1,5 +1,8 @@
-package com.zzu.gfms.data;
+package com.zzu.gfms.data.dbflow;
 
+
+import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 
 /**
  * Created by Administrator on 2017/10/22.
@@ -7,33 +10,34 @@ package com.zzu.gfms.data;
 
 public class Worker{
 
+    @PrimaryKey
     private long workerID;
 
-//    @Column
+    @Column
     private int roleID;
 
-//    @Column
+    @Column
     private int enterpriseID;
 
-//    @Column
+    @Column
     private String name;
 
-//    @Column
+    @Column
     private String sex;
 
-//    @Column
+    @Column
     private String type;
 
-//    @Column
+    @Column
     private String userName;
 
-//    @Column
+    @Column
     private String passWord;
 
-//    @Column
+    @Column
     private String telephone;
 
-//    @Column
+    @Column
     private String icon;
 
     public long getWorkerID() {
