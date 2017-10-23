@@ -5,6 +5,7 @@ import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
+import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ import java.util.List;
  */
 
 @Table(database = AppDatabase.class)
-public class Worker{
+public class Worker extends BaseModel{
 
     @PrimaryKey
     private long workerID;

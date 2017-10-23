@@ -21,4 +21,28 @@ public class WorkType extends BaseModel{
 
     @Column
     private String remark;
+
+    public int getWorkTypeID() {
+        return workTypeID;
+    }
+
+    public void setWorkTypeID(int workTypeID) {
+        this.workTypeID = workTypeID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
 }

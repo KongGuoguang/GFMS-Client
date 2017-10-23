@@ -19,7 +19,7 @@ public class DayRecord extends BaseModel {
     @PrimaryKey
     private long dayRecordID;
 
-    @ForeignKey(tableClass = Worker.class)
+    @Column
     private long workerID;
 
     @Column
@@ -33,4 +33,52 @@ public class DayRecord extends BaseModel {
 
     @Column
     private int total;
+
+    public long getDayRecordID() {
+        return dayRecordID;
+    }
+
+    public void setDayRecordID(long dayRecordID) {
+        this.dayRecordID = dayRecordID;
+    }
+
+    public long getWorkerID() {
+        return workerID;
+    }
+
+    public void setWorkerID(long workerID) {
+        this.workerID = workerID;
+    }
+
+    public long getDay() {
+        return day;
+    }
+
+    public void setDay(long day) {
+        this.day = day;
+    }
+
+    public long getSubmit() {
+        return submit;
+    }
+
+    public void setSubmit(long submit) {
+        this.submit = submit;
+    }
+
+    public String getConvertState() {
+        return convertState;
+    }
+
+    public void setConvertState(String convertState) {
+        this.convertState = convertState;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
+    }
 }
