@@ -6,8 +6,6 @@ import android.view.View;
 
 import com.zzu.gfms.data.dbflow.Worker;
 
-import org.litepal.crud.DataSupport;
-
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -17,7 +15,6 @@ public class MainActivity extends AppCompatActivity {
         Worker worker = new Worker();
         worker.setWorkerID(1);
         worker.setName("zhang");
-        worker.save();
     }
 
     public void onClick(View view) {

@@ -3,11 +3,16 @@ package com.zzu.gfms.data.dbflow;
 
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
+import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
+
+import java.util.List;
 
 /**
  * Created by Administrator on 2017/10/22.
  */
 
+@Table(database = AppDatabase.class)
 public class Worker{
 
     @PrimaryKey
@@ -119,4 +124,8 @@ public class Worker{
     public void setIcon(String icon) {
         this.icon = icon;
     }
+
+//    public List<DayRecord> getDayRecordsOfOneMonth(long date){
+//        return SQLite.select().from(DayRecord.class).where()
+//    }
 }
