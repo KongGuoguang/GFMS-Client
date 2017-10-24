@@ -81,4 +81,16 @@ public class DayRecord extends BaseModel {
     public void setTotal(int total) {
         this.total = total;
     }
+
+    @Override
+    public String toString() {
+        return "DayRecord{" +
+                "dayRecordID=" + dayRecordID +
+                ", workerID=" + workerID +
+                ", day=" + day +
+                ", submit=" + submit +
+                ", convertState='" + convertState + '\'' +
+                ", total=" + total +
+                '}';
+    }
 }
