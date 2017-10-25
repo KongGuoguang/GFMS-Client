@@ -6,6 +6,7 @@ import com.zzu.gfms.data.dbflow.ClothesType;
 import com.zzu.gfms.data.dbflow.DayRecord;
 import com.zzu.gfms.data.dbflow.DetailRecord;
 import com.zzu.gfms.data.dbflow.WorkType;
+import com.zzu.gfms.data.dbflow.Worker;
 import com.zzu.gfms.data.http.GFMSException;
 import com.zzu.gfms.data.http.HttpReply;
 import com.zzu.gfms.data.http.Retrofit2Util;
@@ -16,6 +17,7 @@ import java.util.List;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Function;
 
@@ -29,6 +31,30 @@ import io.reactivex.functions.Function;
 public class RemoteRepository {
 
     private static Gson gson = new Gson();
+
+    public static Observable<Worker> login(String userName, String password){
+        return Retrofit2Util.getServerInterface()
+                .login(userName, password)
+                .flatMap(new Function<HttpReply, Observable<Worker>>() {
+                    @Override
+                    public Observable<Worker> apply(@NonNull final HttpReply httpReply) throws Exception {
+                        final int status = httpReply.getStatus();
+                        return Observable.create(new ObservableOnSubscribe<Worker>() {
+                            @Override
+                            public void subscribe(@NonNull ObservableEmitter<Worker> e) throws Exception {
+                                if (status == 0){
+                                    Worker worker = gson.fromJson(httpReply.getData(), Worker.class);
+                                    e.onNext(worker);
+                                }else {
+                                    e.onError(new GFMSException(status));
+                                }
+
+                                e.onComplete();
+                            }
+                        });
+                    }
+                });
+    }
 
     public static Observable<List<DayRecord>> getDayRecordOfMonth(long workerId){
 
@@ -83,9 +109,9 @@ public class RemoteRepository {
                 });
     }
 
-    public static Observable<List<WorkType>> getAllWorkType(long dayRecordId){
+    public static Observable<List<WorkType>> getWorkType(long dayRecordId){
         return Retrofit2Util.getServerInterface()
-                .getAllWorkType()
+                .getWorkType()
                 .flatMap(new Function<HttpReply, Observable<List<WorkType>>>() {
                     @Override
                     public Observable<List<WorkType>> apply(@NonNull final HttpReply httpReply) throws Exception {
@@ -107,9 +133,9 @@ public class RemoteRepository {
                 });
     }
 
-    public static Observable<List<ClothesType>> getAllClothesType(){
+    public static Observable<List<ClothesType>> getClothesType(){
         return Retrofit2Util.getServerInterface()
-                .getAllClothesType()
+                .getClothesType()
                 .flatMap(new Function<HttpReply, Observable<List<ClothesType>>>() {
                     @Override
                     public Observable<List<ClothesType>> apply(@NonNull final HttpReply httpReply) throws Exception {

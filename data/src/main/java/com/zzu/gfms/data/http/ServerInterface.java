@@ -26,6 +26,9 @@ import retrofit2.http.Query;
 
 public interface ServerInterface {
 
+    @GET("api/v1/login")
+    Observable<HttpReply> login(@Query("userName") String userName,
+                                              @Query("password") String password);
     //获取挑战值
     @GET("api/v1/challenge")
     Observable<HttpReply> getDayRecordOfMonth(@Query("workerId") String id,
@@ -37,9 +40,9 @@ public interface ServerInterface {
 
     //认证
     @POST("api/v1/fastAuth")
-    Observable<HttpReply> getAllWorkType();
+    Observable<HttpReply> getWorkType();
 
     //token续期
     @POST("api/v1/token")
-    Observable<HttpReply> getAllClothesType();
+    Observable<HttpReply> getClothesType();
 }

@@ -1,5 +1,7 @@
 package com.zzu.gfms.bean;
 
+import com.zzu.gfms.data.dbflow.DayRecord;
+
 /**
  * Author:kongguoguang
  * Date:2017-10-24
@@ -16,6 +18,8 @@ public class Day {
     private boolean today;
 
     private boolean hasWorkRecord;
+
+    private DayRecord dayRecord;
 
     public Day(int day, boolean currentMonth){
         this.day = day;
@@ -52,5 +56,13 @@ public class Day {
 
     public void setToday(boolean today) {
         this.today = today;
+    }
+
+    public DayRecord getDayRecord() {
+        return dayRecord;
+    }
+
+    public void setDayRecord(DayRecord dayRecord) {
+        this.dayRecord = dayRecord;
     }
 }

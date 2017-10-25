@@ -87,4 +87,9 @@
         <item name="android:background">@drawable/qmui_divider_bottom_bitmap</item>
     </style>
 
+    <style name="TranslucentActivity" parent="AppTheme">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
 </resources>

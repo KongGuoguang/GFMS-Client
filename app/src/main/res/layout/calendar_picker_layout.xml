@@ -66,7 +66,9 @@
         android:numColumns="7"
         android:horizontalSpacing="1px"
         android:verticalSpacing="1px"
-        android:padding="1px">
+        android:layout_marginTop="10dp"
+        android:padding="1px"
+        android:background="@color/bar_divider">
 
     </GridView>
 

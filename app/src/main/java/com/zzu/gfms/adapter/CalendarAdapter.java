@@ -1,12 +1,11 @@
 package com.zzu.gfms.adapter;
 
 import android.graphics.Color;
-import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.zzu.gfms.R;
@@ -53,6 +52,7 @@ public class CalendarAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.calendar_picker_item, parent, false);
             viewHolder = new ViewHolder();
             viewHolder.day = (TextView) convertView.findViewById(R.id.text_day);
+            viewHolder.right = (ImageView) convertView.findViewById(R.id.image_right);
             convertView.setTag(viewHolder);
         }else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -71,15 +71,22 @@ public class CalendarAdapter extends BaseAdapter {
             }
 
             if (day.isToday()){//给今天设置背景
-                viewHolder.day.setBackgroundColor(Color.BLUE);
+                viewHolder.day.setBackgroundResource(R.drawable.round_bg_blue);
             }else {
                 viewHolder.day.setBackgroundColor(Color.WHITE);
             }
+        }
+
+        if (day.getDayRecord() == null){
+            viewHolder.right.setVisibility(View.GONE);
+        }else {
+            viewHolder.right.setVisibility(View.INVISIBLE);
         }
         return convertView;
     }
 
     private class ViewHolder{
         TextView day;
+        ImageView right;
     }
 }

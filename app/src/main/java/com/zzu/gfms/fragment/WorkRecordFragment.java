@@ -4,7 +4,6 @@ package com.zzu.gfms.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +14,7 @@ import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.zzu.gfms.R;
 import com.zzu.gfms.adapter.CalendarAdapter;
 import com.zzu.gfms.bean.Day;
-import com.zzu.gfms.data.LocalRepository;
 import com.zzu.gfms.data.dbflow.DayRecord;
-import com.zzu.gfms.data.dbflow.Worker;
 import com.zzu.gfms.utils.DayUtil;
 import com.zzu.gfms.view.CalendarView;
 
@@ -46,6 +43,8 @@ public class WorkRecordFragment extends Fragment {
 
     private Button button;
 
+    private List<DayRecord> dayRecords;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,11 +68,7 @@ public class WorkRecordFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                List<DayRecord> dayRecords = LocalRepository.getDayRecordOfMonth(1);
-//                for (DayRecord da :
-//                        dayRecords) {
-//                    Log.d("结果", da.toString());
-//                }
+
             }
         });
 
@@ -93,9 +88,26 @@ public class WorkRecordFragment extends Fragment {
     private void addData(){
         DayRecord dayRecord = new DayRecord();
         dayRecord.setWorkerID(1);
-        dayRecord.setDayRecordID(3);
+        dayRecord.setDayRecordID(4);
         dayRecord.setDay(Calendar.getInstance().getTimeInMillis());
         dayRecord.setTotal(200);
         dayRecord.save();
+    }
+
+    private void addDayRecordToDay(){
+        if (days == null || days.size() == 0 ||
+                dayRecords == null || dayRecords.size() == 0) return;
+
+        Calendar calendar = Calendar.getInstance();
+        for (DayRecord dayRecord: dayRecords){
+            calendar.setTimeInMillis(dayRecord.getDay());
+            int dayOfMonth = DayUtil.getDayOfMonth(calendar);
+            for (Day day: days){
+                if (day.isCurrentMonth() && day.getDay() == dayOfMonth){
+                    day.setDayRecord(dayRecord);
+                    break;
+                }
+            }
+        }
     }
 }
