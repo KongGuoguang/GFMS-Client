@@ -3,6 +3,8 @@ package com.zzu.gfms.data;
 import android.content.Context;
 
 import com.raizlabs.android.dbflow.config.FlowManager;
+import com.zzu.gfms.data.dbflow.ClothesType;
+import com.zzu.gfms.data.dbflow.DayRecord;
 import com.zzu.gfms.data.dbflow.WorkType;
 import com.zzu.gfms.data.dbflow.Worker;
 import com.zzu.gfms.data.http.Retrofit2Util;
@@ -25,7 +27,7 @@ public class DataRepository {
         FlowManager.init(context);
     }
 
-    public static Observable<Worker> getWorker(final String userName, final String password){
+    public static Observable<Worker> getWorker(String userName, String password){
         return LocalRepository.getWorker(userName, password);
     }
 
@@ -33,5 +35,24 @@ public class DataRepository {
         return Observable.concat(LocalRepository.getWorkType(), RemoteRepository.getWorkType(workerId));
     }
 
+    public static Observable<Boolean> saveWorkType(List<WorkType> workTypes){
+        return LocalRepository.saveWorkType(workTypes);
+    }
+
+    public static Observable<Boolean> saveDayRecords(List<DayRecord> dayRecords){
+        return LocalRepository.saveDayRecords(dayRecords);
+    }
+
+    public static Observable<List<DayRecord>> getDayRecordOfMonth(long workerId){
+        return LocalRepository.getDayRecordOfMonth(workerId);
+    }
+
+    public static Observable<List<ClothesType>> getClothesType(){
+        return Observable.concat(LocalRepository.getClothesType(), RemoteRepository.getClothesType());
+    }
+
+    public static Observable<Boolean> saveClothesType(List<ClothesType> clothesTypes){
+        return LocalRepository.saveClothesType(clothesTypes);
+    }
 
 }

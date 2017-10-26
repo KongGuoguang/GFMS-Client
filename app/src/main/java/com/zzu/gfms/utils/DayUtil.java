@@ -165,6 +165,8 @@ public class DayUtil {
         //添加本月
         for (int i = 1; i <= daysOfMonth; i++){
             Day day = new Day(i, true);
+            day.setYear(year);
+            day.setMonth(month);
             if (i == dayOfMonth){
                 day.setToday(true);
             }

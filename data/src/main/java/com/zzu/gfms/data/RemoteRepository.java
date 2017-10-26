@@ -133,7 +133,7 @@ public class RemoteRepository {
                 });
     }
 
-    public static Observable<List<ClothesType>> getClothesType(){
+    static Observable<List<ClothesType>> getClothesType(){
         return Retrofit2Util.getServerInterface()
                 .getClothesType()
                 .flatMap(new Function<HttpReply, Observable<List<ClothesType>>>() {

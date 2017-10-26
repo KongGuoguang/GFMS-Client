@@ -1,6 +1,11 @@
 package com.zzu.gfms.data;
 
+import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.sql.language.Select;
+import com.raizlabs.android.dbflow.structure.BaseModel;
+import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
+import com.raizlabs.android.dbflow.structure.database.transaction.ProcessModelTransaction;
+import com.zzu.gfms.data.dbflow.AppDatabase;
 import com.zzu.gfms.data.dbflow.ClothesType;
 import com.zzu.gfms.data.dbflow.DayRecord;
 import com.zzu.gfms.data.dbflow.DayRecord_Table;
@@ -61,6 +66,24 @@ public class LocalRepository {
         });
     }
 
+    public static Observable<Boolean> saveDayRecords(final List<DayRecord> dayRecords){
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
+                FlowManager.getDatabase(AppDatabase.class)
+                        .executeTransaction(new ProcessModelTransaction.Builder<>(
+                                new ProcessModelTransaction.ProcessModel<DayRecord>() {
+                                    @Override
+                                    public void processModel(DayRecord dayRecord, DatabaseWrapper wrapper) {
+                                        dayRecord.save();
+                                    }
+                        }).addAll(dayRecords).build());
+                e.onNext(true);
+                e.onComplete();
+            }
+        });
+    }
+
     public static Observable<List<DetailRecord>> getDetailRecordOfDay(final long dayRecordId){
         return Observable.create(new ObservableOnSubscribe<List<DetailRecord>>() {
             @Override
@@ -96,4 +119,39 @@ public class LocalRepository {
         });
     }
 
+    public static Observable<Boolean> saveWorkType(final List<WorkType> workTypes){
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
+                FlowManager.getDatabase(AppDatabase.class)
+                        .executeTransaction(new ProcessModelTransaction.Builder<>(
+                                new ProcessModelTransaction.ProcessModel<WorkType>() {
+                                    @Override
+                                    public void processModel(WorkType workType, DatabaseWrapper wrapper) {
+                                        workType.save();
+                                    }
+                                }).addAll(workTypes).build());
+                e.onNext(true);
+                e.onComplete();
+            }
+        });
+    }
+
+    public static Observable<Boolean> saveClothesType(final List<ClothesType> clothesTypes){
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
+                FlowManager.getDatabase(AppDatabase.class)
+                        .executeTransaction(new ProcessModelTransaction.Builder<>(
+                                new ProcessModelTransaction.ProcessModel<ClothesType>() {
+                                    @Override
+                                    public void processModel(ClothesType clothesType, DatabaseWrapper wrapper) {
+                                        clothesType.save();
+                                    }
+                                }).addAll(clothesTypes).build());
+                e.onNext(true);
+                e.onComplete();
+            }
+        });
+    }
 }

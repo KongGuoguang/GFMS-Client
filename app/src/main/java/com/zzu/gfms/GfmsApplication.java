@@ -2,6 +2,7 @@ package com.zzu.gfms;
 
 import android.app.Application;
 
+import com.blankj.utilcode.util.Utils;
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.zzu.gfms.data.DataRepository;
 
@@ -16,5 +17,6 @@ public class GfmsApplication extends Application {
     public void onCreate() {
         super.onCreate();
         DataRepository.init(this);
+        Utils.init(this);
     }
 }

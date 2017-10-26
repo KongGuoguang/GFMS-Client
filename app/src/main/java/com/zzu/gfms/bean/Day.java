@@ -11,6 +11,10 @@ import com.zzu.gfms.data.dbflow.DayRecord;
 
 public class Day {
 
+    private int year;
+
+    private int month;
+
     private int day;
 
     private boolean currentMonth;
@@ -24,6 +28,22 @@ public class Day {
     public Day(int day, boolean currentMonth){
         this.day = day;
         this.currentMonth = currentMonth;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public void setMonth(int month) {
+        this.month = month;
     }
 
     public int getDay() {
@@ -64,5 +84,18 @@ public class Day {
 
     public void setDayRecord(DayRecord dayRecord) {
         this.dayRecord = dayRecord;
+    }
+
+    @Override
+    public String toString() {
+        return "Day{" +
+                "year=" + year +
+                ", month=" + month +
+                ", day=" + day +
+                ", currentMonth=" + currentMonth +
+                ", today=" + today +
+                ", hasWorkRecord=" + hasWorkRecord +
+                ", dayRecord=" + dayRecord +
+                '}';
     }
 }

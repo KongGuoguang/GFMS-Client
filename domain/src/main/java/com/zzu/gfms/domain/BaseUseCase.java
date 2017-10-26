@@ -19,6 +19,12 @@ public abstract class BaseUseCase<T> {
     public void execute(Observer<T> observer){
         buildObservable().subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
+    }
+
+    public void execute(){
+        buildObservable().subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe();
     }
 }

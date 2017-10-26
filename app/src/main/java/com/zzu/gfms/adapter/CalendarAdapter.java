@@ -77,10 +77,10 @@ public class CalendarAdapter extends BaseAdapter {
             }
         }
 
-        if (day.getDayRecord() == null){
-            viewHolder.right.setVisibility(View.GONE);
+        if (day.isHasWorkRecord()){
+            viewHolder.right.setVisibility(View.VISIBLE);
         }else {
-            viewHolder.right.setVisibility(View.INVISIBLE);
+            viewHolder.right.setVisibility(View.GONE);
         }
         return convertView;
     }

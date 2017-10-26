@@ -39,10 +39,10 @@ public interface ServerInterface {
     Observable<HttpReply> getDetailRecordOfDay(@Query("dayRecordId") String id);
 
     //认证
-    @POST("api/v1/fastAuth")
+    @GET("api/v1/fastAuth")
     Observable<HttpReply> getWorkType();
 
     //token续期
-    @POST("api/v1/token")
+    @GET("api/v1/token")
     Observable<HttpReply> getClothesType();
 }

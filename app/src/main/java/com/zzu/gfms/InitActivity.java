@@ -7,11 +7,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.zzu.gfms.data.dbflow.Worker;
 import com.zzu.gfms.domain.GetWorkerUseCase;
 import com.zzu.gfms.utils.ConstantUtil;
 import com.zzu.gfms.utils.Constants;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;

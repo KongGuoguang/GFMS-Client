@@ -22,7 +22,7 @@ public class Retrofit2Util {
 
     public static void createServerInterface(Context context) {
 
-        String baseUrl = "https://11.12.110.201:1135/uaas-api/";
+        String baseUrl = "https://11.12.110.201:1135/gfms/";
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .client(OkHttp3Util.createOkHttpClient(context, false))
