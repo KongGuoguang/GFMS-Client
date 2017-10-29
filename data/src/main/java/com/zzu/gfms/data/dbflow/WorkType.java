@@ -22,6 +22,9 @@ public class WorkType extends BaseModel{
     @Column
     private String remark;
 
+    @Column
+    private int enterpriseID;
+
     public int getWorkTypeID() {
         return workTypeID;
     }
@@ -44,5 +47,13 @@ public class WorkType extends BaseModel{
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public int getEnterpriseID() {
+        return enterpriseID;
+    }
+
+    public void setEnterpriseID(int enterpriseID) {
+        this.enterpriseID = enterpriseID;
     }
 }

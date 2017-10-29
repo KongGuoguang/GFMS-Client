@@ -40,9 +40,9 @@ public interface ServerInterface {
 
     //认证
     @GET("api/v1/fastAuth")
-    Observable<HttpReply> getWorkType();
+    Observable<HttpReply> getWorkType(@Query("enterpriseID") int enterpriseID);
 
     //token续期
     @GET("api/v1/token")
-    Observable<HttpReply> getClothesType();
+    Observable<HttpReply> getClothesType(@Query("enterpriseID") int enterpriseID);
 }

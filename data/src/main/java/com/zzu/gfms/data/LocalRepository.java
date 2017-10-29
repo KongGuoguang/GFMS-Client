@@ -2,16 +2,17 @@ package com.zzu.gfms.data;
 
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.sql.language.Select;
-import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
 import com.raizlabs.android.dbflow.structure.database.transaction.ProcessModelTransaction;
 import com.zzu.gfms.data.dbflow.AppDatabase;
 import com.zzu.gfms.data.dbflow.ClothesType;
+import com.zzu.gfms.data.dbflow.ClothesType_Table;
 import com.zzu.gfms.data.dbflow.DayRecord;
 import com.zzu.gfms.data.dbflow.DayRecord_Table;
 import com.zzu.gfms.data.dbflow.DetailRecord;
 import com.zzu.gfms.data.dbflow.DetailRecord_Table;
 import com.zzu.gfms.data.dbflow.WorkType;
+import com.zzu.gfms.data.dbflow.WorkType_Table;
 import com.zzu.gfms.data.dbflow.Worker;
 import com.zzu.gfms.data.dbflow.Worker_Table;
 import com.zzu.gfms.data.utils.CalendarUtil;
@@ -97,22 +98,28 @@ public class LocalRepository {
         });
     }
 
-    public static Observable<List<WorkType>> getWorkType(){
+    public static Observable<List<WorkType>> getWorkType(final int enterpriseID){
         return Observable.create(new ObservableOnSubscribe<List<WorkType>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<WorkType>> e) throws Exception {
-                List<WorkType> workTypes = new Select().from(WorkType.class).queryList();
+                List<WorkType> workTypes = new Select()
+                        .from(WorkType.class)
+                        .where(WorkType_Table.enterpriseID.eq(enterpriseID))
+                        .queryList();
                 e.onNext(workTypes);
                 e.onComplete();
             }
         });
     }
 
-    public static Observable<List<ClothesType>> getClothesType(){
+    public static Observable<List<ClothesType>> getClothesType(final int enterpriseID){
         return Observable.create(new ObservableOnSubscribe<List<ClothesType>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ClothesType>> e) throws Exception {
-                List<ClothesType> clothesTypes = new Select().from(ClothesType.class).queryList();
+                List<ClothesType> clothesTypes = new Select()
+                        .from(ClothesType.class)
+                        .where(ClothesType_Table.enterpriseID.eq(enterpriseID))
+                        .queryList();
                 e.onNext(clothesTypes);
                 e.onComplete();
             }

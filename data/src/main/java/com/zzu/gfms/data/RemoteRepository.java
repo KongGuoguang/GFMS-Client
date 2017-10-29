@@ -109,9 +109,9 @@ public class RemoteRepository {
                 });
     }
 
-    public static Observable<List<WorkType>> getWorkType(long dayRecordId){
+    public static Observable<List<WorkType>> getWorkType(int enterpriseID){
         return Retrofit2Util.getServerInterface()
-                .getWorkType()
+                .getWorkType(enterpriseID)
                 .flatMap(new Function<HttpReply, Observable<List<WorkType>>>() {
                     @Override
                     public Observable<List<WorkType>> apply(@NonNull final HttpReply httpReply) throws Exception {
@@ -133,9 +133,9 @@ public class RemoteRepository {
                 });
     }
 
-    static Observable<List<ClothesType>> getClothesType(){
+    static Observable<List<ClothesType>> getClothesType(int enterpriseID){
         return Retrofit2Util.getServerInterface()
-                .getClothesType()
+                .getClothesType(enterpriseID)
                 .flatMap(new Function<HttpReply, Observable<List<ClothesType>>>() {
                     @Override
                     public Observable<List<ClothesType>> apply(@NonNull final HttpReply httpReply) throws Exception {

@@ -31,8 +31,8 @@ public class DataRepository {
         return LocalRepository.getWorker(userName, password);
     }
 
-    public static Observable<List<WorkType>> getWorkType(long workerId){
-        return Observable.concat(LocalRepository.getWorkType(), RemoteRepository.getWorkType(workerId));
+    public static Observable<List<WorkType>> getWorkType(int enterpriseID){
+        return Observable.concat(LocalRepository.getWorkType(enterpriseID), RemoteRepository.getWorkType(enterpriseID));
     }
 
     public static Observable<Boolean> saveWorkType(List<WorkType> workTypes){
@@ -47,8 +47,8 @@ public class DataRepository {
         return LocalRepository.getDayRecordOfMonth(workerId);
     }
 
-    public static Observable<List<ClothesType>> getClothesType(){
-        return Observable.concat(LocalRepository.getClothesType(), RemoteRepository.getClothesType());
+    public static Observable<List<ClothesType>> getClothesType(int enterpriseID){
+        return Observable.concat(LocalRepository.getClothesType(enterpriseID), RemoteRepository.getClothesType(enterpriseID));
     }
 
     public static Observable<Boolean> saveClothesType(List<ClothesType> clothesTypes){
