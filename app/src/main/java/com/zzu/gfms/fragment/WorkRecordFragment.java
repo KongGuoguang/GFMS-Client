@@ -1,6 +1,7 @@
 package com.zzu.gfms.fragment;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.zzu.gfms.AddDayRecordActivity;
 import com.zzu.gfms.R;
 import com.zzu.gfms.adapter.CalendarAdapter;
 import com.zzu.gfms.bean.Day;
@@ -45,7 +47,9 @@ public class WorkRecordFragment extends Fragment {
 
     private TextView date;
 
-    private TextView count;
+    private TextView dayCount;
+
+    private TextView workCount;
 
     private List<Day> days;
 
@@ -80,8 +84,10 @@ public class WorkRecordFragment extends Fragment {
         LogUtils.d("onViewCreated");
         super.onViewCreated(view, savedInstanceState);
         topBar = (QMUITopBar) view.findViewById(R.id.top_bar);
+        topBar.setTitle("工作日历");
         date = (TextView) view.findViewById(R.id.text_date);
-        count = (TextView) view.findViewById(R.id.text_count);
+        dayCount = (TextView) view.findViewById(R.id.text_day_count);
+        workCount = (TextView) view.findViewById(R.id.text_work_count);
         calendarView = (CalendarView) view.findViewById(R.id.calendar_view);
         button = (Button) view.findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
@@ -109,7 +115,11 @@ public class WorkRecordFragment extends Fragment {
                 }
 
                 if (!day.isHasWorkRecord()){
-                    //TODO 打开日志填报
+                    Intent intent = new Intent(getActivity(), AddDayRecordActivity.class);
+                    intent.putExtra("year", day.getYear());
+                    intent.putExtra("month", day.getMonth());
+                    intent.putExtra("day", day.getDay());
+                    startActivity(intent);
                 }else {
                     //TODO 打开日志详情
                 }
@@ -130,7 +140,7 @@ public class WorkRecordFragment extends Fragment {
                     @Override
                     public void onNext(List<DayRecord> dayRecords) {
                         if (dayRecords != null && dayRecords.size() > 0){
-                            count.setText(getString(R.string.work_count, dayRecords.size()));
+                            dayCount.setText(getString(R.string.day_count, dayRecords.size()));
                             WorkRecordFragment.this.dayRecords = dayRecords;
                             addDayRecordsToDays();
                             adapter.notifyDataSetChanged();
@@ -162,6 +172,7 @@ public class WorkRecordFragment extends Fragment {
             dayRecord.setDayRecordID(i);
             dayRecord.setDay(calendar.getTimeInMillis());
             dayRecord.setTotal(100 + i);
+            dayRecord.setConvertState("1");
             dayRecords.add(dayRecord);
         }
 
@@ -181,8 +192,10 @@ public class WorkRecordFragment extends Fragment {
         if (days == null || days.size() == 0 ||
                 dayRecords == null || dayRecords.size() == 0) return;
 
+        int totalCount = 0;
         Calendar calendar = Calendar.getInstance();
         for (DayRecord dayRecord: dayRecords){
+            totalCount = totalCount + dayRecord.getTotal();
             calendar.setTimeInMillis(dayRecord.getDay());
             int dayOfMonth = DayUtil.getDayOfMonth(calendar);
             for (Day day: days){
@@ -193,5 +206,6 @@ public class WorkRecordFragment extends Fragment {
                 }
             }
         }
+        workCount.setText(getString(R.string.work_count, totalCount));
     }
 }

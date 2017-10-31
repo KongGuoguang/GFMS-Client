@@ -5,6 +5,7 @@ import android.content.Context;
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.zzu.gfms.data.dbflow.ClothesType;
 import com.zzu.gfms.data.dbflow.DayRecord;
+import com.zzu.gfms.data.dbflow.DetailRecord;
 import com.zzu.gfms.data.dbflow.WorkType;
 import com.zzu.gfms.data.dbflow.Worker;
 import com.zzu.gfms.data.http.Retrofit2Util;
@@ -39,12 +40,29 @@ public class DataRepository {
         return LocalRepository.saveWorkType(workTypes);
     }
 
-    public static Observable<Boolean> saveDayRecords(List<DayRecord> dayRecords){
-        return LocalRepository.saveDayRecords(dayRecords);
+    public static Observable<Boolean> saveDayRecord(DayRecord dayRecord){
+        return LocalRepository.saveDayRecord(dayRecord);
     }
 
-    public static Observable<List<DayRecord>> getDayRecordOfMonth(long workerId){
-        return LocalRepository.getDayRecordOfMonth(workerId);
+    public static Observable<Boolean> saveDayRecordsOfMonth(List<DayRecord> dayRecords){
+        return LocalRepository.saveDayRecordsOfMonth(dayRecords);
+    }
+
+    /**
+     *
+     * @param workerId
+     * @return
+     */
+    public static Observable<List<DayRecord>> getDayRecordsOfMonth(long workerId){
+        return LocalRepository.getDayRecordsOfMonth(workerId);
+    }
+
+    public static Observable<Boolean> saveDetailRecords(List<DetailRecord> detailRecords){
+        return LocalRepository.saveDetailRecords(detailRecords);
+    }
+
+    public static Observable<List<DetailRecord>> getDetailRecords(long dayRecordId){
+        return Observable.concat(LocalRepository.getDetailRecords(dayRecordId), RemoteRepository.getDetailRecords(dayRecordId));
     }
 
     public static Observable<List<ClothesType>> getClothesType(int enterpriseID){

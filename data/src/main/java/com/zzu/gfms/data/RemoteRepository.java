@@ -85,7 +85,7 @@ public class RemoteRepository {
                 });
     }
 
-    public static Observable<List<DetailRecord>> getDetailRecordOfDay(long dayRecordId){
+    public static Observable<List<DetailRecord>> getDetailRecords(long dayRecordId){
         return Retrofit2Util.getServerInterface()
                 .getDetailRecordOfDay(String.valueOf(dayRecordId))
                 .flatMap(new Function<HttpReply, Observable<List<DetailRecord>>>() {

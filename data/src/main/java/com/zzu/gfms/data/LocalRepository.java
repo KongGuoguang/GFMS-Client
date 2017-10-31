@@ -48,8 +48,19 @@ public class LocalRepository {
         });
     }
 
+    public static Observable<Boolean> saveDayRecord(final DayRecord dayRecord){
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
+                dayRecord.save();
+                e.onNext(true);
+                e.onComplete();
+            }
+        });
+    }
 
-    public static Observable<List<DayRecord>> getDayRecordOfMonth(final long workerId){
+
+    public static Observable<List<DayRecord>> getDayRecordsOfMonth(final long workerId){
 
         return Observable.create(new ObservableOnSubscribe<List<DayRecord>>() {
             @Override
@@ -67,7 +78,7 @@ public class LocalRepository {
         });
     }
 
-    public static Observable<Boolean> saveDayRecords(final List<DayRecord> dayRecords){
+    public static Observable<Boolean> saveDayRecordsOfMonth(final List<DayRecord> dayRecords){
         return Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
             public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
@@ -85,7 +96,7 @@ public class LocalRepository {
         });
     }
 
-    public static Observable<List<DetailRecord>> getDetailRecordOfDay(final long dayRecordId){
+    public static Observable<List<DetailRecord>> getDetailRecords(final long dayRecordId){
         return Observable.create(new ObservableOnSubscribe<List<DetailRecord>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<DetailRecord>> e) throws Exception {
@@ -93,6 +104,24 @@ public class LocalRepository {
                         .where(DetailRecord_Table.dayRecordID.eq(dayRecordId))
                         .queryList();
                 e.onNext(detailRecords);
+                e.onComplete();
+            }
+        });
+    }
+
+    public static Observable<Boolean> saveDetailRecords(final List<DetailRecord> detailRecords){
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
+                FlowManager.getDatabase(AppDatabase.class)
+                        .executeTransaction(new ProcessModelTransaction.Builder<>(
+                                new ProcessModelTransaction.ProcessModel<DetailRecord>() {
+                                    @Override
+                                    public void processModel(DetailRecord detailRecord, DatabaseWrapper wrapper) {
+                                        detailRecord.save();
+                                    }
+                                }).addAll(detailRecords).build());
+                e.onNext(true);
                 e.onComplete();
             }
         });
@@ -107,20 +136,6 @@ public class LocalRepository {
                         .where(WorkType_Table.enterpriseID.eq(enterpriseID))
                         .queryList();
                 e.onNext(workTypes);
-                e.onComplete();
-            }
-        });
-    }
-
-    public static Observable<List<ClothesType>> getClothesType(final int enterpriseID){
-        return Observable.create(new ObservableOnSubscribe<List<ClothesType>>() {
-            @Override
-            public void subscribe(@NonNull ObservableEmitter<List<ClothesType>> e) throws Exception {
-                List<ClothesType> clothesTypes = new Select()
-                        .from(ClothesType.class)
-                        .where(ClothesType_Table.enterpriseID.eq(enterpriseID))
-                        .queryList();
-                e.onNext(clothesTypes);
                 e.onComplete();
             }
         });
@@ -143,6 +158,21 @@ public class LocalRepository {
             }
         });
     }
+
+    public static Observable<List<ClothesType>> getClothesType(final int enterpriseID){
+        return Observable.create(new ObservableOnSubscribe<List<ClothesType>>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<List<ClothesType>> e) throws Exception {
+                List<ClothesType> clothesTypes = new Select()
+                        .from(ClothesType.class)
+                        .where(ClothesType_Table.enterpriseID.eq(enterpriseID))
+                        .queryList();
+                e.onNext(clothesTypes);
+                e.onComplete();
+            }
+        });
+    }
+
 
     public static Observable<Boolean> saveClothesType(final List<ClothesType> clothesTypes){
         return Observable.create(new ObservableOnSubscribe<Boolean>() {

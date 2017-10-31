@@ -3,11 +3,11 @@ package com.zzu.gfms;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class FillInActivity extends AppCompatActivity {
+public class AddDetailRecordActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fill_in);
+        setContentView(R.layout.activity_add_detail_record);
     }
 }

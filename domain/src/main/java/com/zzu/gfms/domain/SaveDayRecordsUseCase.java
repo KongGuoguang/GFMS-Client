@@ -25,6 +25,6 @@ public class SaveDayRecordsUseCase extends BaseUseCase<Boolean> {
 
     @Override
     public Observable<Boolean> buildObservable() {
-        return DataRepository.saveDayRecords(dayRecords);
+        return DataRepository.saveDayRecordsOfMonth(dayRecords);
     }
 }

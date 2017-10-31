@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.zzu.gfms.FillInActivity">
+    tools:context="com.zzu.gfms.AddDayRecordActivity">
 
     <com.qmuiteam.qmui.widget.QMUITopBar
         android:id="@+id/top_bar"
@@ -14,10 +14,11 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_below="@+id/top_bar"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp">
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_centerVertical="true">
 
         <TextView
             android:id="@+id/text_date"
@@ -31,5 +32,12 @@
             android:layout_alignParentRight="true"/>
 
     </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </android.support.v7.widget.RecyclerView>
 
 </RelativeLayout>

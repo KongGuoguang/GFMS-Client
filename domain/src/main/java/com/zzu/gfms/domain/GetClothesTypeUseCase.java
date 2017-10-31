@@ -15,8 +15,11 @@ import io.reactivex.Observable;
  */
 
 public class GetClothesTypeUseCase extends BaseUseCase<List<ClothesType>> {
+
+    private int enterpriseID;
+
     @Override
     public Observable<List<ClothesType>> buildObservable() {
-        return DataRepository.getClothesType();
+        return DataRepository.getClothesType(enterpriseID);
     }
 }

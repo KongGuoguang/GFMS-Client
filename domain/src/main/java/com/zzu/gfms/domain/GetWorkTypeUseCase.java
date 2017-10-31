@@ -16,10 +16,10 @@ import io.reactivex.Observable;
 
 public class GetWorkTypeUseCase extends BaseUseCase<List<WorkType>>{
 
-    private long workerId;
+    private int enterpriseID;
 
     @Override
     public Observable<List<WorkType>> buildObservable() {
-        return DataRepository.getWorkType(workerId);
+        return DataRepository.getWorkType(enterpriseID);
     }
 }

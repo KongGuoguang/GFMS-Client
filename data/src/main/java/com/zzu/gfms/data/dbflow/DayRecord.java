@@ -6,6 +6,8 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
+import java.util.List;
+
 /**
  * Author:kongguoguang
  * Date:2017-10-23
@@ -33,6 +35,8 @@ public class DayRecord extends BaseModel {
 
     @Column
     private int total;
+
+    private List<DetailRecord> detailRecords;
 
     public long getDayRecordID() {
         return dayRecordID;
@@ -80,6 +84,14 @@ public class DayRecord extends BaseModel {
 
     public void setTotal(int total) {
         this.total = total;
+    }
+
+    public List<DetailRecord> getDetailRecords() {
+        return detailRecords;
+    }
+
+    public void setDetailRecords(List<DetailRecord> detailRecords) {
+        this.detailRecords = detailRecords;
     }
 
     @Override

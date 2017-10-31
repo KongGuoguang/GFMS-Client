@@ -25,6 +25,6 @@ public class GetDayRecordsOfMonthUseCase extends BaseUseCase<List<DayRecord>> {
 
     @Override
     public Observable<List<DayRecord>> buildObservable() {
-        return DataRepository.getDayRecordOfMonth(workerId);
+        return DataRepository.getDayRecordsOfMonth(workerId);
     }
 }
