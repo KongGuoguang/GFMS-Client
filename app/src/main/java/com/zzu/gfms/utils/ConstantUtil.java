@@ -4,6 +4,7 @@ import com.zzu.gfms.data.dbflow.ClothesType;
 import com.zzu.gfms.data.dbflow.WorkType;
 import com.zzu.gfms.data.dbflow.Worker;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,9 +20,9 @@ public class ConstantUtil {
 
     public static List<WorkType> workTypes;
 
-    public static List<ClothesType> clothesTypes;
+    public static List<ClothesType> allClothesTypes;
 
-    public static String getWorkTypeName(int workTypeID){
+    public static String getWorkName(int workTypeID){
         String name = "";
         for (WorkType workType : workTypes){
             if (workType.getWorkTypeID() == workTypeID){
@@ -32,9 +33,19 @@ public class ConstantUtil {
         return name;
     }
 
-    public static String getClothesTypeName(int clothesTypeID){
+    public static List<ClothesType> getChildClothesType(int parentID){
+        List<ClothesType> clothesTypes = new ArrayList<>();
+        for (ClothesType clothesType : allClothesTypes){
+            if (clothesType.getParentID() == parentID){
+                clothesTypes.add(clothesType);
+            }
+        }
+        return clothesTypes;
+    }
+
+    public static String getClothesName(int clothesTypeID){
         String name = "";
-        for (ClothesType clothesType : clothesTypes){
+        for (ClothesType clothesType : allClothesTypes){
             if (clothesType.getClothesID() == clothesTypeID){
                 name = clothesType.getName();
                 break;

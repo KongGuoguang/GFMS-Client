@@ -18,6 +18,10 @@ public class GetWorkTypeUseCase extends BaseUseCase<List<WorkType>>{
 
     private int enterpriseID;
 
+    public GetWorkTypeUseCase(int enterpriseID){
+        this.enterpriseID = enterpriseID;
+    }
+
     @Override
     public Observable<List<WorkType>> buildObservable() {
         return DataRepository.getWorkType(enterpriseID);

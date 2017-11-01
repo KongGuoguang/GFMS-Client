@@ -18,9 +18,13 @@ import com.zzu.gfms.AddDayRecordActivity;
 import com.zzu.gfms.R;
 import com.zzu.gfms.adapter.CalendarAdapter;
 import com.zzu.gfms.bean.Day;
+import com.zzu.gfms.data.dbflow.ClothesType;
 import com.zzu.gfms.data.dbflow.DayRecord;
+import com.zzu.gfms.data.dbflow.WorkType;
 import com.zzu.gfms.domain.GetDayRecordsOfMonthUseCase;
+import com.zzu.gfms.domain.SaveClothesTypeUseCase;
 import com.zzu.gfms.domain.SaveDayRecordsUseCase;
+import com.zzu.gfms.domain.SaveWorkTypeUseCase;
 import com.zzu.gfms.utils.DayUtil;
 import com.zzu.gfms.view.CalendarView;
 
@@ -93,7 +97,9 @@ public class WorkRecordFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addData();
+//                addData();
+//                addClothesType();
+                addWorkType();
             }
         });
 
@@ -186,6 +192,91 @@ public class WorkRecordFragment extends Fragment {
 
 
 
+    }
+
+    private void addClothesType(){
+        List<ClothesType> clothesTypes = new ArrayList<>();
+        ClothesType clothesType = new ClothesType();
+        clothesType.setClothesID(1);
+        clothesType.setParentID(0);
+        clothesType.setName("上衣");
+        clothesType.setEnterpriseID(1);
+        clothesTypes.add(clothesType);
+
+        ClothesType clothesType1 = new ClothesType();
+        clothesType1.setClothesID(2);
+        clothesType1.setParentID(0);
+        clothesType1.setName("下衣");
+        clothesType1.setEnterpriseID(1);
+        clothesTypes.add(clothesType1);
+
+        ClothesType clothesType2 = new ClothesType();
+        clothesType2.setClothesID(3);
+        clothesType2.setParentID(1);
+        clothesType2.setName("外套");
+        clothesType2.setEnterpriseID(1);
+        clothesTypes.add(clothesType2);
+
+        ClothesType clothesType3 = new ClothesType();
+        clothesType3.setClothesID(4);
+        clothesType3.setParentID(1);
+        clothesType3.setName("毛衣");
+        clothesType3.setEnterpriseID(1);
+        clothesTypes.add(clothesType3);
+
+        ClothesType clothesType4 = new ClothesType();
+        clothesType4.setClothesID(5);
+        clothesType4.setParentID(1);
+        clothesType4.setName("短袖");
+        clothesType4.setEnterpriseID(1);
+        clothesTypes.add(clothesType4);
+
+        ClothesType clothesType5 = new ClothesType();
+        clothesType5.setClothesID(6);
+        clothesType5.setParentID(2);
+        clothesType5.setName("裤子");
+        clothesType5.setEnterpriseID(1);
+        clothesTypes.add(clothesType5);
+
+        ClothesType clothesType6 = new ClothesType();
+        clothesType6.setClothesID(7);
+        clothesType6.setParentID(2);
+        clothesType6.setName("短裤");
+        clothesType6.setEnterpriseID(1);
+        clothesTypes.add(clothesType6);
+
+        ClothesType clothesType7 = new ClothesType();
+        clothesType7.setClothesID(8);
+        clothesType7.setParentID(2);
+        clothesType7.setName("内裤");
+        clothesType7.setEnterpriseID(1);
+        clothesTypes.add(clothesType7);
+
+        new SaveClothesTypeUseCase(clothesTypes).execute();
+    }
+
+    private void addWorkType(){
+        List<WorkType> workTypes = new ArrayList<>();
+
+        WorkType workType = new WorkType();
+        workType.setWorkTypeID(1);
+        workType.setName("缝纫");
+        workType.setEnterpriseID(1);
+        workTypes.add(workType);
+
+        WorkType workType1 = new WorkType();
+        workType1.setWorkTypeID(2);
+        workType1.setName("锁边");
+        workType1.setEnterpriseID(1);
+        workTypes.add(workType1);
+
+        WorkType workType2 = new WorkType();
+        workType2.setWorkTypeID(3);
+        workType2.setName("裁剪");
+        workType2.setEnterpriseID(1);
+        workTypes.add(workType2);
+
+        new SaveWorkTypeUseCase(workTypes).execute();
     }
 
     private void addDayRecordsToDays(){

@@ -23,7 +23,7 @@ public class ClothesType extends BaseModel{
     private String remark;
 
     @Column
-    private String parentID;
+    private int parentID;
 
     @Column
     private int enterpriseID;
@@ -52,11 +52,11 @@ public class ClothesType extends BaseModel{
         this.remark = remark;
     }
 
-    public String getParentID() {
+    public int getParentID() {
         return parentID;
     }
 
-    public void setParentID(String parentID) {
+    public void setParentID(int parentID) {
         this.parentID = parentID;
     }
 

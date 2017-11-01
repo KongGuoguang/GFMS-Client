@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.zzu.gfms.AddDetailRecordActivity">
 
     <com.qmuiteam.qmui.widget.QMUITopBar
@@ -12,6 +11,163 @@
         android:layout_height="?attr/qmui_topbar_height">
 
     </com.qmuiteam.qmui.widget.QMUITopBar>
+
+    <RelativeLayout
+        android:id="@+id/layout_choose_clothes"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_below="@+id/top_bar"
+        android:layout_marginTop="20dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:background="@color/app_color_blue_2_disabled">
+        <TextView
+            android:id="@+id/text_clothes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="衣服类型："/>
+
+        <TextView
+            android:id="@+id/text_clothes_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/text_clothes"/>
+
+        <TextView
+            android:id="@+id/text_select_clothes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="选择"
+            android:drawableRight="@mipmap/icon_right_arrow"
+            android:textColor="#13227a"
+            android:gravity="center_vertical"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingLeft="8dp"
+            android:onClick="onClick"/>
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/line1"
+        style="@style/CommonDividerLine"
+        android:layout_below="@+id/layout_choose_clothes"/>
+
+    <RelativeLayout
+        android:id="@+id/layout_choose_work"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_below="@+id/line1"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:background="@color/app_color_blue_2_disabled">
+        <TextView
+            android:id="@+id/text_work"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="工作类型："/>
+
+        <TextView
+            android:id="@+id/text_work_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/text_work"/>
+
+        <TextView
+            android:id="@+id/text_select_work"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="选择"
+            android:drawableRight="@mipmap/icon_right_arrow"
+            android:textColor="#13227a"
+            android:gravity="center_vertical"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingLeft="8dp"
+            android:onClick="onClick"/>
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/line2"
+        style="@style/CommonDividerLine"
+        android:layout_below="@+id/layout_choose_work"/>
+
+    <RelativeLayout
+        android:id="@+id/layout_work_count"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_below="@+id/line2"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:background="@color/app_color_blue_2_disabled">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="完成量："/>
+
+        <EditText
+            android:id="@+id/edit_work_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:minWidth="20dp"
+            android:layout_toLeftOf="@+id/text_jian"
+            android:layout_marginRight="2dp"
+            android:hint="0"
+            android:inputType="number"
+            android:maxLength="8"
+            android:background="@null"
+            android:textSize="15sp"/>
+
+        <TextView
+            android:id="@+id/text_jian"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="件"
+            android:gravity="center_vertical" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="2dp"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp">
+        <TextView
+            android:id="@+id/button_confirm"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/s_radius_button_bg"
+            android:gravity="center"
+            android:text="确认"
+            android:onClick="onClick"/>
+        <View
+            android:layout_width="4dp"
+            android:layout_height="match_parent"/>
+
+        <TextView
+            android:id="@+id/button_cancel"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/s_radius_button_bg"
+            android:gravity="center"
+            android:text="取消"
+            android:onClick="onClick"/>
+
+    </LinearLayout>
 
 
 </RelativeLayout>

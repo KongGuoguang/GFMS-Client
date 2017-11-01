@@ -11,6 +11,8 @@ import io.reactivex.Observable;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
@@ -26,9 +28,10 @@ import retrofit2.http.Query;
 
 public interface ServerInterface {
 
-    @GET("api/v1/login")
-    Observable<HttpReply> login(@Query("userName") String userName,
-                                              @Query("password") String password);
+    @FormUrlEncoded
+    @POST("user/login")
+    Observable<HttpReply> login(@Field("userName") String userName,
+                                              @Field("password") String password);
     //获取挑战值
     @GET("api/v1/challenge")
     Observable<HttpReply> getDayRecordOfMonth(@Query("workerId") String id,
@@ -38,11 +41,11 @@ public interface ServerInterface {
     @GET("api/v1/auth")
     Observable<HttpReply> getDetailRecordOfDay(@Query("dayRecordId") String id);
 
-    //认证
-    @GET("api/v1/fastAuth")
-    Observable<HttpReply> getWorkType(@Query("enterpriseID") int enterpriseID);
+    //获取工作类型
+    @GET("worktype/getWorkTypesByWorkerID/{enterpriseID}")
+    Observable<HttpReply> getWorkType(@Path("enterpriseID") int enterpriseID);
 
-    //token续期
-    @GET("api/v1/token")
-    Observable<HttpReply> getClothesType(@Query("enterpriseID") int enterpriseID);
+    //获取衣服类型
+    @GET("clothestype/getAllClothesTypeByWorkerID/{enterpriseID}")
+    Observable<HttpReply> getClothesType(@Path("enterpriseID") int enterpriseID);
 }

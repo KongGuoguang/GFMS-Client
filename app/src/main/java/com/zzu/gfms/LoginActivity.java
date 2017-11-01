@@ -87,18 +87,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void showErrorDialog(String message){
-        new QMUIDialog.MessageDialogBuilder(this)
-                .setTitle("提示")
-                .setMessage(message)
-                .addAction("确定", new QMUIDialogAction.ActionListener() {
-                    @Override
-                    public void onClick(QMUIDialog dialog, int index) {
-                        dialog.dismiss();
-                    }
-                })
-                .create().show();
-    }
+
 
     @Override
     protected void onDestroy() {

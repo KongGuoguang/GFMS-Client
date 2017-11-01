@@ -5,13 +5,11 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.qmuiteam.qmui.widget.QMUITabSegment;
 import com.zzu.gfms.data.dbflow.ClothesType;
 import com.zzu.gfms.data.dbflow.WorkType;
-import com.zzu.gfms.data.dbflow.Worker;
 import com.zzu.gfms.domain.GetClothesTypeUseCase;
 import com.zzu.gfms.domain.GetWorkTypeUseCase;
 import com.zzu.gfms.domain.SaveClothesTypeUseCase;
@@ -77,8 +75,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initClothesType() {
-        if (ConstantUtil.clothesTypes == null || ConstantUtil.clothesTypes.size() <= 0){
-            new GetClothesTypeUseCase().execute(new Observer<List<ClothesType>>() {
+        if (ConstantUtil.allClothesTypes == null || ConstantUtil.allClothesTypes.size() <= 0){
+            new GetClothesTypeUseCase(1).execute(new Observer<List<ClothesType>>() {
 
                 int i = 0;
                 @Override
@@ -89,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onNext(List<ClothesType> clothesTypes) {
                     i++;
-                    ConstantUtil.clothesTypes = clothesTypes;
+                    ConstantUtil.allClothesTypes = clothesTypes;
                     if (i == 2){
                         new SaveClothesTypeUseCase(clothesTypes).execute();
                     }
@@ -110,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initWorkType() {
         if (ConstantUtil.workTypes == null || ConstantUtil.workTypes.size() <= 0){
-            new GetWorkTypeUseCase().execute(new Observer<List<WorkType>>() {
+            new GetWorkTypeUseCase(1).execute(new Observer<List<WorkType>>() {
                 int i = 0;
                 @Override
                 public void onSubscribe(Disposable d) {

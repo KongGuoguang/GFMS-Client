@@ -24,7 +24,7 @@ public class DetailRecordAdapter extends RecyclerView.Adapter<DetailRecordAdapte
 
     private List<DetailRecord> detailRecords;
 
-    private DeleteDetailRecordListener listener;
+    private OnDeleteListener onDeleteListener;
 
     public DetailRecordAdapter(List<DetailRecord> detailRecords){
         this.detailRecords = detailRecords;
@@ -36,20 +36,22 @@ public class DetailRecordAdapter extends RecyclerView.Adapter<DetailRecordAdapte
         return new ViewHolder(view);
     }
 
-    public void setDeleteDetailRecordListener(DeleteDetailRecordListener listener){
-        this.listener = listener;
+    public void setOnDeleteListener(OnDeleteListener onDeleteListener) {
+        this.onDeleteListener = onDeleteListener;
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         DetailRecord detailRecord = detailRecords.get(position);
-        holder.workType.setText("工作类型：" + ConstantUtil.getWorkTypeName(detailRecord.getWorkTypeID()));
-        holder.clothesType.setText("衣服类型：" + ConstantUtil.getClothesTypeName(detailRecord.getClothesID()));
+        holder.workType.setText("工作类型：" + ConstantUtil.getWorkName(detailRecord.getWorkTypeID()));
+        holder.clothesType.setText("衣服类型：" + ConstantUtil.getClothesName(detailRecord.getClothesID()));
         holder.count.setText("完成量：" + detailRecord.getCount());
         holder.dustbin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onDetailRecordDelete(position);
+                if (onDeleteListener != null){
+                    onDeleteListener.onDelete(position);
+                }
             }
         });
     }
@@ -74,5 +76,9 @@ public class DetailRecordAdapter extends RecyclerView.Adapter<DetailRecordAdapte
             count = (TextView) itemView.findViewById(R.id.text_count);
             dustbin = (ImageView) itemView.findViewById(R.id.image_dustbin);
         }
+    }
+
+    public interface OnDeleteListener{
+        void onDelete(int position);
     }
 }
