@@ -10,6 +10,7 @@ import android.widget.EditText;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
+import com.zzu.gfms.app.BaseActivity;
 import com.zzu.gfms.data.dbflow.Worker;
 import com.zzu.gfms.domain.LoginUseCase;
 import com.zzu.gfms.utils.ConstantUtil;
@@ -19,7 +20,7 @@ import io.reactivex.Observer;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity {
 
     private EditText userNameEdit;
 
@@ -47,42 +48,43 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onClick(View view) {
 
-        startActivity(new Intent(this, MainActivity.class));
+//        startActivity(new Intent(this, MainActivity.class));
 
-//        String username = userNameEdit.getText().toString();
-//        String password = passwordEdit.getText().toString();
-//
-//        if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)){
-//            showErrorDialog("用户名和密码不能为空");
-//        }else {
-//            tipDialog.show();
-//            new LoginUseCase().execute(new Observer<Worker>() {
-//                @Override
-//                public void onSubscribe(@NonNull Disposable d) {
-//                    disposable = d;
-//                }
-//
-//                @Override
-//                public void onNext(@NonNull Worker worker) {
-//                    tipDialog.dismiss();
-//                    ConstantUtil.worker = worker;
-//                    worker.async().save();
-//                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
-//                    finish();
-//                }
-//
-//                @Override
-//                public void onError(@NonNull Throwable e) {
-//                    tipDialog.dismiss();
-//                    showErrorDialog(ExceptionUtil.parseErrorMessage(e));
-//                }
-//
-//                @Override
-//                public void onComplete() {
-//
-//                }
-//            });
-//        }
+        String username = userNameEdit.getText().toString();
+        String password = passwordEdit.getText().toString();
+
+        if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)){
+            showErrorDialog("用户名和密码不能为空");
+        }else {
+            tipDialog.show();
+            new LoginUseCase().login(username, password)
+                    .execute(new Observer<Worker>() {
+                @Override
+                public void onSubscribe(@NonNull Disposable d) {
+                    disposable = d;
+                }
+
+                @Override
+                public void onNext(@NonNull Worker worker) {
+                    tipDialog.dismiss();
+                    ConstantUtil.worker = worker;
+                    worker.async().save();
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    finish();
+                }
+
+                @Override
+                public void onError(@NonNull Throwable e) {
+                    tipDialog.dismiss();
+                    showErrorDialog(ExceptionUtil.parseErrorMessage(e));
+                }
+
+                @Override
+                public void onComplete() {
+
+                }
+            });
+        }
 
 
     }

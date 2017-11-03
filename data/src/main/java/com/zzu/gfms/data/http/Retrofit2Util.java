@@ -22,7 +22,7 @@ public class Retrofit2Util {
 
     public static void createServerInterface(Context context) {
 
-        String baseUrl = "http://11.12.110.201:8080/workRecord/";
+        String baseUrl = "http://192.168.31.212:8080/workRecord/";
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .client(OkHttp3Util.createOkHttpClient(context, false))

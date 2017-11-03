@@ -9,8 +9,10 @@ import com.zzu.gfms.data.dbflow.WorkType;
 import com.zzu.gfms.data.dbflow.Worker;
 import com.zzu.gfms.data.http.GFMSException;
 import com.zzu.gfms.data.http.HttpReply;
+import com.zzu.gfms.data.http.LoginReply;
 import com.zzu.gfms.data.http.Retrofit2Util;
 
+import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.List;
 
@@ -35,15 +37,15 @@ public class RemoteRepository {
     public static Observable<Worker> login(String userName, String password){
         return Retrofit2Util.getServerInterface()
                 .login(userName, password)
-                .flatMap(new Function<HttpReply, Observable<Worker>>() {
+                .flatMap(new Function<HttpReply<Worker>, Observable<Worker>>() {
                     @Override
-                    public Observable<Worker> apply(@NonNull final HttpReply httpReply) throws Exception {
+                    public Observable<Worker> apply(@NonNull final HttpReply<Worker> httpReply) throws Exception {
                         final int status = httpReply.getStatus();
                         return Observable.create(new ObservableOnSubscribe<Worker>() {
                             @Override
                             public void subscribe(@NonNull ObservableEmitter<Worker> e) throws Exception {
                                 if (status == 0){
-                                    Worker worker = gson.fromJson(httpReply.getData(), Worker.class);
+                                    Worker worker = httpReply.getData();
                                     e.onNext(worker);
                                 }else {
                                     e.onError(new GFMSException(status));
@@ -56,24 +58,21 @@ public class RemoteRepository {
                 });
     }
 
-    public static Observable<List<DayRecord>> getDayRecordOfMonth(long workerId){
-
-        Calendar calendar = Calendar.getInstance();
-        long milSecond = calendar.getTimeInMillis();
+    public static Observable<List<DayRecord>> getDayRecordOfMonth(long workerId, int year, int month){
 
         return Retrofit2Util.getServerInterface()
-                .getDayRecordOfMonth(String.valueOf(workerId), String.valueOf(milSecond))
-                .flatMap(new Function<HttpReply, Observable<List<DayRecord>>>() {
+                .getDayRecordOfMonth(String.valueOf(workerId), String.valueOf(year),
+                        new DecimalFormat("00").format(month))
+                .flatMap(new Function<HttpReply<List<DayRecord>>, Observable<List<DayRecord>>>() {
                     @Override
-                    public Observable<List<DayRecord>> apply(@NonNull final HttpReply httpReply) throws Exception {
+                    public Observable<List<DayRecord>> apply(@NonNull final HttpReply<List<DayRecord>> httpReply) throws Exception {
                         final int status = httpReply.getStatus();
                         return Observable.create(new ObservableOnSubscribe<List<DayRecord>>() {
                             @Override
                             public void subscribe(@NonNull ObservableEmitter<List<DayRecord>> e) throws Exception {
 
                                 if (status == 0){
-                                    List<DayRecord> dayRecords = gson.fromJson(httpReply.getData(),
-                                            new TypeToken<List<DayRecord>>(){}.getType());
+                                    List<DayRecord> dayRecords = httpReply.getData();
                                     e.onNext(dayRecords);
                                 }else {
                                     e.onError(new GFMSException(status));
@@ -88,16 +87,15 @@ public class RemoteRepository {
     public static Observable<List<DetailRecord>> getDetailRecords(long dayRecordId){
         return Retrofit2Util.getServerInterface()
                 .getDetailRecordOfDay(String.valueOf(dayRecordId))
-                .flatMap(new Function<HttpReply, Observable<List<DetailRecord>>>() {
+                .flatMap(new Function<HttpReply<List<DetailRecord>>, Observable<List<DetailRecord>>>() {
                     @Override
-                    public Observable<List<DetailRecord>> apply(@NonNull final HttpReply httpReply) throws Exception {
+                    public Observable<List<DetailRecord>> apply(@NonNull final HttpReply<List<DetailRecord>> httpReply) throws Exception {
                         final int status = httpReply.getStatus();
                         return Observable.create(new ObservableOnSubscribe<List<DetailRecord>>() {
                             @Override
                             public void subscribe(@NonNull ObservableEmitter<List<DetailRecord>> e) throws Exception {
                                 if (status == 0){
-                                    List<DetailRecord> detailRecords = gson.fromJson(httpReply.getData(),
-                                            new TypeToken<List<DetailRecord>>(){}.getType());
+                                    List<DetailRecord> detailRecords = httpReply.getData();
                                     e.onNext(detailRecords);
                                 }else {
                                     e.onError(new GFMSException(status));
@@ -109,19 +107,18 @@ public class RemoteRepository {
                 });
     }
 
-    public static Observable<List<WorkType>> getWorkType(int enterpriseID){
+    public static Observable<List<WorkType>> getWorkType(long workerId){
         return Retrofit2Util.getServerInterface()
-                .getWorkType(enterpriseID)
-                .flatMap(new Function<HttpReply, Observable<List<WorkType>>>() {
+                .getWorkType(workerId)
+                .flatMap(new Function<HttpReply<List<WorkType>>, Observable<List<WorkType>>>() {
                     @Override
-                    public Observable<List<WorkType>> apply(@NonNull final HttpReply httpReply) throws Exception {
+                    public Observable<List<WorkType>> apply(@NonNull final HttpReply<List<WorkType>> httpReply) throws Exception {
                         final int status = httpReply.getStatus();
                         return Observable.create(new ObservableOnSubscribe<List<WorkType>>() {
                             @Override
                             public void subscribe(@NonNull ObservableEmitter<List<WorkType>> e) throws Exception {
                                 if (status == 0){
-                                    List<WorkType> workTypes = gson.fromJson(httpReply.getData(),
-                                            new TypeToken<List<WorkType>>(){}.getType());
+                                    List<WorkType> workTypes = httpReply.getData();
                                     e.onNext(workTypes);
                                 }else {
                                     e.onError(new GFMSException(status));
@@ -133,19 +130,18 @@ public class RemoteRepository {
                 });
     }
 
-    static Observable<List<ClothesType>> getClothesType(int enterpriseID){
+    static Observable<List<ClothesType>> getClothesType(long workerId){
         return Retrofit2Util.getServerInterface()
-                .getClothesType(enterpriseID)
-                .flatMap(new Function<HttpReply, Observable<List<ClothesType>>>() {
+                .getClothesType(workerId)
+                .flatMap(new Function<HttpReply<List<ClothesType>>, Observable<List<ClothesType>>>() {
                     @Override
-                    public Observable<List<ClothesType>> apply(@NonNull final HttpReply httpReply) throws Exception {
+                    public Observable<List<ClothesType>> apply(@NonNull final HttpReply<List<ClothesType>> httpReply) throws Exception {
                         final int status = httpReply.getStatus();
                         return Observable.create(new ObservableOnSubscribe<List<ClothesType>>() {
                             @Override
                             public void subscribe(@NonNull ObservableEmitter<List<ClothesType>> e) throws Exception {
                                 if (status == 0){
-                                    List<ClothesType> clothesTypes = gson.fromJson(httpReply.getData(),
-                                            new TypeToken<List<ClothesType>>(){}.getType());
+                                    List<ClothesType> clothesTypes = httpReply.getData();
                                     e.onNext(clothesTypes);
                                 }else {
                                     e.onError(new GFMSException(status));

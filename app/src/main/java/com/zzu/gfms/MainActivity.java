@@ -76,7 +76,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void initClothesType() {
         if (ConstantUtil.allClothesTypes == null || ConstantUtil.allClothesTypes.size() <= 0){
-            new GetClothesTypeUseCase(1).execute(new Observer<List<ClothesType>>() {
+            new GetClothesTypeUseCase()
+                    .get(ConstantUtil.worker.getWorkerID(), ConstantUtil.worker.getEnterpriseID())
+                    .execute(new Observer<List<ClothesType>>() {
 
                 int i = 0;
                 @Override
@@ -108,7 +110,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void initWorkType() {
         if (ConstantUtil.workTypes == null || ConstantUtil.workTypes.size() <= 0){
-            new GetWorkTypeUseCase(1).execute(new Observer<List<WorkType>>() {
+            new GetWorkTypeUseCase()
+                    .get(ConstantUtil.worker.getWorkerID(), ConstantUtil.worker.getEnterpriseID())
+                    .execute(new Observer<List<WorkType>>() {
                 int i = 0;
                 @Override
                 public void onSubscribe(Disposable d) {

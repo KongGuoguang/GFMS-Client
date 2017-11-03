@@ -4,6 +4,7 @@ import com.zzu.gfms.data.dbflow.ClothesType;
 import com.zzu.gfms.data.dbflow.DayRecord;
 import com.zzu.gfms.data.dbflow.DetailRecord;
 import com.zzu.gfms.data.dbflow.WorkType;
+import com.zzu.gfms.data.dbflow.Worker;
 
 import java.util.List;
 
@@ -28,24 +29,26 @@ import retrofit2.http.Query;
 
 public interface ServerInterface {
 
+    //登录
     @FormUrlEncoded
     @POST("user/login")
-    Observable<HttpReply> login(@Field("userName") String userName,
-                                              @Field("password") String password);
-    //获取挑战值
-    @GET("api/v1/challenge")
-    Observable<HttpReply> getDayRecordOfMonth(@Query("workerId") String id,
-                                              @Query("date") String date);
+    Observable<HttpReply<Worker>> login(@Field("userName") String userName,
+                                        @Field("password") String password);
+    //获取一个月的日报记录
+    @GET("dayrecord/getDayRecordByMonth/{workerId}-{year}-{month}")
+    Observable<HttpReply<List<DayRecord>>> getDayRecordOfMonth(@Path("workerId") String workerId,
+                                              @Path("year") String year,
+                                              @Path("month") String month);
 
     //认证
     @GET("api/v1/auth")
-    Observable<HttpReply> getDetailRecordOfDay(@Query("dayRecordId") String id);
+    Observable<HttpReply<List<DetailRecord>>> getDetailRecordOfDay(@Query("dayRecordId") String id);
 
     //获取工作类型
-    @GET("worktype/getWorkTypesByWorkerID/{enterpriseID}")
-    Observable<HttpReply> getWorkType(@Path("enterpriseID") int enterpriseID);
+    @GET("worktype/getWorkTypesByWorkerID/{workerId}")
+    Observable<HttpReply<List<WorkType>>> getWorkType(@Path("workerId") long workerId);
 
     //获取衣服类型
-    @GET("clothestype/getAllClothesTypeByWorkerID/{enterpriseID}")
-    Observable<HttpReply> getClothesType(@Path("enterpriseID") int enterpriseID);
+    @GET("clothestype/getAllClothesTypeByWorkerID/{workerId}")
+    Observable<HttpReply<List<ClothesType>>> getClothesType(@Path("workerId") long workerId);
 }

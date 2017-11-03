@@ -28,12 +28,16 @@ public class DataRepository {
         FlowManager.init(context);
     }
 
+    public static Observable<Worker> login(String userName, String password){
+        return RemoteRepository.login(userName, password);
+    }
+
     public static Observable<Worker> getWorker(String userName, String password){
         return LocalRepository.getWorker(userName, password);
     }
 
-    public static Observable<List<WorkType>> getWorkType(int enterpriseID){
-        return Observable.concat(LocalRepository.getWorkType(enterpriseID), RemoteRepository.getWorkType(enterpriseID));
+    public static Observable<List<WorkType>> getWorkType(long workerId, int enterpriseID){
+        return Observable.concat(LocalRepository.getWorkType(enterpriseID), RemoteRepository.getWorkType(workerId));
     }
 
     public static Observable<Boolean> saveWorkType(List<WorkType> workTypes){
@@ -65,8 +69,8 @@ public class DataRepository {
         return Observable.concat(LocalRepository.getDetailRecords(dayRecordId), RemoteRepository.getDetailRecords(dayRecordId));
     }
 
-    public static Observable<List<ClothesType>> getClothesType(int enterpriseID){
-        return Observable.concat(LocalRepository.getClothesType(enterpriseID), RemoteRepository.getClothesType(enterpriseID));
+    public static Observable<List<ClothesType>> getClothesType(long workerId, int enterpriseID){
+        return Observable.concat(LocalRepository.getClothesType(enterpriseID), RemoteRepository.getClothesType(workerId));
     }
 
     public static Observable<Boolean> saveClothesType(List<ClothesType> clothesTypes){

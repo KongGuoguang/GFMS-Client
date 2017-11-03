@@ -40,6 +40,14 @@ public class ExceptionUtil {
     }
 
     private static String parseServerError(int errorCode){
-        return "";
+        switch (errorCode){
+            case 1:
+                return "用户不存在";
+            case 2:
+                return "密码错误";
+            default:
+                return "";
+        }
+
     }
 }

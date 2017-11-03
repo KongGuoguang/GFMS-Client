@@ -18,6 +18,7 @@ import com.zzu.gfms.AddDayRecordActivity;
 import com.zzu.gfms.R;
 import com.zzu.gfms.adapter.CalendarAdapter;
 import com.zzu.gfms.bean.Day;
+import com.zzu.gfms.data.RemoteRepository;
 import com.zzu.gfms.data.dbflow.ClothesType;
 import com.zzu.gfms.data.dbflow.DayRecord;
 import com.zzu.gfms.data.dbflow.WorkType;
@@ -25,6 +26,7 @@ import com.zzu.gfms.domain.GetDayRecordsOfMonthUseCase;
 import com.zzu.gfms.domain.SaveClothesTypeUseCase;
 import com.zzu.gfms.domain.SaveDayRecordsUseCase;
 import com.zzu.gfms.domain.SaveWorkTypeUseCase;
+import com.zzu.gfms.utils.ConstantUtil;
 import com.zzu.gfms.utils.DayUtil;
 import com.zzu.gfms.view.CalendarView;
 
@@ -33,7 +35,9 @@ import java.util.Calendar;
 import java.util.List;
 
 import io.reactivex.Observer;
+import io.reactivex.Scheduler;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -67,6 +71,8 @@ public class WorkRecordFragment extends Fragment {
 
     private CalendarAdapter adapter;
 
+    private int year, month;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         LogUtils.d("onCreate");
@@ -99,13 +105,16 @@ public class WorkRecordFragment extends Fragment {
             public void onClick(View v) {
 //                addData();
 //                addClothesType();
-                addWorkType();
+//                addWorkType();
+                RemoteRepository.getDayRecordOfMonth(1, year, month)
+                        .subscribeOn(Schedulers.io())
+                        .subscribe();
             }
         });
 
         Calendar calendar = Calendar.getInstance();
-        int year = DayUtil.getYear(calendar);
-        int month = DayUtil.getMonth(calendar);
+        year = DayUtil.getYear(calendar);
+        month = DayUtil.getMonth(calendar);
         String dateStr = year + "年" + month + "月";
         date.setText(dateStr);
 

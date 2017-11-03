@@ -18,12 +18,16 @@ public class GetClothesTypeUseCase extends BaseUseCase<List<ClothesType>> {
 
     private int enterpriseID;
 
-    public GetClothesTypeUseCase(int enterpriseID){
+    private long workerId;
+
+    public GetClothesTypeUseCase get(long workerId, int enterpriseID){
+        this.workerId = workerId;
         this.enterpriseID = enterpriseID;
+        return this;
     }
 
     @Override
     public Observable<List<ClothesType>> buildObservable() {
-        return DataRepository.getClothesType(enterpriseID);
+        return DataRepository.getClothesType(workerId, enterpriseID);
     }
 }

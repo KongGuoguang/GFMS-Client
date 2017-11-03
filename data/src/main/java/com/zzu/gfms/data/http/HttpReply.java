@@ -7,13 +7,13 @@ package com.zzu.gfms.data.http;
  * Summary:
  */
 
-public class HttpReply {
+public class HttpReply<T> {
 
     private int status;
 
     private String message;
 
-    private String data;
+    private T data;
 
     public int getStatus() {
         return status;
@@ -31,11 +31,11 @@ public class HttpReply {
         this.message = message;
     }
 
-    public String getData() {
+    public T getData() {
         return data;
     }
 
-    public void setData(String data) {
+    public void setData(T data) {
         this.data = data;
     }
 }
