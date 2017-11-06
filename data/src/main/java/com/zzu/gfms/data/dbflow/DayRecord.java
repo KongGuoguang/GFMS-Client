@@ -19,19 +19,19 @@ import java.util.List;
 public class DayRecord extends BaseModel {
 
     @PrimaryKey
-    private String dayRecordID;
+    private String dayRecordID = "";
 
     @Column
     private long workerID;
 
     @Column
-    private String day;
+    private String day = "";
 
     @Column
-    private String submit;
+    private String submit = "";
 
     @Column
-    private String convertState;
+    private String convertState = "" ;
 
     @Column
     private int total;

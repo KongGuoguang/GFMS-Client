@@ -10,8 +10,11 @@ package com.zzu.gfms.data.http;
 public class GFMSException extends Exception {
     private int errorCode;
 
-    public GFMSException(int errorCode){
+    private String errorMessage;
+
+    public GFMSException(int errorCode, String errorMessage){
         this.errorCode = errorCode;
+        this.errorMessage = errorMessage;
     }
 
     public int getErrorCode() {
@@ -20,5 +23,14 @@ public class GFMSException extends Exception {
 
     public void setErrorCode(int errorCode) {
         this.errorCode = errorCode;
+    }
+
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 }

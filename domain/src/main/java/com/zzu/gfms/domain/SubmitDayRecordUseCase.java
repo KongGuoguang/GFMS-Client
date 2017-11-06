@@ -16,24 +16,18 @@ import io.reactivex.schedulers.Schedulers;
  * Summary:
  */
 
-public class CommitDayRecordUseCase extends BaseUseCase<DayAndDetailRecords> {
+public class SubmitDayRecordUseCase extends BaseUseCase<DayAndDetailRecords> {
 
-    private String dayRecord;
+    private DayAndDetailRecords dayAndDetailRecords;
 
-    private String detaiRecords;
-
-    private int type;
-
-    public CommitDayRecordUseCase commit(String dayRecord, String detaiRecords, int type){
-        this.dayRecord = dayRecord;
-        this.detaiRecords = detaiRecords;
-        this.type = type;
+    public SubmitDayRecordUseCase commit(DayAndDetailRecords dayAndDetailRecords){
+        this.dayAndDetailRecords = dayAndDetailRecords;
         return this;
     }
 
     @Override
     public Observable<DayAndDetailRecords> buildObservable() {
-        return DataRepository.commitDayRecord(dayRecord, detaiRecords, type);
+        return DataRepository.submitDayRecord(dayAndDetailRecords);
     }
 
     @Override

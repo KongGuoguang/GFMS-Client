@@ -100,7 +100,7 @@ public class LocalRepository {
         });
     }
 
-    public static Observable<List<DetailRecord>> getDetailRecords(final long dayRecordId){
+    public static Observable<List<DetailRecord>> getDetailRecords(final String dayRecordId){
         return Observable.create(new ObservableOnSubscribe<List<DetailRecord>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<DetailRecord>> e) throws Exception {

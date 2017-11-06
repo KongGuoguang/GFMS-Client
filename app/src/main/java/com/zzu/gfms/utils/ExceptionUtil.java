@@ -32,7 +32,7 @@ public class ExceptionUtil {
         }
 
         if (e instanceof GFMSException){
-            return parseServerError(((GFMSException) e).getErrorCode());
+            return ((GFMSException) e).getErrorMessage();
         }
 
         LogUtils.d(e.getMessage());

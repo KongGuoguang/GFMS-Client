@@ -16,7 +16,7 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
 public class DetailRecord extends BaseModel {
 
     @PrimaryKey
-    private long detailRecordID;
+    private String detailRecordID = "";
 
     @Column
     private int workTypeID;
@@ -25,16 +25,16 @@ public class DetailRecord extends BaseModel {
     private int clothesID;
 
     @Column
-    private long dayRecordID;
+    private String dayRecordID = "";
 
     @Column
     private int count;
 
-    public long getDetailRecordID() {
+    public String getDetailRecordID() {
         return detailRecordID;
     }
 
-    public void setDetailRecordID(long detailRecordID) {
+    public void setDetailRecordID(String detailRecordID) {
         this.detailRecordID = detailRecordID;
     }
 
@@ -54,11 +54,11 @@ public class DetailRecord extends BaseModel {
         this.clothesID = clothesID;
     }
 
-    public long getDayRecordID() {
+    public String getDayRecordID() {
         return dayRecordID;
     }
 
-    public void setDayRecordID(long dayRecordID) {
+    public void setDayRecordID(String dayRecordID) {
         this.dayRecordID = dayRecordID;
     }
 

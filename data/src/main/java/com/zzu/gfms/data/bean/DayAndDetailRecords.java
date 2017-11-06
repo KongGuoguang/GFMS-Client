@@ -18,6 +18,8 @@ public class DayAndDetailRecords {
 
     private List<DetailRecord> detailRecords;
 
+    private int type;
+
     public DayRecord getDayRecord() {
         return dayRecord;
     }
@@ -32,5 +34,13 @@ public class DayAndDetailRecords {
 
     public void setDetailRecords(List<DetailRecord> detailRecords) {
         this.detailRecords = detailRecords;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 }

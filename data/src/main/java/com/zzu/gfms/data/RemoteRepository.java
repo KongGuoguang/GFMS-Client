@@ -1,7 +1,6 @@
 package com.zzu.gfms.data;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.zzu.gfms.data.bean.DayAndDetailRecords;
 import com.zzu.gfms.data.dbflow.ClothesType;
 import com.zzu.gfms.data.dbflow.DayRecord;
@@ -10,17 +9,14 @@ import com.zzu.gfms.data.dbflow.WorkType;
 import com.zzu.gfms.data.dbflow.Worker;
 import com.zzu.gfms.data.http.GFMSException;
 import com.zzu.gfms.data.http.HttpReply;
-import com.zzu.gfms.data.http.LoginReply;
 import com.zzu.gfms.data.http.Retrofit2Util;
 
 import java.text.DecimalFormat;
-import java.util.Calendar;
 import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.ObservableSource;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Function;
 
@@ -49,7 +45,7 @@ public class RemoteRepository {
                                     Worker worker = httpReply.getData();
                                     e.onNext(worker);
                                 }else {
-                                    e.onError(new GFMSException(status));
+                                    e.onError(new GFMSException(status, httpReply.getMessage()));
                                 }
 
                                 e.onComplete();
@@ -76,7 +72,7 @@ public class RemoteRepository {
                                     List<DayRecord> dayRecords = httpReply.getData();
                                     e.onNext(dayRecords);
                                 }else {
-                                    e.onError(new GFMSException(status));
+                                    e.onError(new GFMSException(status, httpReply.getMessage()));
                                 }
                                 e.onComplete();
                             }
@@ -85,9 +81,9 @@ public class RemoteRepository {
                 });
     }
 
-    public static Observable<List<DetailRecord>> getDetailRecords(long dayRecordId){
+    public static Observable<List<DetailRecord>> getDetailRecords(String dayRecordId){
         return Retrofit2Util.getServerInterface()
-                .getDetailRecordOfDay(String.valueOf(dayRecordId))
+                .getDetailRecordOfDay(dayRecordId)
                 .flatMap(new Function<HttpReply<List<DetailRecord>>, Observable<List<DetailRecord>>>() {
                     @Override
                     public Observable<List<DetailRecord>> apply(@NonNull final HttpReply<List<DetailRecord>> httpReply) throws Exception {
@@ -99,7 +95,7 @@ public class RemoteRepository {
                                     List<DetailRecord> detailRecords = httpReply.getData();
                                     e.onNext(detailRecords);
                                 }else {
-                                    e.onError(new GFMSException(status));
+                                    e.onError(new GFMSException(status, httpReply.getMessage()));
                                 }
                                 e.onComplete();
                             }
@@ -122,7 +118,7 @@ public class RemoteRepository {
                                     List<WorkType> workTypes = httpReply.getData();
                                     e.onNext(workTypes);
                                 }else {
-                                    e.onError(new GFMSException(status));
+                                    e.onError(new GFMSException(status, httpReply.getMessage()));
                                 }
                                 e.onComplete();
                             }
@@ -145,7 +141,7 @@ public class RemoteRepository {
                                     List<ClothesType> clothesTypes = httpReply.getData();
                                     e.onNext(clothesTypes);
                                 }else {
-                                    e.onError(new GFMSException(status));
+                                    e.onError(new GFMSException(status, httpReply.getMessage()));
                                 }
                                 e.onComplete();
                             }
@@ -154,9 +150,9 @@ public class RemoteRepository {
                 });
     }
 
-    static Observable<DayAndDetailRecords> commitDayRecord(String dayRecord, String detailRecords, int type){
+    static Observable<DayAndDetailRecords> submitDayRecord(DayAndDetailRecords dayAndDetailRecords){
         return Retrofit2Util.getServerInterface()
-                .commitDayRecord(dayRecord, detailRecords, type)
+                .submitDayRecord(dayAndDetailRecords)
                 .flatMap(new Function<HttpReply<DayAndDetailRecords>, Observable<DayAndDetailRecords>>() {
                     @Override
                     public Observable<DayAndDetailRecords> apply(final HttpReply<DayAndDetailRecords> httpReply) throws Exception {
@@ -168,7 +164,7 @@ public class RemoteRepository {
                                     DayAndDetailRecords dayAndDetailRecords = httpReply.getData();
                                     e.onNext(dayAndDetailRecords);
                                 }else {
-                                    e.onError(new GFMSException(status));
+                                    e.onError(new GFMSException(status, httpReply.getMessage()));
                                 }
                                 e.onComplete();
                             }

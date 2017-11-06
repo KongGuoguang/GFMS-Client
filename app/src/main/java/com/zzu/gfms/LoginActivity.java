@@ -1,14 +1,11 @@
 package com.zzu.gfms;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 
-import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
-import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.zzu.gfms.app.BaseActivity;
 import com.zzu.gfms.data.dbflow.Worker;
@@ -26,7 +23,7 @@ public class LoginActivity extends BaseActivity {
 
     private EditText passwordEdit;
 
-    private QMUITipDialog tipDialog;
+    private QMUITipDialog loading;
 
     private Disposable disposable;
 
@@ -45,7 +42,7 @@ public class LoginActivity extends BaseActivity {
     private void initView(){
         userNameEdit = (EditText) findViewById(R.id.edit_text_user_name);
         passwordEdit = (EditText) findViewById(R.id.edit_text_password);
-        tipDialog = new QMUITipDialog.Builder(this)
+        loading = new QMUITipDialog.Builder(this)
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
                 .setTipWord("正在登录")
                 .create();
@@ -61,7 +58,7 @@ public class LoginActivity extends BaseActivity {
         if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)){
             showErrorDialog("用户名和密码不能为空");
         }else {
-            tipDialog.show();
+            loading.show();
             new LoginUseCase().login(username, password)
                     .execute(new Observer<Worker>() {
                 @Override
@@ -71,7 +68,7 @@ public class LoginActivity extends BaseActivity {
 
                 @Override
                 public void onNext(@NonNull Worker worker) {
-                    tipDialog.dismiss();
+                    loading.dismiss();
                     ConstantUtil.worker = worker;
                     worker.async().save();
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
@@ -80,7 +77,7 @@ public class LoginActivity extends BaseActivity {
 
                 @Override
                 public void onError(@NonNull Throwable e) {
-                    tipDialog.dismiss();
+                    loading.dismiss();
                     showErrorDialog(ExceptionUtil.parseErrorMessage(e));
                 }
 

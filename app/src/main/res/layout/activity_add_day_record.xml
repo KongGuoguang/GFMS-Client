@@ -54,7 +54,7 @@
         android:paddingLeft="2dp"
         android:paddingRight="2dp">
         <TextView
-            android:id="@+id/button_confirm"
+            android:id="@+id/button_submit"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"

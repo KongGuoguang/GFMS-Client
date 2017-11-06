@@ -11,12 +11,14 @@ import android.widget.TextView;
 import com.blankj.utilcode.util.LogUtils;
 import com.google.gson.Gson;
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.zzu.gfms.adapter.DetailRecordAdapter;
 import com.zzu.gfms.app.BaseActivity;
+import com.zzu.gfms.data.bean.DayAndDetailRecords;
 import com.zzu.gfms.data.dbflow.DayRecord;
 import com.zzu.gfms.data.dbflow.DetailRecord;
 import com.zzu.gfms.data.dbflow.DetailRecordDraft;
-import com.zzu.gfms.domain.CommitDayRecordUseCase;
+import com.zzu.gfms.domain.SubmitDayRecordUseCase;
 import com.zzu.gfms.domain.DeleteAllDetailRecordDraftUseCase;
 import com.zzu.gfms.domain.DeleteSingleDetailRecordDraftUseCase;
 import com.zzu.gfms.domain.GetAllDetailRecordDraftsUseCase;
@@ -24,6 +26,7 @@ import com.zzu.gfms.domain.SaveSingleDetailRecordDraftUseCase;
 import com.zzu.gfms.event.AddDetailRecordFailed;
 import com.zzu.gfms.event.AddDetailRecordSuccess;
 import com.zzu.gfms.utils.ConstantUtil;
+import com.zzu.gfms.utils.ExceptionUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -32,6 +35,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
 public class AddDayRecordActivity extends BaseActivity {
@@ -53,10 +58,11 @@ public class AddDayRecordActivity extends BaseActivity {
     private DeleteSingleDetailRecordDraftUseCase deleteSingleDetailRecordDraftUseCase;
     private GetAllDetailRecordDraftsUseCase getAllDetailRecordDraftsUseCase;
     private DeleteAllDetailRecordDraftUseCase deleteAllDetailRecordDraftUseCase;
-    private CommitDayRecordUseCase commitDayRecordUseCase;
+    private SubmitDayRecordUseCase submitDayRecordUseCase;
 
     private DayRecord dayRecord = new DayRecord();
     private Gson gson = new Gson();
+    private QMUITipDialog loading;
 
 
     @Override
@@ -110,6 +116,11 @@ public class AddDayRecordActivity extends BaseActivity {
             }
         });
         recyclerView.setAdapter(adapter);
+
+        loading = new QMUITipDialog.Builder(this)
+                .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
+                .setTipWord("正在提交")
+                .create();
     }
 
     private void initUseCase(){
@@ -117,7 +128,7 @@ public class AddDayRecordActivity extends BaseActivity {
         deleteAllDetailRecordDraftUseCase = new DeleteAllDetailRecordDraftUseCase();
         deleteSingleDetailRecordDraftUseCase = new DeleteSingleDetailRecordDraftUseCase();
         getAllDetailRecordDraftsUseCase = new GetAllDetailRecordDraftsUseCase();
-        commitDayRecordUseCase = new CommitDayRecordUseCase();
+        submitDayRecordUseCase = new SubmitDayRecordUseCase();
     }
 
     private void loadDetailRecordDrafts(){
@@ -128,6 +139,7 @@ public class AddDayRecordActivity extends BaseActivity {
                     public void accept(List<DetailRecordDraft> detailRecordDrafts) throws Exception {
                         if (detailRecordDrafts != null && detailRecordDrafts.size() > 0){
                             for (DetailRecordDraft detailRecordDraft : detailRecordDrafts){
+                                totalCount = totalCount + detailRecordDraft.getCount();
                                 detailRecordDraftList.add(detailRecordDraft);
                                 DetailRecord detailRecord = new DetailRecord();
                                 detailRecord.setClothesID(detailRecordDraft.getClothesID());
@@ -136,6 +148,7 @@ public class AddDayRecordActivity extends BaseActivity {
                                 detailRecordList.add(detailRecord);
                             }
                             adapter.notifyDataSetChanged();
+                            totalWorkCount.setText(getString(R.string.work_count, totalCount));
                         }
                     }
                 });
@@ -172,6 +185,7 @@ public class AddDayRecordActivity extends BaseActivity {
         detailRecordDraft.setWorkTypeID(detailRecord.getWorkTypeID());
         detailRecordDraft.setClothesID(detailRecord.getClothesID());
         detailRecordDraft.setCount(detailRecord.getCount());
+        detailRecordDraft.setDate(year+month+day);
         detailRecordDraftList.add(detailRecordDraft);
         saveSingleDetailRecordDraftUseCase.save(detailRecordDraft).execute();
     }
@@ -195,9 +209,50 @@ public class AddDayRecordActivity extends BaseActivity {
         detailRecordDraftList.remove(position);
     }
 
-    private void commitDayRecord(){
+    private void submitDayRecord(){
+        if (detailRecordList.size() <= 0){
+            showErrorDialog("请至少添加一条记录！");
+            return;
+        }
+        loading.show();
+        dayRecord.setTotal(totalCount);
+        dayRecord.setWorkerID(ConstantUtil.worker.getWorkerID());
+        dayRecord.setDay("2017-11-08");
+        dayRecord.setConvertState("1");
 
-        commitDayRecordUseCase.commit(gson.toJson(dayRecord), gson.toJson(detailRecordList), 1);
+        DayAndDetailRecords dayAndDetailRecords = new DayAndDetailRecords();
+        dayAndDetailRecords.setDayRecord(dayRecord);
+        dayAndDetailRecords.setDetailRecords(detailRecordList);
+        dayAndDetailRecords.setType(1);
+
+        submitDayRecordUseCase
+                .commit(dayAndDetailRecords)
+                .execute(new Observer<DayAndDetailRecords>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(DayAndDetailRecords dayAndDetailRecords) {
+                        loading.dismiss();
+                        showToast("提交成功");
+                        EventBus.getDefault().post(dayAndDetailRecords.getDayRecord());
+                        deleteAllDetailRecordDraftUseCase.delete(ConstantUtil.worker.getWorkerID(),
+                                year+month+day).execute();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        loading.dismiss();
+                        showErrorDialog(ExceptionUtil.parseErrorMessage(e));
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     @Override
@@ -207,5 +262,14 @@ public class AddDayRecordActivity extends BaseActivity {
     }
 
     public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.button_submit:
+                submitDayRecord();
+                break;
+            case R.id.button_cancel:
+                finish();
+                break;
+
+        }
     }
 }

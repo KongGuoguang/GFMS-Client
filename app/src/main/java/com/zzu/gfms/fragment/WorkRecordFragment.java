@@ -74,7 +74,6 @@ public class WorkRecordFragment extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        LogUtils.d("onCreate");
         super.onCreate(savedInstanceState);
         saveAllDayRecordsUseCase = new SaveAllDayRecordsUseCase();
         getDayRecordsOfMonthUseCase = new GetDayRecordsOfMonthUseCase();
@@ -83,14 +82,12 @@ public class WorkRecordFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        LogUtils.d("onCreateView");
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_work_record, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        LogUtils.d("onViewCreated");
         super.onViewCreated(view, savedInstanceState);
         topBar = (QMUITopBar) view.findViewById(R.id.top_bar);
         topBar.setTitle("工作日历");

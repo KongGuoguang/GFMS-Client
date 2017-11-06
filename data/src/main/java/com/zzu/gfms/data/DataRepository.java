@@ -50,8 +50,8 @@ public class DataRepository {
         return LocalRepository.saveDayRecord(dayRecord);
     }
 
-    public static Observable<DayAndDetailRecords> commitDayRecord(String dayRecord, String detailRecords, int type){
-        return RemoteRepository.commitDayRecord(dayRecord, detailRecords, type);
+    public static Observable<DayAndDetailRecords> submitDayRecord(DayAndDetailRecords dayAndDetailRecords){
+        return RemoteRepository.submitDayRecord(dayAndDetailRecords);
     }
 
     public static Observable<Boolean> saveDayRecordsOfMonth(List<DayRecord> dayRecords){
@@ -72,7 +72,7 @@ public class DataRepository {
         return LocalRepository.saveDetailRecords(detailRecords);
     }
 
-    public static Observable<List<DetailRecord>> getDetailRecords(long dayRecordId){
+    public static Observable<List<DetailRecord>> getDetailRecords(String dayRecordId){
         return Observable.concat(LocalRepository.getDetailRecords(dayRecordId), RemoteRepository.getDetailRecords(dayRecordId));
     }
 
