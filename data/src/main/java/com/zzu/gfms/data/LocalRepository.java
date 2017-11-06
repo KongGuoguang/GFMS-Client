@@ -1,6 +1,7 @@
 package com.zzu.gfms.data;
 
 import com.raizlabs.android.dbflow.config.FlowManager;
+import com.raizlabs.android.dbflow.sql.language.Delete;
 import com.raizlabs.android.dbflow.sql.language.Select;
 import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
 import com.raizlabs.android.dbflow.structure.database.transaction.ProcessModelTransaction;
@@ -10,6 +11,8 @@ import com.zzu.gfms.data.dbflow.ClothesType_Table;
 import com.zzu.gfms.data.dbflow.DayRecord;
 import com.zzu.gfms.data.dbflow.DayRecord_Table;
 import com.zzu.gfms.data.dbflow.DetailRecord;
+import com.zzu.gfms.data.dbflow.DetailRecordDraft;
+import com.zzu.gfms.data.dbflow.DetailRecordDraft_Table;
 import com.zzu.gfms.data.dbflow.DetailRecord_Table;
 import com.zzu.gfms.data.dbflow.WorkType;
 import com.zzu.gfms.data.dbflow.WorkType_Table;
@@ -17,6 +20,7 @@ import com.zzu.gfms.data.dbflow.Worker;
 import com.zzu.gfms.data.dbflow.Worker_Table;
 import com.zzu.gfms.data.utils.CalendarUtil;
 
+import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.List;
 
@@ -60,17 +64,17 @@ public class LocalRepository {
     }
 
 
-    public static Observable<List<DayRecord>> getDayRecordsOfMonth(final long workerId){
+    public static Observable<List<DayRecord>> getDayRecordsOfMonth(final long workerId, final int year, final int month){
 
         return Observable.create(new ObservableOnSubscribe<List<DayRecord>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<DayRecord>> e) throws Exception {
-                Calendar calendar = Calendar.getInstance();
-                long start = CalendarUtil.getStartTimeInMillisOfMonth(calendar);
-                long end = CalendarUtil.getEndTimeInMillisOfMonth(calendar);
+                String y = String.valueOf(year);
+                String m = new DecimalFormat("00").format(month);
+                String ym = y + "-" + m + "-" + "%";
                 List<DayRecord> dayRecords = new Select().from(DayRecord.class)
                         .where(DayRecord_Table.workerID.eq(workerId))
-                        .and(DayRecord_Table.day.between(start).and(end))
+                        .and(DayRecord_Table.day.like(ym))
                         .queryList();
                 e.onNext(dayRecords);
                 e.onComplete();
@@ -186,6 +190,69 @@ public class LocalRepository {
                                         clothesType.save();
                                     }
                                 }).addAll(clothesTypes).build());
+                e.onNext(true);
+                e.onComplete();
+            }
+        });
+    }
+
+    /**
+     * 获取某天未提交的详细记录草稿
+     * @param date
+     * @return
+     */
+    public static Observable<List<DetailRecordDraft>> getDetailRecordDrafts(final long workerId, final int date){
+        return Observable.create(new ObservableOnSubscribe<List<DetailRecordDraft>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<DetailRecordDraft>> e) throws Exception {
+                List<DetailRecordDraft> detailRecordDrafts = new Select()
+                        .from(DetailRecordDraft.class)
+                        .where(DetailRecordDraft_Table.workerId.eq(workerId))
+                        .and(DetailRecordDraft_Table.date.eq(date))
+                        .queryList();
+                e.onNext(detailRecordDrafts);
+                e.onComplete();
+            }
+        });
+    }
+
+    /**
+     * 删除某天未提交的详细记录草稿
+     * @param workerId
+     * @param date
+     * @return
+     */
+    public static Observable<Boolean> deleteDetailRecordDrafts(final long workerId, final int date){
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
+                new Delete().from(DetailRecordDraft.class)
+                        .where(DetailRecordDraft_Table.workerId.eq(workerId))
+                        .and(DetailRecordDraft_Table.date.eq(date))
+                        .execute();
+                e.onNext(true);
+                e.onComplete();
+            }
+        });
+    }
+
+    public static Observable<Boolean> saveDetailRecordDraft(final DetailRecordDraft detailRecordDraft){
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
+                long id = detailRecordDraft.insert();
+                detailRecordDraft.setId(id);
+                e.onNext(true);
+                e.onComplete();
+            }
+        });
+    }
+
+    public static Observable<Boolean> deleteDetailRecordDraft(final DetailRecordDraft detailRecordDraft){
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
+                detailRecordDraft.delete();
                 e.onNext(true);
                 e.onComplete();
             }

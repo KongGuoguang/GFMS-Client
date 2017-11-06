@@ -35,6 +35,11 @@ public class LoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         initView();
+//        Worker worker = new Worker();
+//        worker.setEnterpriseID(1);
+//        worker.setName("kong");
+//        worker.setWorkerID(1);
+//        ConstantUtil.worker = worker;
     }
 
     private void initView(){

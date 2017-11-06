@@ -18,13 +18,19 @@ public class GetDayRecordsOfMonthUseCase extends BaseUseCase<List<DayRecord>> {
 
     private long workerId;
 
-    public GetDayRecordsOfMonthUseCase get(long workerId){
+    private int year;
+
+    private int month;
+
+    public GetDayRecordsOfMonthUseCase get(long workerId, int year, int month){
         this.workerId = workerId;
+        this.year = year;
+        this.month = month;
         return this;
     }
 
     @Override
     public Observable<List<DayRecord>> buildObservable() {
-        return DataRepository.getDayRecordsOfMonth(workerId);
+        return DataRepository.getDayRecordsOfMonth(workerId, year, month);
     }
 }

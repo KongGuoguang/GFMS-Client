@@ -14,11 +14,11 @@ import io.reactivex.Observable;
  * Summary:
  */
 
-public class SaveDayRecordsUseCase extends BaseUseCase<Boolean> {
+public class SaveAllDayRecordsUseCase extends BaseUseCase<Boolean> {
 
     List<DayRecord> dayRecords;
 
-    public SaveDayRecordsUseCase get(List<DayRecord> dayRecords){
+    public SaveAllDayRecordsUseCase save(List<DayRecord> dayRecords){
         this.dayRecords = dayRecords;
         return this;
     }

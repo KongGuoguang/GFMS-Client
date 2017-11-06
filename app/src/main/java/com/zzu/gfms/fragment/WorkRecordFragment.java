@@ -18,13 +18,12 @@ import com.zzu.gfms.AddDayRecordActivity;
 import com.zzu.gfms.R;
 import com.zzu.gfms.adapter.CalendarAdapter;
 import com.zzu.gfms.bean.Day;
-import com.zzu.gfms.data.RemoteRepository;
 import com.zzu.gfms.data.dbflow.ClothesType;
 import com.zzu.gfms.data.dbflow.DayRecord;
 import com.zzu.gfms.data.dbflow.WorkType;
 import com.zzu.gfms.domain.GetDayRecordsOfMonthUseCase;
 import com.zzu.gfms.domain.SaveClothesTypeUseCase;
-import com.zzu.gfms.domain.SaveDayRecordsUseCase;
+import com.zzu.gfms.domain.SaveAllDayRecordsUseCase;
 import com.zzu.gfms.domain.SaveWorkTypeUseCase;
 import com.zzu.gfms.utils.ConstantUtil;
 import com.zzu.gfms.utils.DayUtil;
@@ -35,9 +34,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import io.reactivex.Observer;
-import io.reactivex.Scheduler;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -65,7 +62,7 @@ public class WorkRecordFragment extends Fragment {
 
     private List<DayRecord> dayRecords;
 
-    private SaveDayRecordsUseCase saveDayRecordsUseCase;
+    private SaveAllDayRecordsUseCase saveAllDayRecordsUseCase;
 
     private GetDayRecordsOfMonthUseCase getDayRecordsOfMonthUseCase;
 
@@ -73,11 +70,13 @@ public class WorkRecordFragment extends Fragment {
 
     private int year, month;
 
+    private Disposable disposable;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         LogUtils.d("onCreate");
         super.onCreate(savedInstanceState);
-        saveDayRecordsUseCase = new SaveDayRecordsUseCase();
+        saveAllDayRecordsUseCase = new SaveAllDayRecordsUseCase();
         getDayRecordsOfMonthUseCase = new GetDayRecordsOfMonthUseCase();
     }
 
@@ -103,12 +102,12 @@ public class WorkRecordFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                addData();
+                addData();
 //                addClothesType();
 //                addWorkType();
-                RemoteRepository.getDayRecordOfMonth(1, year, month)
-                        .subscribeOn(Schedulers.io())
-                        .subscribe();
+//                RemoteRepository.getDayRecordOfMonth(1, year, month)
+//                        .subscribeOn(Schedulers.io())
+//                        .subscribe();
             }
         });
 
@@ -141,26 +140,36 @@ public class WorkRecordFragment extends Fragment {
             }
         });
 
-        refreshView();
+        loadDayRecordsOfMonth();
     }
 
-    private void refreshView(){
-        getDayRecordsOfMonthUseCase.get(1)
+    /**
+     * 加载本月工作记录
+     */
+    private void loadDayRecordsOfMonth(){
+        getDayRecordsOfMonthUseCase.get(ConstantUtil.worker.getWorkerID(), year, month)
                 .execute(new Observer<List<DayRecord>>() {
+
+                    int i = 0;
+
                     @Override
                     public void onSubscribe(Disposable d) {
-
+                        disposable = d;
                     }
 
                     @Override
                     public void onNext(List<DayRecord> dayRecords) {
+                        i++;
+
                         if (dayRecords != null && dayRecords.size() > 0){
                             dayCount.setText(getString(R.string.day_count, dayRecords.size()));
                             WorkRecordFragment.this.dayRecords = dayRecords;
                             addDayRecordsToDays();
                             adapter.notifyDataSetChanged();
+                            if (i == 2){
+                                saveAllDayRecordsUseCase.save(dayRecords).execute();
+                            }
                         }
-
                     }
 
                     @Override
@@ -180,24 +189,24 @@ public class WorkRecordFragment extends Fragment {
         Calendar calendar = Calendar.getInstance();
         int year = DayUtil.getYear(calendar);
         int month = DayUtil.getMonth(calendar);
-        for (int i = 10; i < 20; i++){
+        for (int i = 20; i < 30; i++){
             calendar.set(year, month -1, i);
             DayRecord dayRecord = new DayRecord();
             dayRecord.setWorkerID(1);
-            dayRecord.setDayRecordID(i);
-            dayRecord.setDay(calendar.getTimeInMillis());
+            dayRecord.setDayRecordID(i + "a");
+            dayRecord.setDay("2017-10-" + i);
             dayRecord.setTotal(100 + i);
             dayRecord.setConvertState("1");
             dayRecords.add(dayRecord);
         }
 
-        this.dayRecords = dayRecords;
+//        this.dayRecords = dayRecords;
+//
+//        addDayRecordsToDays();
+//
+//        adapter.notifyDataSetChanged();
 
-        addDayRecordsToDays();
-
-        adapter.notifyDataSetChanged();
-
-        saveDayRecordsUseCase.get(dayRecords).execute();
+        saveAllDayRecordsUseCase.save(dayRecords).execute();
 
 
 
@@ -293,11 +302,12 @@ public class WorkRecordFragment extends Fragment {
                 dayRecords == null || dayRecords.size() == 0) return;
 
         int totalCount = 0;
-        Calendar calendar = Calendar.getInstance();
         for (DayRecord dayRecord: dayRecords){
             totalCount = totalCount + dayRecord.getTotal();
-            calendar.setTimeInMillis(dayRecord.getDay());
-            int dayOfMonth = DayUtil.getDayOfMonth(calendar);
+            String date = dayRecord.getDay();
+            int length = date.length();
+            if (length < 10) break;
+            int dayOfMonth = Integer.parseInt(dayRecord.getDay().substring(length-2));
             for (Day day: days){
                 if (day.isCurrentMonth() && day.getDay() == dayOfMonth){
                     day.setHasWorkRecord(true);
@@ -307,5 +317,13 @@ public class WorkRecordFragment extends Fragment {
             }
         }
         workCount.setText(getString(R.string.work_count, totalCount));
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (disposable != null && !disposable.isDisposed()){
+            disposable.dispose();
+        }
     }
 }

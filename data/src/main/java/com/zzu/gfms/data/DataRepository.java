@@ -3,9 +3,11 @@ package com.zzu.gfms.data;
 import android.content.Context;
 
 import com.raizlabs.android.dbflow.config.FlowManager;
+import com.zzu.gfms.data.bean.DayAndDetailRecords;
 import com.zzu.gfms.data.dbflow.ClothesType;
 import com.zzu.gfms.data.dbflow.DayRecord;
 import com.zzu.gfms.data.dbflow.DetailRecord;
+import com.zzu.gfms.data.dbflow.DetailRecordDraft;
 import com.zzu.gfms.data.dbflow.WorkType;
 import com.zzu.gfms.data.dbflow.Worker;
 import com.zzu.gfms.data.http.Retrofit2Util;
@@ -48,6 +50,10 @@ public class DataRepository {
         return LocalRepository.saveDayRecord(dayRecord);
     }
 
+    public static Observable<DayAndDetailRecords> commitDayRecord(String dayRecord, String detailRecords, int type){
+        return RemoteRepository.commitDayRecord(dayRecord, detailRecords, type);
+    }
+
     public static Observable<Boolean> saveDayRecordsOfMonth(List<DayRecord> dayRecords){
         return LocalRepository.saveDayRecordsOfMonth(dayRecords);
     }
@@ -57,8 +63,9 @@ public class DataRepository {
      * @param workerId
      * @return
      */
-    public static Observable<List<DayRecord>> getDayRecordsOfMonth(long workerId){
-        return LocalRepository.getDayRecordsOfMonth(workerId);
+    public static Observable<List<DayRecord>> getDayRecordsOfMonth(long workerId, int year, int month){
+        return Observable.concat(LocalRepository.getDayRecordsOfMonth(workerId, year, month),
+                RemoteRepository.getDayRecordOfMonth(workerId, year, month));
     }
 
     public static Observable<Boolean> saveDetailRecords(List<DetailRecord> detailRecords){
@@ -77,4 +84,19 @@ public class DataRepository {
         return LocalRepository.saveClothesType(clothesTypes);
     }
 
+    public static Observable<Boolean> saveDetailRecordDraft(DetailRecordDraft detailRecordDraft){
+        return LocalRepository.saveDetailRecordDraft(detailRecordDraft);
+    }
+
+    public static Observable<Boolean> deleteDetailRecordDraft(DetailRecordDraft detailRecordDraft){
+        return LocalRepository.deleteDetailRecordDraft(detailRecordDraft);
+    }
+
+    public static Observable<Boolean> deleteDetailRecordDrafts(long workerId, int date){
+        return LocalRepository.deleteDetailRecordDrafts(workerId, date);
+    }
+
+    public static Observable<List<DetailRecordDraft>> getDetailRecordDrafts(long workerId, int date){
+        return LocalRepository.getDetailRecordDrafts(workerId, date);
+    }
 }

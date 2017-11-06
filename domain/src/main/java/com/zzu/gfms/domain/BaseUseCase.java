@@ -3,6 +3,7 @@ package com.zzu.gfms.domain;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -20,6 +21,12 @@ public abstract class BaseUseCase<T> {
         buildObservable().subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
+    }
+
+    public void execute(Consumer<T> consumer){
+        buildObservable().subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(consumer);
     }
 
     public void execute(){

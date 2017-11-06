@@ -2,6 +2,7 @@ package com.zzu.gfms.data;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.zzu.gfms.data.bean.DayAndDetailRecords;
 import com.zzu.gfms.data.dbflow.ClothesType;
 import com.zzu.gfms.data.dbflow.DayRecord;
 import com.zzu.gfms.data.dbflow.DetailRecord;
@@ -143,6 +144,29 @@ public class RemoteRepository {
                                 if (status == 0){
                                     List<ClothesType> clothesTypes = httpReply.getData();
                                     e.onNext(clothesTypes);
+                                }else {
+                                    e.onError(new GFMSException(status));
+                                }
+                                e.onComplete();
+                            }
+                        });
+                    }
+                });
+    }
+
+    static Observable<DayAndDetailRecords> commitDayRecord(String dayRecord, String detailRecords, int type){
+        return Retrofit2Util.getServerInterface()
+                .commitDayRecord(dayRecord, detailRecords, type)
+                .flatMap(new Function<HttpReply<DayAndDetailRecords>, Observable<DayAndDetailRecords>>() {
+                    @Override
+                    public Observable<DayAndDetailRecords> apply(final HttpReply<DayAndDetailRecords> httpReply) throws Exception {
+                        final int status = httpReply.getStatus();
+                        return Observable.create(new ObservableOnSubscribe<DayAndDetailRecords>() {
+                            @Override
+                            public void subscribe(ObservableEmitter<DayAndDetailRecords> e) throws Exception {
+                                if (status == 0){
+                                    DayAndDetailRecords dayAndDetailRecords = httpReply.getData();
+                                    e.onNext(dayAndDetailRecords);
                                 }else {
                                     e.onError(new GFMSException(status));
                                 }

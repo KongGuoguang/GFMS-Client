@@ -1,22 +1,28 @@
 package com.zzu.gfms.data.dbflow;
 
 import com.raizlabs.android.dbflow.annotation.Column;
-import com.raizlabs.android.dbflow.annotation.ForeignKey;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
 /**
  * Author:kongguoguang
- * Date:2017-10-23
- * Time:19:34
+ * Date:2017-11-03
+ * Time:12:44
  * Summary:
  */
-@Table(database = AppDatabase.class)
-public class DetailRecord extends BaseModel {
 
-    @PrimaryKey
-    private long detailRecordID;
+@Table(database = AppDatabase.class)
+public class DetailRecordDraft extends BaseModel {
+
+    @PrimaryKey(autoincrement = true)
+    private long id;
+
+    @Column
+    private long workerId;
+
+    @Column
+    private int date;
 
     @Column
     private int workTypeID;
@@ -25,17 +31,30 @@ public class DetailRecord extends BaseModel {
     private int clothesID;
 
     @Column
-    private long dayRecordID;
-
-    @Column
     private int count;
 
-    public long getDetailRecordID() {
-        return detailRecordID;
+    public long getId() {
+        return id;
     }
 
-    public void setDetailRecordID(long detailRecordID) {
-        this.detailRecordID = detailRecordID;
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public long getWorkerId() {
+        return workerId;
+    }
+
+    public void setWorkerId(long workerId) {
+        this.workerId = workerId;
+    }
+
+    public int getDate() {
+        return date;
+    }
+
+    public void setDate(int date) {
+        this.date = date;
     }
 
     public int getWorkTypeID() {
@@ -52,14 +71,6 @@ public class DetailRecord extends BaseModel {
 
     public void setClothesID(int clothesID) {
         this.clothesID = clothesID;
-    }
-
-    public long getDayRecordID() {
-        return dayRecordID;
-    }
-
-    public void setDayRecordID(long dayRecordID) {
-        this.dayRecordID = dayRecordID;
     }
 
     public int getCount() {

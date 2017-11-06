@@ -1,5 +1,6 @@
 package com.zzu.gfms.data.http;
 
+import com.zzu.gfms.data.bean.DayAndDetailRecords;
 import com.zzu.gfms.data.dbflow.ClothesType;
 import com.zzu.gfms.data.dbflow.DayRecord;
 import com.zzu.gfms.data.dbflow.DetailRecord;
@@ -51,4 +52,10 @@ public interface ServerInterface {
     //获取衣服类型
     @GET("clothestype/getAllClothesTypeByWorkerID/{workerId}")
     Observable<HttpReply<List<ClothesType>>> getClothesType(@Path("workerId") long workerId);
+
+    @FormUrlEncoded
+    @POST("dayrecord/saveTmpDayRecord")
+    Observable<HttpReply<DayAndDetailRecords>> commitDayRecord(@Field("dayRecord") String dayRecord,
+                                                               @Field("detailRecords") String detailRecords,
+                                                               @Field("type") int type);
 }

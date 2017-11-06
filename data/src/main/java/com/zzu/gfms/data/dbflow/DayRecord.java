@@ -19,16 +19,16 @@ import java.util.List;
 public class DayRecord extends BaseModel {
 
     @PrimaryKey
-    private long dayRecordID;
+    private String dayRecordID;
 
     @Column
     private long workerID;
 
     @Column
-    private long day;
+    private String day;
 
     @Column
-    private long submit;
+    private String submit;
 
     @Column
     private String convertState;
@@ -38,11 +38,11 @@ public class DayRecord extends BaseModel {
 
     private List<DetailRecord> detailRecords;
 
-    public long getDayRecordID() {
+    public String getDayRecordID() {
         return dayRecordID;
     }
 
-    public void setDayRecordID(long dayRecordID) {
+    public void setDayRecordID(String dayRecordID) {
         this.dayRecordID = dayRecordID;
     }
 
@@ -54,19 +54,19 @@ public class DayRecord extends BaseModel {
         this.workerID = workerID;
     }
 
-    public long getDay() {
+    public String getDay() {
         return day;
     }
 
-    public void setDay(long day) {
+    public void setDay(String day) {
         this.day = day;
     }
 
-    public long getSubmit() {
+    public String getSubmit() {
         return submit;
     }
 
-    public void setSubmit(long submit) {
+    public void setSubmit(String submit) {
         this.submit = submit;
     }
 
