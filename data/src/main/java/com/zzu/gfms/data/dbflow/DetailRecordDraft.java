@@ -22,7 +22,7 @@ public class DetailRecordDraft extends BaseModel {
     private long workerId;
 
     @Column
-    private int date;
+    private String date;
 
     @Column
     private int workTypeID;
@@ -49,11 +49,11 @@ public class DetailRecordDraft extends BaseModel {
         this.workerId = workerId;
     }
 
-    public int getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(int date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

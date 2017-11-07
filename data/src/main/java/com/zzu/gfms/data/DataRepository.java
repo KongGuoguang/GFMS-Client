@@ -92,11 +92,11 @@ public class DataRepository {
         return LocalRepository.deleteDetailRecordDraft(detailRecordDraft);
     }
 
-    public static Observable<Boolean> deleteDetailRecordDrafts(long workerId, int date){
+    public static Observable<Boolean> deleteDetailRecordDrafts(long workerId, String date){
         return LocalRepository.deleteDetailRecordDrafts(workerId, date);
     }
 
-    public static Observable<List<DetailRecordDraft>> getDetailRecordDrafts(long workerId, int date){
+    public static Observable<List<DetailRecordDraft>> getDetailRecordDrafts(long workerId, String date){
         return LocalRepository.getDetailRecordDrafts(workerId, date);
     }
 }

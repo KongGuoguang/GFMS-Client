@@ -83,7 +83,7 @@ public class RemoteRepository {
 
     public static Observable<List<DetailRecord>> getDetailRecords(String dayRecordId){
         return Retrofit2Util.getServerInterface()
-                .getDetailRecordOfDay(dayRecordId)
+                .getDetailRecords(dayRecordId)
                 .flatMap(new Function<HttpReply<List<DetailRecord>>, Observable<List<DetailRecord>>>() {
                     @Override
                     public Observable<List<DetailRecord>> apply(@NonNull final HttpReply<List<DetailRecord>> httpReply) throws Exception {

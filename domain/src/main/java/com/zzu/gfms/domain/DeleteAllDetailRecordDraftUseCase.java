@@ -1,7 +1,6 @@
 package com.zzu.gfms.domain;
 
 import com.zzu.gfms.data.DataRepository;
-import com.zzu.gfms.data.dbflow.DetailRecord;
 
 import io.reactivex.Observable;
 
@@ -16,9 +15,9 @@ public class DeleteAllDetailRecordDraftUseCase extends BaseUseCase<Boolean> {
 
     private long workerId;
 
-    private int date;
+    private String date;
 
-    public DeleteAllDetailRecordDraftUseCase delete(long workerId, int date){
+    public DeleteAllDetailRecordDraftUseCase delete(long workerId, String date){
         this.workerId = workerId;
         this.date = date;
         return this;

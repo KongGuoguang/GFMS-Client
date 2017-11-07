@@ -18,9 +18,9 @@ public class GetAllDetailRecordDraftsUseCase extends BaseUseCase<List<DetailReco
 
     private long workerId;
 
-    private int date;
+    private String date;
 
-    public GetAllDetailRecordDraftsUseCase get(long workerId, int date){
+    public GetAllDetailRecordDraftsUseCase get(long workerId, String date){
         this.workerId = workerId;
         this.date = date;
         return this;

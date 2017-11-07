@@ -201,7 +201,7 @@ public class LocalRepository {
      * @param date
      * @return
      */
-    public static Observable<List<DetailRecordDraft>> getDetailRecordDrafts(final long workerId, final int date){
+    public static Observable<List<DetailRecordDraft>> getDetailRecordDrafts(final long workerId, final String date){
         return Observable.create(new ObservableOnSubscribe<List<DetailRecordDraft>>() {
             @Override
             public void subscribe(ObservableEmitter<List<DetailRecordDraft>> e) throws Exception {
@@ -222,7 +222,7 @@ public class LocalRepository {
      * @param date
      * @return
      */
-    public static Observable<Boolean> deleteDetailRecordDrafts(final long workerId, final int date){
+    public static Observable<Boolean> deleteDetailRecordDrafts(final long workerId, final String date){
         return Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
             public void subscribe(ObservableEmitter<Boolean> e) throws Exception {

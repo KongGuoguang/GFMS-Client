@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.LogUtils;
 import com.google.gson.Gson;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
@@ -23,6 +22,7 @@ import com.zzu.gfms.domain.DeleteAllDetailRecordDraftUseCase;
 import com.zzu.gfms.domain.DeleteSingleDetailRecordDraftUseCase;
 import com.zzu.gfms.domain.GetAllDetailRecordDraftsUseCase;
 import com.zzu.gfms.domain.SaveSingleDetailRecordDraftUseCase;
+import com.zzu.gfms.event.AddDayRecordSuccess;
 import com.zzu.gfms.event.AddDetailRecordFailed;
 import com.zzu.gfms.event.AddDetailRecordSuccess;
 import com.zzu.gfms.utils.ConstantUtil;
@@ -32,6 +32,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,9 +42,8 @@ import io.reactivex.functions.Consumer;
 
 public class AddDayRecordActivity extends BaseActivity {
 
-    private QMUITopBar topBar;
     private int year, month, day;
-    private TextView date;
+    private String date;
     private TextView totalWorkCount;
     private RecyclerView recyclerView;
 
@@ -61,8 +61,9 @@ public class AddDayRecordActivity extends BaseActivity {
     private SubmitDayRecordUseCase submitDayRecordUseCase;
 
     private DayRecord dayRecord = new DayRecord();
-    private Gson gson = new Gson();
     private QMUITipDialog loading;
+
+    private Disposable loadDetailRecordDraftDisposable, submitDayRecordDisposable;
 
 
     @Override
@@ -73,6 +74,8 @@ public class AddDayRecordActivity extends BaseActivity {
         year = intent.getIntExtra("year", 0);
         month = intent.getIntExtra("month", 0);
         day = intent.getIntExtra("day", 0);
+        DecimalFormat decimalFormat = new DecimalFormat("00");
+        date = String.valueOf(year) + "-" + decimalFormat.format(month) + "-" + decimalFormat.format(day);
         initView();
         initUseCase();
         loadDetailRecordDrafts();
@@ -80,13 +83,13 @@ public class AddDayRecordActivity extends BaseActivity {
     }
 
     private void initView(){
-        date = (TextView) findViewById(R.id.text_date);
+        TextView dateText = (TextView) findViewById(R.id.text_date);
         String dateStr = "工作日期：" + year + "年" + month + "月" + day + "日";
-        date.setText(dateStr);
+        dateText.setText(dateStr);
 
         totalWorkCount = (TextView) findViewById(R.id.text_count);
 
-        topBar = (QMUITopBar) findViewById(R.id.top_bar);
+        QMUITopBar topBar = (QMUITopBar) findViewById(R.id.top_bar);
         topBar.setTitle("日报填写");
         topBar.addLeftBackImageButton()
                 .setOnClickListener(new View.OnClickListener() {
@@ -133,10 +136,15 @@ public class AddDayRecordActivity extends BaseActivity {
 
     private void loadDetailRecordDrafts(){
         getAllDetailRecordDraftsUseCase
-                .get(ConstantUtil.worker.getWorkerID(), year+month+day)
-                .execute(new Consumer<List<DetailRecordDraft>>() {
+                .get(ConstantUtil.worker.getWorkerID(), date)
+                .execute(new Observer<List<DetailRecordDraft>>() {
                     @Override
-                    public void accept(List<DetailRecordDraft> detailRecordDrafts) throws Exception {
+                    public void onSubscribe(Disposable d) {
+                        loadDetailRecordDraftDisposable = d;
+                    }
+
+                    @Override
+                    public void onNext(List<DetailRecordDraft> detailRecordDrafts) {
                         if (detailRecordDrafts != null && detailRecordDrafts.size() > 0){
                             for (DetailRecordDraft detailRecordDraft : detailRecordDrafts){
                                 totalCount = totalCount + detailRecordDraft.getCount();
@@ -151,8 +159,17 @@ public class AddDayRecordActivity extends BaseActivity {
                             totalWorkCount.setText(getString(R.string.work_count, totalCount));
                         }
                     }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
                 });
-        ;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -185,7 +202,7 @@ public class AddDayRecordActivity extends BaseActivity {
         detailRecordDraft.setWorkTypeID(detailRecord.getWorkTypeID());
         detailRecordDraft.setClothesID(detailRecord.getClothesID());
         detailRecordDraft.setCount(detailRecord.getCount());
-        detailRecordDraft.setDate(year+month+day);
+        detailRecordDraft.setDate(date);
         detailRecordDraftList.add(detailRecordDraft);
         saveSingleDetailRecordDraftUseCase.save(detailRecordDraft).execute();
     }
@@ -217,7 +234,7 @@ public class AddDayRecordActivity extends BaseActivity {
         loading.show();
         dayRecord.setTotal(totalCount);
         dayRecord.setWorkerID(ConstantUtil.worker.getWorkerID());
-        dayRecord.setDay("2017-11-08");
+        dayRecord.setDay(date);
         dayRecord.setConvertState("1");
 
         DayAndDetailRecords dayAndDetailRecords = new DayAndDetailRecords();
@@ -230,16 +247,17 @@ public class AddDayRecordActivity extends BaseActivity {
                 .execute(new Observer<DayAndDetailRecords>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-
+                        submitDayRecordDisposable = d;
                     }
 
                     @Override
                     public void onNext(DayAndDetailRecords dayAndDetailRecords) {
                         loading.dismiss();
                         showToast("提交成功");
-                        EventBus.getDefault().post(dayAndDetailRecords.getDayRecord());
+                        EventBus.getDefault().post(new AddDayRecordSuccess());
                         deleteAllDetailRecordDraftUseCase.delete(ConstantUtil.worker.getWorkerID(),
-                                year+month+day).execute();
+                                date).execute();
+                        finish();
                     }
 
                     @Override
@@ -259,6 +277,15 @@ public class AddDayRecordActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        if (loadDetailRecordDraftDisposable != null &&
+                !loadDetailRecordDraftDisposable.isDisposed()){
+            loadDetailRecordDraftDisposable.dispose();
+        }
+
+        if (submitDayRecordDisposable != null &&
+                !submitDayRecordDisposable.isDisposed()){
+            submitDayRecordDisposable.dispose();
+        }
     }
 
     public void onClick(View view) {
@@ -269,7 +296,6 @@ public class AddDayRecordActivity extends BaseActivity {
             case R.id.button_cancel:
                 finish();
                 break;
-
         }
     }
 }
