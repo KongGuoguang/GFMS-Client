@@ -99,4 +99,8 @@ public class DataRepository {
     public static Observable<List<DetailRecordDraft>> getDetailRecordDrafts(long workerId, String date){
         return LocalRepository.getDetailRecordDrafts(workerId, date);
     }
+
+    public static Observable<Boolean> submitModifyApplication(String dayRecordID, String modifyReason){
+        return RemoteRepository.submitModifyApplication(dayRecordID, modifyReason);
+    }
 }

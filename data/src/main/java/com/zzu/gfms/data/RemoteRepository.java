@@ -17,6 +17,7 @@ import java.util.List;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Function;
 
@@ -163,6 +164,30 @@ public class RemoteRepository {
                                 if (status == 0){
                                     DayAndDetailRecords dayAndDetailRecords = httpReply.getData();
                                     e.onNext(dayAndDetailRecords);
+                                }else {
+                                    e.onError(new GFMSException(status, httpReply.getMessage()));
+                                }
+                                e.onComplete();
+                            }
+                        });
+                    }
+                });
+    }
+
+    static Observable<Boolean> submitModifyApplication(String dayRecordID, String modifyReason){
+        return Retrofit2Util.getServerInterface()
+                .submitModifyApplication(dayRecordID, modifyReason)
+                .flatMap(new Function<HttpReply, Observable<Boolean>>() {
+                    @Override
+                    public Observable<Boolean> apply(final HttpReply httpReply) throws Exception {
+
+                        final int status = httpReply.getStatus();
+
+                        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+                            @Override
+                            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
+                                if (status == 0){
+                                    e.onNext(true);
                                 }else {
                                     e.onError(new GFMSException(status, httpReply.getMessage()));
                                 }

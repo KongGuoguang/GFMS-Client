@@ -55,4 +55,10 @@ public interface ServerInterface {
 
     @POST("dayrecord/saveTmpDayRecord")
     Observable<HttpReply<DayAndDetailRecords>> submitDayRecord(@Body() DayAndDetailRecords dayAndDetailRecords);
+
+    //申请修改
+    @FormUrlEncoded
+    @POST("dayrecord/applyModify")
+    Observable<HttpReply> submitModifyApplication(@Field("dayRecordID") String dayRecordID,
+                                                  @Field("modifyReason") String modifyReason);
 }
