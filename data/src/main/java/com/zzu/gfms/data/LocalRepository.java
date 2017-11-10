@@ -3,6 +3,7 @@ package com.zzu.gfms.data;
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.sql.language.Delete;
 import com.raizlabs.android.dbflow.sql.language.Select;
+import com.raizlabs.android.dbflow.sql.language.Update;
 import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
 import com.raizlabs.android.dbflow.structure.database.transaction.ProcessModelTransaction;
 import com.zzu.gfms.data.dbflow.AppDatabase;
@@ -253,6 +254,20 @@ public class LocalRepository {
             @Override
             public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
                 detailRecordDraft.delete();
+                e.onNext(true);
+                e.onComplete();
+            }
+        });
+    }
+
+    public static Observable<Boolean> convertDayRecordState(final String dayRecordId, final String state){
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
+                new Update<>(DayRecord.class)
+                        .set(DayRecord_Table.convertState.eq(state))
+                        .where(DayRecord_Table.dayRecordID.eq(dayRecordId))
+                        .execute();
                 e.onNext(true);
                 e.onComplete();
             }

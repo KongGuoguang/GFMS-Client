@@ -26,8 +26,11 @@ public class DetailRecordAdapter extends RecyclerView.Adapter<DetailRecordAdapte
 
     private OnDeleteListener onDeleteListener;
 
-    public DetailRecordAdapter(List<DetailRecord> detailRecords){
+    private boolean deleteable;
+
+    public DetailRecordAdapter(List<DetailRecord> detailRecords, boolean deleteable){
         this.detailRecords = detailRecords;
+        this.deleteable = deleteable;
     }
 
     @Override
@@ -62,19 +65,24 @@ public class DetailRecordAdapter extends RecyclerView.Adapter<DetailRecordAdapte
         return detailRecords.size();
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder{
 
         TextView workType;
         TextView clothesType;
         TextView count;
         ImageView dustbin;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             workType = (TextView) itemView.findViewById(R.id.text_work_type);
             clothesType = (TextView) itemView.findViewById(R.id.text_clothes_type);
             count = (TextView) itemView.findViewById(R.id.text_count);
             dustbin = (ImageView) itemView.findViewById(R.id.image_dustbin);
+            if (deleteable){
+                dustbin.setVisibility(View.VISIBLE);
+            }else {
+                dustbin.setVisibility(View.GONE);
+            }
         }
     }
 

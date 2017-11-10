@@ -18,15 +18,4 @@ public class Constants {
     public static final String MONTH = "month";
 
     public static final String DAY = "day";
-
-    public static String DAY_RECORD_STATE_SUBMIT = "1";//提交
-
-    //申请修改未审核
-    public static String DAY_RECORD_STATE_NOT_REVIEWED = "2";
-
-    //申请修改审核不通过
-    public static String DAY_RECORD_STATE_NOT_PASSED = "3";
-
-    //申请修改审核通过
-    public static String DAY_RECORD_STATE_PASSED = "4";
 }

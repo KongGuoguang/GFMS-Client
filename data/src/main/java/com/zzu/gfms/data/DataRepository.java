@@ -103,4 +103,8 @@ public class DataRepository {
     public static Observable<Boolean> submitModifyApplication(String dayRecordID, String modifyReason){
         return RemoteRepository.submitModifyApplication(dayRecordID, modifyReason);
     }
+
+    public static Observable<Boolean> convertDayRecordState(String dayRecordId, String state){
+        return LocalRepository.convertDayRecordState(dayRecordId, state);
+    }
 }

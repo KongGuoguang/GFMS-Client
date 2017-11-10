@@ -1,20 +1,27 @@
 package com.zzu.gfms;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.zzu.gfms.adapter.DetailRecordAdapter;
+import com.zzu.gfms.app.BaseActivity;
 import com.zzu.gfms.data.dbflow.DetailRecord;
 import com.zzu.gfms.domain.GetDetailRecordsUseCase;
 import com.zzu.gfms.domain.SaveDetailRecordsUseCase;
+import com.zzu.gfms.domain.SubmitModifyApplicationUseCase;
+import com.zzu.gfms.event.SubmitModifyApplicationSuccess;
+import com.zzu.gfms.utils.ExceptionUtil;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,13 +29,14 @@ import java.util.List;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
-public class DetailRecordActivity extends AppCompatActivity {
+public class ShowDayRecordActivity extends BaseActivity {
 
     private int year, month, day;
     private String dayRecordId;
 
     private TextView totalWorkCount;
-    private RecyclerView recyclerView;
+
+    private EditText modifyReasonEdit;
 
     private List<DetailRecord> detailRecordList = new ArrayList<>();
     private DetailRecordAdapter adapter;
@@ -37,10 +45,13 @@ public class DetailRecordActivity extends AppCompatActivity {
 
     private GetDetailRecordsUseCase getDetailRecordsUseCase;
     private SaveDetailRecordsUseCase saveDetailRecordsUseCase;
+    private SubmitModifyApplicationUseCase submitModifyApplicationUseCase;
 
     private QMUITipDialog loading;
 
-    private Disposable disposable;
+    private Disposable getDetailRecordsDisposable;
+
+    private Disposable submitModifyApplicationDisposable;
 
 
     @Override
@@ -64,6 +75,8 @@ public class DetailRecordActivity extends AppCompatActivity {
 
         totalWorkCount = (TextView) findViewById(R.id.text_count);
 
+        modifyReasonEdit = (EditText) findViewById(R.id.edit_modify_reason);
+
         QMUITopBar topBar = (QMUITopBar) findViewById(R.id.top_bar);
         topBar.setTitle("日报详情");
         topBar.addLeftBackImageButton()
@@ -74,11 +87,11 @@ public class DetailRecordActivity extends AppCompatActivity {
                     }
                 });
 
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        adapter = new DetailRecordAdapter(detailRecordList);
+        adapter = new DetailRecordAdapter(detailRecordList, false);
         recyclerView.setAdapter(adapter);
 
         loading = new QMUITipDialog.Builder(this)
@@ -90,6 +103,7 @@ public class DetailRecordActivity extends AppCompatActivity {
     private void initUseCase(){
         getDetailRecordsUseCase = new GetDetailRecordsUseCase();
         saveDetailRecordsUseCase = new SaveDetailRecordsUseCase();
+        submitModifyApplicationUseCase = new SubmitModifyApplicationUseCase();
     }
 
     private void loadDetailRecords(){
@@ -98,7 +112,7 @@ public class DetailRecordActivity extends AppCompatActivity {
                     int i = 0;
                     @Override
                     public void onSubscribe(Disposable d) {
-                        disposable = d;
+                        getDetailRecordsDisposable = d;
                     }
 
                     @Override
@@ -134,8 +148,12 @@ public class DetailRecordActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (disposable != null && !disposable.isDisposed()){
-            disposable.dispose();
+        if (getDetailRecordsDisposable != null && !getDetailRecordsDisposable.isDisposed()){
+            getDetailRecordsDisposable.dispose();
+        }
+
+        if (submitModifyApplicationDisposable != null && !submitModifyApplicationDisposable.isDisposed()){
+            submitModifyApplicationDisposable.dispose();
         }
     }
 
@@ -145,7 +163,41 @@ public class DetailRecordActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.button_submit:
+                submitModifyApplication();
                 break;
         }
+    }
+
+    private void submitModifyApplication(){
+        if (TextUtils.isEmpty(modifyReasonEdit.getText())){
+            showErrorDialog("修改原因不能为空");
+        }
+        loading.show();
+        submitModifyApplicationUseCase.submit(dayRecordId, modifyReasonEdit.getText().toString())
+                .execute(new Observer<Boolean>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        submitModifyApplicationDisposable = d;
+                    }
+
+                    @Override
+                    public void onNext(Boolean aBoolean) {
+                        loading.dismiss();
+                        showToast("修改申请提交成功！");
+                        EventBus.getDefault().post(new SubmitModifyApplicationSuccess());
+                        finish();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        loading.dismiss();
+                        showToast(ExceptionUtil.parseErrorMessage(e));
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 }

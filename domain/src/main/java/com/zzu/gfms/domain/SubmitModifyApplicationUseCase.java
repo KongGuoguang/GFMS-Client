@@ -1,6 +1,7 @@
 package com.zzu.gfms.domain;
 
 import com.zzu.gfms.data.DataRepository;
+import com.zzu.gfms.data.utils.ConvertState;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -37,7 +38,11 @@ public class SubmitModifyApplicationUseCase extends BaseUseCase<Boolean> {
                 .doOnNext(new Consumer<Boolean>() {
                     @Override
                     public void accept(Boolean b) throws Exception {
-
+                        if (b){
+                            DataRepository
+                                    .convertDayRecordState(dayRecordID, ConvertState.DAY_RECORD_MODIFY_NOT_CHECK)
+                                    .subscribe();
+                        }
                     }
                 })
                 .subscribe(observer);

@@ -105,13 +105,8 @@ class OkHttp3Util {
             if ("POST".equals(method)) {//打印post请求体
                 Buffer buffer = new Buffer();
                 request.body().writeTo(buffer);
-                if (buffer.size() > 300){
-                    LogUtils.d("OkHttpLog", String.format("发送请求:%s %n requestBody:%s",
-                            request.url(), buffer.readUtf8(300)));
-                }else {
-                    LogUtils.d("OkHttpLog", String.format("发送请求:%s %n requestBody:%s",
-                            request.url(), buffer.readUtf8()));
-                }
+                LogUtils.d("OkHttpLog", String.format("发送请求:%s %n requestBody:%s",
+                        request.url(), buffer.readUtf8()));
 
             } else {
                 LogUtils.d("OkHttpLog", String.format("发送请求:%s", request.url()));
@@ -125,7 +120,7 @@ class OkHttp3Util {
             //这里不能直接使用response.body().string()的方式输出日志
             //因为response.body().string()之后，response中的流会被关闭，程序会报错，我们需要创建出一
             //个新的response给应用层处理
-            ResponseBody responseBody = response.peekBody(300);
+            ResponseBody responseBody = response.peekBody(1024 * 1024);
 
             LogUtils.d("OkHttpLog",
                     String.format("接收响应:%s %n" +

@@ -15,14 +15,12 @@
         <TextView
             android:id="@+id/text_clothes_type"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="yifuleixing"/>
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/text_work_type"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="gongzuoleixing"/>
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
@@ -32,10 +30,8 @@
         android:id="@+id/text_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="200"
         android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/image_dustbin"
-        android:layout_marginRight="20dp"/>
+        android:layout_marginLeft="200dp"/>
 
     <ImageView
         android:id="@+id/image_dustbin"

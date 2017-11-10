@@ -9,24 +9,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.LogUtils;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.zzu.gfms.AddDayRecordActivity;
-import com.zzu.gfms.DetailRecordActivity;
+import com.zzu.gfms.ShowDayRecordActivity;
+import com.zzu.gfms.ModifyDayRecordActivity;
 import com.zzu.gfms.R;
 import com.zzu.gfms.adapter.CalendarAdapter;
 import com.zzu.gfms.bean.Day;
-import com.zzu.gfms.data.dbflow.ClothesType;
 import com.zzu.gfms.data.dbflow.DayRecord;
-import com.zzu.gfms.data.dbflow.WorkType;
+import com.zzu.gfms.data.utils.ConvertState;
 import com.zzu.gfms.domain.GetDayRecordsOfMonthUseCase;
-import com.zzu.gfms.domain.SaveClothesTypeUseCase;
 import com.zzu.gfms.domain.SaveAllDayRecordsUseCase;
-import com.zzu.gfms.domain.SaveWorkTypeUseCase;
 import com.zzu.gfms.event.AddDayRecordSuccess;
+import com.zzu.gfms.event.SubmitModifyApplicationSuccess;
 import com.zzu.gfms.utils.ConstantUtil;
 import com.zzu.gfms.utils.DayUtil;
 import com.zzu.gfms.view.CalendarView;
@@ -34,7 +31,6 @@ import com.zzu.gfms.view.CalendarView;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -51,19 +47,11 @@ public class WorkRecordFragment extends Fragment {
         // Required empty public constructor
     }
 
-    private QMUITopBar topBar;
-
-    private CalendarView calendarView;
-
-    private TextView date;
-
     private TextView dayCount;
 
     private TextView workCount;
 
     private List<Day> days;
-
-    private Button button;
 
     private List<DayRecord> dayRecords;
 
@@ -95,29 +83,17 @@ public class WorkRecordFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        topBar = (QMUITopBar) view.findViewById(R.id.top_bar);
+        QMUITopBar topBar = (QMUITopBar) view.findViewById(R.id.top_bar);
         topBar.setTitle("工作日历");
-        date = (TextView) view.findViewById(R.id.text_date);
+        TextView date = (TextView) view.findViewById(R.id.text_date);
         dayCount = (TextView) view.findViewById(R.id.text_day_count);
         workCount = (TextView) view.findViewById(R.id.text_work_count);
-        calendarView = (CalendarView) view.findViewById(R.id.calendar_view);
-        button = (Button) view.findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                addData();
-//                addClothesType();
-//                addWorkType();
-//                RemoteRepository.getDayRecordOfMonth(1, year, month)
-//                        .subscribeOn(Schedulers.io())
-//                        .subscribe();
-            }
-        });
+        CalendarView calendarView = (CalendarView) view.findViewById(R.id.calendar_view);
 
-        Calendar calendar = Calendar.getInstance();
+        final Calendar calendar = Calendar.getInstance();
         year = DayUtil.getYear(calendar);
         month = DayUtil.getMonth(calendar);
-        String dateStr = year + "年" + month + "月";
+        final String dateStr = year + "年" + month + "月";
         date.setText(dateStr);
 
         days = DayUtil.getAllDays(calendar);
@@ -131,20 +107,31 @@ public class WorkRecordFragment extends Fragment {
                     return;
                 }
 
+                Intent intent = new Intent();
+                intent.putExtra("year", day.getYear());
+                intent.putExtra("month", day.getMonth());
+                intent.putExtra("day", day.getDay());
+
                 if (!day.isHasWorkRecord()){
-                    Intent intent = new Intent(getActivity(), AddDayRecordActivity.class);
-                    intent.putExtra("year", day.getYear());
-                    intent.putExtra("month", day.getMonth());
-                    intent.putExtra("day", day.getDay());
-                    startActivity(intent);
+                    intent.setClass(getActivity(), AddDayRecordActivity.class);
                 }else {
-                    Intent intent = new Intent(getActivity(), DetailRecordActivity.class);
-                    intent.putExtra("year", day.getYear());
-                    intent.putExtra("month", day.getMonth());
-                    intent.putExtra("day", day.getDay());
-                    intent.putExtra("dayRecordId", day.getDayRecord().getDayRecordID());
-                    startActivity(intent);
+                    DayRecord dayRecord = day.getDayRecord();
+                    if (dayRecord != null){
+                        intent.putExtra("dayRecordId", dayRecord.getDayRecordID());
+                        switch (dayRecord.getConvertState()){
+                            case ConvertState.DAY_RECORD_TEMPORARY:
+                                intent.setClass(getActivity(), ModifyDayRecordActivity.class);
+                                break;
+                            case ConvertState.DAY_RECORD_MODIFY_NOT_CHECK:
+                                intent.putExtra("convertState", dayRecord.getConvertState());
+                            case ConvertState.DAY_RECORD_SUBMIT:
+                                intent.setClass(getActivity(), ShowDayRecordActivity.class);
+                                break;
+                            default:
+                        }
+                    }
                 }
+                startActivity(intent);
             }
         });
 
@@ -198,6 +185,9 @@ public class WorkRecordFragment extends Fragment {
 
         int totalCount = 0;
         for (DayRecord dayRecord: dayRecords){
+            if (ConvertState.DAY_RECORD_MODIFY_PASSED.equals(dayRecord.getConvertState())){
+                continue;
+            }
             totalCount = totalCount + dayRecord.getTotal();
             String date = dayRecord.getDay();
             int length = date.length();
@@ -216,6 +206,11 @@ public class WorkRecordFragment extends Fragment {
 
     @Subscribe
     public void onAddDayRecordSuccess(AddDayRecordSuccess event){
+        loadDayRecordsOfMonth();
+    }
+
+    @Subscribe
+    public void onSubmitModifyApplicationSuccess(SubmitModifyApplicationSuccess event){
         loadDayRecordsOfMonth();
     }
 
