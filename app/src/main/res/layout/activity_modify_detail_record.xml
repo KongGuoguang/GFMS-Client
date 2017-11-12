@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.zzu.gfms.AddDetailRecordActivity">
+    tools:context="com.zzu.gfms.ModifyDetailRecordActivity">
 
     <com.qmuiteam.qmui.widget.QMUITopBar
         android:id="@+id/top_bar"
@@ -34,21 +34,6 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/text_clothes"/>
-
-        <TextView
-            android:id="@+id/text_select_clothes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:text="选择"
-            android:drawableRight="@mipmap/icon_right_arrow"
-            android:textColor="#13227a"
-            android:gravity="center_vertical"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:paddingLeft="8dp"
-            android:onClick="onClick"/>
     </RelativeLayout>
 
     <View
@@ -78,20 +63,6 @@
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/text_work"/>
 
-        <TextView
-            android:id="@+id/text_select_work"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:text="选择"
-            android:drawableRight="@mipmap/icon_right_arrow"
-            android:textColor="#13227a"
-            android:gravity="center_vertical"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:paddingLeft="8dp"
-            android:onClick="onClick"/>
     </RelativeLayout>
 
     <View

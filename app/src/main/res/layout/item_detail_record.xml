@@ -29,9 +29,12 @@
     <TextView
         android:id="@+id/text_count"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="200dp"/>
+        android:layout_height="match_parent"
+        android:minWidth="100dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="80dp"
+        android:gravity="center_vertical"
+        android:text="完成量：300件"/>
 
     <ImageView
         android:id="@+id/image_dustbin"

@@ -26,11 +26,14 @@ public class DetailRecordAdapter extends RecyclerView.Adapter<DetailRecordAdapte
 
     private OnDeleteListener onDeleteListener;
 
+    private OnModifyListener onModifyListener;
+
     private boolean deleteable;
 
     public DetailRecordAdapter(List<DetailRecord> detailRecords, boolean deleteable){
         this.detailRecords = detailRecords;
         this.deleteable = deleteable;
+
     }
 
     @Override
@@ -43,17 +46,38 @@ public class DetailRecordAdapter extends RecyclerView.Adapter<DetailRecordAdapte
         this.onDeleteListener = onDeleteListener;
     }
 
+    public void setOnModifyListener(OnModifyListener onModifyListener){
+        this.onModifyListener = onModifyListener;
+    }
+
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
-        DetailRecord detailRecord = detailRecords.get(position);
-        holder.workType.setText("工作类型：" + ConstantUtil.getWorkName(detailRecord.getWorkTypeID()));
-        holder.clothesType.setText("衣服类型：" + ConstantUtil.getClothesName(detailRecord.getClothesID()));
-        holder.count.setText("完成量：" + detailRecord.getCount());
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
+
+        DetailRecord detailRecord = detailRecords.get(holder.getAdapterPosition());
+
+        String workType = "工作类型：" + ConstantUtil.getWorkName(detailRecord.getWorkTypeID());
+        holder.workType.setText(workType);
+
+        String clothesType = "衣服类型：" + ConstantUtil.getClothesName(detailRecord.getClothesID());
+        holder.clothesType.setText(clothesType);
+
+        String count = "完成量：" + detailRecord.getCount() + "件";
+        holder.count.setText(count);
+
         holder.dustbin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (onDeleteListener != null){
-                    onDeleteListener.onDelete(position);
+                    onDeleteListener.onDelete(holder.getAdapterPosition());
+                }
+            }
+        });
+
+        holder.count.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onModifyListener != null){
+                    onModifyListener.onModify(holder.getAdapterPosition());
                 }
             }
         });
@@ -88,5 +112,9 @@ public class DetailRecordAdapter extends RecyclerView.Adapter<DetailRecordAdapte
 
     public interface OnDeleteListener{
         void onDelete(int position);
+    }
+
+    public interface OnModifyListener{
+        void onModify(int position);
     }
 }

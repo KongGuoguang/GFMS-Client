@@ -32,7 +32,8 @@
             android:screenOrientation="portrait" />
         <activity android:name=".AddDetailRecordActivity" />
         <activity android:name=".ShowDayRecordActivity" />
-        <activity android:name=".ModifyDayRecordActivity"></activity>
+        <activity android:name=".ModifyDayRecordActivity" />
+        <activity android:name=".ModifyDetailRecordActivity"></activity>
     </application>
 
 </manifest>

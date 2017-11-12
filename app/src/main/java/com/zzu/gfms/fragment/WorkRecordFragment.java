@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.qmuiteam.qmui.widget.pullRefreshLayout.QMUIPullRefreshLayout;
 import com.zzu.gfms.AddDayRecordActivity;
 import com.zzu.gfms.ShowDayRecordActivity;
 import com.zzu.gfms.ModifyDayRecordActivity;
@@ -32,10 +33,12 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -51,6 +54,8 @@ public class WorkRecordFragment extends Fragment {
 
     private TextView workCount;
 
+    private QMUIPullRefreshLayout pullRefreshLayout;
+
     private List<Day> days;
 
     private List<DayRecord> dayRecords;
@@ -64,6 +69,10 @@ public class WorkRecordFragment extends Fragment {
     private int year, month;
 
     private Disposable disposable;
+
+    private boolean isRefreshing;
+
+    private Consumer<List<DayRecord>> dayRecordsConsumer;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -88,6 +97,26 @@ public class WorkRecordFragment extends Fragment {
         TextView date = (TextView) view.findViewById(R.id.text_date);
         dayCount = (TextView) view.findViewById(R.id.text_day_count);
         workCount = (TextView) view.findViewById(R.id.text_work_count);
+
+        pullRefreshLayout = (QMUIPullRefreshLayout) view.findViewById(R.id.layout_pull_refresh);
+        pullRefreshLayout.setOnPullListener(new QMUIPullRefreshLayout.OnPullListener() {
+            @Override
+            public void onMoveTarget(int offset) {
+
+            }
+
+            @Override
+            public void onMoveRefreshView(int offset) {
+
+            }
+
+            @Override
+            public void onRefresh() {
+                isRefreshing = true;
+                loadDayRecordsOfMonth();
+            }
+        });
+
         CalendarView calendarView = (CalendarView) view.findViewById(R.id.calendar_view);
 
         final Calendar calendar = Calendar.getInstance();
@@ -142,41 +171,96 @@ public class WorkRecordFragment extends Fragment {
      * 加载本月工作记录
      */
     private void loadDayRecordsOfMonth(){
-        getDayRecordsOfMonthUseCase.get(ConstantUtil.worker.getWorkerID(), year, month)
-                .execute(new Observer<List<DayRecord>>() {
+        disposable = getDayRecordsOfMonthUseCase
+                .get(ConstantUtil.worker.getWorkerID(), year, month)
+                .execute(getDayRecordsConsumer());
+//        getDayRecordsOfMonthUseCase.get(ConstantUtil.worker.getWorkerID(), year, month)
+//                .execute(new Observer<List<DayRecord>>() {
+//
+//                    int i = 0;
+//
+//                    @Override
+//                    public void onSubscribe(Disposable d) {
+//                        disposable = d;
+//                    }
+//
+//                    @Override
+//                    public void onNext(List<DayRecord> dayRecords) {
+//                        i++;
+//
+//                        if (dayRecords != null && dayRecords.size() > 0){
+//                            if (i == 2){
+//                                saveAllDayRecordsUseCase.save(dayRecords).execute();
+//                                if (isRefreshing){
+//                                    isRefreshing = false;
+//                                    pullRefreshLayout.finishRefresh();
+//                                }
+//                            }
+//
+//                            Iterator<DayRecord> iterator = dayRecords.iterator();
+//                            while(iterator.hasNext()){
+//                                DayRecord dayRecord = iterator.next();
+//                                if(ConvertState.DAY_RECORD_MODIFY_PASSED.equals(dayRecord.getConvertState())){
+//                                    iterator.remove();
+//                                }
+//                            }
+//
+//                            dayCount.setText(getString(R.string.day_count, dayRecords.size()));
+//                            WorkRecordFragment.this.dayRecords = dayRecords;
+//                            addDayRecordsToDays();
+//                            adapter.notifyDataSetChanged();
+//
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onComplete() {
+//
+//                    }
+//                });
+    }
 
-                    int i = 0;
+    private Consumer<List<DayRecord>> getDayRecordsConsumer(){
+        if (dayRecordsConsumer == null){
+            dayRecordsConsumer = new Consumer<List<DayRecord>>() {
+                int i = 0;
+                @Override
+                public void accept(List<DayRecord> dayRecords) throws Exception {
+                    i++;
 
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        disposable = d;
-                    }
+                    if (dayRecords != null && dayRecords.size() > 0){
+                        if (i == 2){
+                            saveAllDayRecordsUseCase.save(dayRecords).execute();
+                            if (isRefreshing){
+                                isRefreshing = false;
+                                pullRefreshLayout.finishRefresh();
+                            }
+                            i = 0;
+                        }
 
-                    @Override
-                    public void onNext(List<DayRecord> dayRecords) {
-                        i++;
-
-                        if (dayRecords != null && dayRecords.size() > 0){
-                            dayCount.setText(getString(R.string.day_count, dayRecords.size()));
-                            WorkRecordFragment.this.dayRecords = dayRecords;
-                            addDayRecordsToDays();
-                            adapter.notifyDataSetChanged();
-                            if (i == 2){
-                                saveAllDayRecordsUseCase.save(dayRecords).execute();
+                        Iterator<DayRecord> iterator = dayRecords.iterator();
+                        while(iterator.hasNext()){
+                            DayRecord dayRecord = iterator.next();
+                            if(ConvertState.DAY_RECORD_MODIFY_PASSED.equals(dayRecord.getConvertState())){
+                                iterator.remove();
                             }
                         }
-                    }
 
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
+                        dayCount.setText(getString(R.string.day_count, dayRecords.size()));
+                        WorkRecordFragment.this.dayRecords = dayRecords;
+                        addDayRecordsToDays();
+                        adapter.notifyDataSetChanged();
 
                     }
-                });
+                }
+            };
+        }
+        return dayRecordsConsumer;
     }
 
     private void addDayRecordsToDays(){

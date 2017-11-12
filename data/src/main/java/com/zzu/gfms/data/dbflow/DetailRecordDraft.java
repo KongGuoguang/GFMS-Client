@@ -19,6 +19,9 @@ public class DetailRecordDraft extends BaseModel {
     private long id;
 
     @Column
+    private String detailRecordID = "";
+
+    @Column
     private long workerId;
 
     @Column
@@ -39,6 +42,14 @@ public class DetailRecordDraft extends BaseModel {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getDetailRecordID() {
+        return detailRecordID;
+    }
+
+    public void setDetailRecordID(String detailRecordID) {
+        this.detailRecordID = detailRecordID;
     }
 
     public long getWorkerId() {

@@ -22,11 +22,13 @@ import com.zzu.gfms.domain.DeleteAllDetailRecordDraftUseCase;
 import com.zzu.gfms.domain.DeleteSingleDetailRecordDraftUseCase;
 import com.zzu.gfms.domain.GetAllDetailRecordDraftsUseCase;
 import com.zzu.gfms.domain.GetDetailRecordsUseCase;
+import com.zzu.gfms.domain.ModifyDetailRecordDraftUseCase;
 import com.zzu.gfms.domain.SaveSingleDetailRecordDraftUseCase;
 import com.zzu.gfms.domain.SubmitDayRecordUseCase;
 import com.zzu.gfms.event.AddDayRecordSuccess;
 import com.zzu.gfms.event.AddDetailRecordFailed;
 import com.zzu.gfms.event.AddDetailRecordSuccess;
+import com.zzu.gfms.event.ModifyDetailRecord;
 import com.zzu.gfms.utils.ConstantUtil;
 import com.zzu.gfms.utils.ExceptionUtil;
 
@@ -63,6 +65,7 @@ public class ModifyDayRecordActivity extends BaseActivity {
     private DeleteAllDetailRecordDraftUseCase deleteAllDetailRecordDraftUseCase;
     private SubmitDayRecordUseCase submitDayRecordUseCase;
     private GetDetailRecordsUseCase getDetailRecordsUseCase;
+    private ModifyDetailRecordDraftUseCase modifyDetailRecordDraftUseCase;
 
     private DayRecord dayRecord = new DayRecord();
 
@@ -87,6 +90,7 @@ public class ModifyDayRecordActivity extends BaseActivity {
         initView();
         initUseCase();
         loadDetailRecordDrafts();
+        EventBus.getDefault().register(this);
     }
 
     private void initView(){
@@ -97,7 +101,7 @@ public class ModifyDayRecordActivity extends BaseActivity {
         totalWorkCount = (TextView) findViewById(R.id.text_count);
 
         QMUITopBar topBar = (QMUITopBar) findViewById(R.id.top_bar);
-        topBar.setTitle("日报编辑");
+        topBar.setTitle("日报修改");
         topBar.addLeftBackImageButton()
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -125,6 +129,20 @@ public class ModifyDayRecordActivity extends BaseActivity {
                 deleteDetailRecordDraft(position);
             }
         });
+
+        adapter.setOnModifyListener(new DetailRecordAdapter.OnModifyListener() {
+            @Override
+            public void onModify(int position) {
+                DetailRecord detailRecord = detailRecordList.get(position);
+                Intent intent = new Intent(ModifyDayRecordActivity.this, ModifyDetailRecordActivity.class);
+                intent.putExtra("workTypeID", detailRecord.getWorkTypeID());
+                intent.putExtra("clothesID", detailRecord.getClothesID());
+                intent.putExtra("count", detailRecord.getCount());
+                intent.putExtra("position", position);
+                startActivity(intent);
+            }
+        });
+
         recyclerView.setAdapter(adapter);
 
         loading = new QMUITipDialog.Builder(this)
@@ -145,6 +163,7 @@ public class ModifyDayRecordActivity extends BaseActivity {
         getAllDetailRecordDraftsUseCase = new GetAllDetailRecordDraftsUseCase();
         submitDayRecordUseCase = new SubmitDayRecordUseCase();
         getDetailRecordsUseCase = new GetDetailRecordsUseCase();
+        modifyDetailRecordDraftUseCase = new ModifyDetailRecordDraftUseCase();
     }
 
     private void loadDetailRecordDrafts(){
@@ -160,6 +179,7 @@ public class ModifyDayRecordActivity extends BaseActivity {
                                 totalCount = totalCount + detailRecordDraft.getCount();
                                 detailRecordDraftList.add(detailRecordDraft);
                                 DetailRecord detailRecord = new DetailRecord();
+                                detailRecord.setDetailRecordID(detailRecordDraft.getDetailRecordID());
                                 detailRecord.setClothesID(detailRecordDraft.getClothesID());
                                 detailRecord.setWorkTypeID(detailRecordDraft.getWorkTypeID());
                                 detailRecord.setCount(detailRecordDraft.getCount());
@@ -216,6 +236,12 @@ public class ModifyDayRecordActivity extends BaseActivity {
         addDetailRecord(record);
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onModifyDetailRecord(ModifyDetailRecord record){
+        modifyDetailRecord(record);
+        modifyDetailRecordDraft(record);
+    }
+
     private void addDetailRecord(DetailRecord detailRecord){
         for (DetailRecord record : detailRecordList){
             if (record.getWorkTypeID() == detailRecord.getWorkTypeID() &&
@@ -237,6 +263,7 @@ public class ModifyDayRecordActivity extends BaseActivity {
 
     private void saveDetailRecordDraft(DetailRecord detailRecord){
         DetailRecordDraft detailRecordDraft = new DetailRecordDraft();
+        detailRecordDraft.setDetailRecordID(detailRecord.getDetailRecordID());
         detailRecordDraft.setWorkerId(ConstantUtil.worker.getWorkerID());
         detailRecordDraft.setWorkTypeID(detailRecord.getWorkTypeID());
         detailRecordDraft.setClothesID(detailRecord.getClothesID());
@@ -265,12 +292,30 @@ public class ModifyDayRecordActivity extends BaseActivity {
         detailRecordDraftList.remove(position);
     }
 
+    private void modifyDetailRecord(ModifyDetailRecord modifyDetailRecord){
+
+        DetailRecord detailRecord = detailRecordList.get(modifyDetailRecord.getPosition());
+
+        totalCount = totalCount - detailRecord.getCount() + modifyDetailRecord.getCount();
+        totalWorkCount.setText(getString(R.string.work_count, totalCount));
+
+        detailRecord.setCount(modifyDetailRecord.getCount());
+        adapter.notifyItemChanged(modifyDetailRecord.getPosition());
+    }
+
+    private void modifyDetailRecordDraft(ModifyDetailRecord modifyDetailRecord){
+        DetailRecordDraft detailRecordDraft = detailRecordDraftList.get(modifyDetailRecord.getPosition());
+        detailRecordDraft.setCount(modifyDetailRecord.getCount());
+        modifyDetailRecordDraftUseCase.modify(detailRecordDraft).execute();
+    }
+
     private void submitDayRecord(){
         if (detailRecordList.size() <= 0){
             showErrorDialog("请至少添加一条记录！");
             return;
         }
         submitting.show();
+        dayRecord.setDayRecordID(dayRecordId);
         dayRecord.setTotal(totalCount);
         dayRecord.setWorkerID(ConstantUtil.worker.getWorkerID());
         dayRecord.setDay(date);

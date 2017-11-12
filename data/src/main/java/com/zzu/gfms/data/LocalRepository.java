@@ -249,6 +249,17 @@ public class LocalRepository {
         });
     }
 
+    public static Observable<Boolean> updateDetailRecordDraft(final DetailRecordDraft detailRecordDraft){
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
+                detailRecordDraft.update();
+                e.onNext(true);
+                e.onComplete();
+            }
+        });
+    }
+
     public static Observable<Boolean> deleteDetailRecordDraft(final DetailRecordDraft detailRecordDraft){
         return Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override

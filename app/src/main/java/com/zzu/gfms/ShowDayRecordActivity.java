@@ -15,11 +15,13 @@ import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.zzu.gfms.adapter.DetailRecordAdapter;
 import com.zzu.gfms.app.BaseActivity;
 import com.zzu.gfms.data.dbflow.DetailRecord;
+import com.zzu.gfms.data.utils.ConvertState;
 import com.zzu.gfms.domain.GetDetailRecordsUseCase;
 import com.zzu.gfms.domain.SaveDetailRecordsUseCase;
 import com.zzu.gfms.domain.SubmitModifyApplicationUseCase;
 import com.zzu.gfms.event.SubmitModifyApplicationSuccess;
 import com.zzu.gfms.utils.ExceptionUtil;
+import com.zzu.gfms.utils.ViewUtil;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -33,6 +35,7 @@ public class ShowDayRecordActivity extends BaseActivity {
 
     private int year, month, day;
     private String dayRecordId;
+    private String convertState;
 
     private TextView totalWorkCount;
 
@@ -58,14 +61,19 @@ public class ShowDayRecordActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_record);
+        initIntentExtra();
+        initView();
+        initUseCase();
+        loadDetailRecords();
+    }
+
+    private void initIntentExtra(){
         Intent intent = getIntent();
         year = intent.getIntExtra("year", 0);
         month = intent.getIntExtra("month", 0);
         day = intent.getIntExtra("day", 0);
         dayRecordId = intent.getStringExtra("dayRecordId");
-        initView();
-        initUseCase();
-        loadDetailRecords();
+        convertState = intent.getStringExtra("convertState");
     }
 
     private void initView(){
@@ -98,6 +106,11 @@ public class ShowDayRecordActivity extends BaseActivity {
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
                 .setTipWord("正在提交申请")
                 .create();
+
+        TextView submit = (TextView) findViewById(R.id.button_submit);
+        if (ConvertState.DAY_RECORD_MODIFY_NOT_CHECK.equals(convertState)){
+            ViewUtil.setViewEnable(submit, false);
+        }
     }
 
     private void initUseCase(){

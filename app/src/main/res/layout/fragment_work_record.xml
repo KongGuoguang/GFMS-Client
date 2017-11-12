@@ -50,14 +50,24 @@
 
     </RelativeLayout>
 
-    <com.zzu.gfms.view.CalendarView
-        android:id="@+id/calendar_view"
+    <com.qmuiteam.qmui.widget.pullRefreshLayout.QMUIPullRefreshLayout
+        android:id="@+id/layout_pull_refresh"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/layout_date_count"
-        android:layout_marginTop="40dp">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/layout_date_count">
 
-    </com.zzu.gfms.view.CalendarView>
+        <com.zzu.gfms.view.CalendarView
+            android:id="@+id/calendar_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp">
+
+        </com.zzu.gfms.view.CalendarView>
+
+    </com.qmuiteam.qmui.widget.pullRefreshLayout.QMUIPullRefreshLayout>
+
+
+
 
     <Button
         android:id="@+id/button"

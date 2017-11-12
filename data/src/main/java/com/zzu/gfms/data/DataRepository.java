@@ -92,6 +92,10 @@ public class DataRepository {
         return LocalRepository.deleteDetailRecordDraft(detailRecordDraft);
     }
 
+    public static Observable<Boolean> updateDetailRecordDraft(DetailRecordDraft detailRecordDraft){
+        return LocalRepository.updateDetailRecordDraft(detailRecordDraft);
+    }
+
     public static Observable<Boolean> deleteDetailRecordDrafts(long workerId, String date){
         return LocalRepository.deleteDetailRecordDrafts(workerId, date);
     }

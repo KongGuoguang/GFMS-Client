@@ -43,10 +43,10 @@ public class ConstantUtil {
         return clothesTypes;
     }
 
-    public static String getClothesName(int clothesTypeID){
+    public static String getClothesName(int clothesID){
         String name = "";
         for (ClothesType clothesType : allClothesTypes){
-            if (clothesType.getClothesID() == clothesTypeID){
+            if (clothesType.getClothesID() == clothesID){
                 name = clothesType.getName();
                 break;
             }

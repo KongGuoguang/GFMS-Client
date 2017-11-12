@@ -19,6 +19,7 @@ import com.zzu.gfms.data.dbflow.DayRecord;
 import com.zzu.gfms.data.dbflow.DetailRecord;
 import com.zzu.gfms.data.dbflow.DetailRecordDraft;
 import com.zzu.gfms.data.utils.ConvertState;
+import com.zzu.gfms.domain.ModifyDetailRecordDraftUseCase;
 import com.zzu.gfms.domain.SubmitDayRecordUseCase;
 import com.zzu.gfms.domain.DeleteAllDetailRecordDraftUseCase;
 import com.zzu.gfms.domain.DeleteSingleDetailRecordDraftUseCase;
@@ -27,6 +28,7 @@ import com.zzu.gfms.domain.SaveSingleDetailRecordDraftUseCase;
 import com.zzu.gfms.event.AddDayRecordSuccess;
 import com.zzu.gfms.event.AddDetailRecordFailed;
 import com.zzu.gfms.event.AddDetailRecordSuccess;
+import com.zzu.gfms.event.ModifyDetailRecord;
 import com.zzu.gfms.utils.ConstantUtil;
 import com.zzu.gfms.utils.ExceptionUtil;
 
@@ -62,6 +64,7 @@ public class AddDayRecordActivity extends BaseActivity {
     private GetAllDetailRecordDraftsUseCase getAllDetailRecordDraftsUseCase;
     private DeleteAllDetailRecordDraftUseCase deleteAllDetailRecordDraftUseCase;
     private SubmitDayRecordUseCase submitDayRecordUseCase;
+    private ModifyDetailRecordDraftUseCase modifyDetailRecordDraftUseCase;
 
     private DayRecord dayRecord = new DayRecord();
     private QMUITipDialog loading;
@@ -121,6 +124,20 @@ public class AddDayRecordActivity extends BaseActivity {
                 deleteDetailRecordDraft(position);
             }
         });
+
+        adapter.setOnModifyListener(new DetailRecordAdapter.OnModifyListener() {
+            @Override
+            public void onModify(int position) {
+                DetailRecord detailRecord = detailRecordList.get(position);
+                Intent intent = new Intent(AddDayRecordActivity.this, ModifyDetailRecordActivity.class);
+                intent.putExtra("workTypeID", detailRecord.getWorkTypeID());
+                intent.putExtra("clothesID", detailRecord.getClothesID());
+                intent.putExtra("count", detailRecord.getCount());
+                intent.putExtra("position", position);
+                startActivity(intent);
+            }
+        });
+
         recyclerView.setAdapter(adapter);
 
         loading = new QMUITipDialog.Builder(this)
@@ -135,6 +152,7 @@ public class AddDayRecordActivity extends BaseActivity {
         deleteSingleDetailRecordDraftUseCase = new DeleteSingleDetailRecordDraftUseCase();
         getAllDetailRecordDraftsUseCase = new GetAllDetailRecordDraftsUseCase();
         submitDayRecordUseCase = new SubmitDayRecordUseCase();
+        modifyDetailRecordDraftUseCase = new ModifyDetailRecordDraftUseCase();
     }
 
     private void loadDetailRecordDrafts(){
@@ -163,6 +181,12 @@ public class AddDayRecordActivity extends BaseActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAddDetailRecord(DetailRecord record){
         addDetailRecord(record);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onModifyDetailRecord(ModifyDetailRecord record){
+        modifyDetailRecord(record);
+        modifyDetailRecordDraft(record);
     }
 
     private void addDetailRecord(DetailRecord detailRecord){
@@ -212,6 +236,23 @@ public class AddDayRecordActivity extends BaseActivity {
         DetailRecordDraft detailRecordDraft = detailRecordDraftList.get(position);
         deleteSingleDetailRecordDraftUseCase.delete(detailRecordDraft).execute();
         detailRecordDraftList.remove(position);
+    }
+
+    private void modifyDetailRecord(ModifyDetailRecord modifyDetailRecord){
+
+        DetailRecord detailRecord = detailRecordList.get(modifyDetailRecord.getPosition());
+
+        totalCount = totalCount - detailRecord.getCount() + modifyDetailRecord.getCount();
+        totalWorkCount.setText(getString(R.string.work_count, totalCount));
+
+        detailRecord.setCount(modifyDetailRecord.getCount());
+        adapter.notifyItemChanged(modifyDetailRecord.getPosition());
+    }
+
+    private void modifyDetailRecordDraft(ModifyDetailRecord modifyDetailRecord){
+        DetailRecordDraft detailRecordDraft = detailRecordDraftList.get(modifyDetailRecord.getPosition());
+        detailRecordDraft.setCount(modifyDetailRecord.getCount());
+        modifyDetailRecordDraftUseCase.modify(detailRecordDraft).execute();
     }
 
     private void submitDayRecord(){
