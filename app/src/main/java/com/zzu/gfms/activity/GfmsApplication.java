@@ -1,4 +1,4 @@
-package com.zzu.gfms;
+package com.zzu.gfms.activity;
 
 import android.app.Application;
 

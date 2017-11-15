@@ -1,7 +1,8 @@
-package com.zzu.gfms;
+package com.zzu.gfms.activity;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,12 +10,14 @@ import android.view.MotionEvent;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.qmuiteam.qmui.widget.QMUITabSegment;
+import com.zzu.gfms.R;
 import com.zzu.gfms.data.dbflow.ClothesType;
 import com.zzu.gfms.data.dbflow.WorkType;
 import com.zzu.gfms.domain.GetClothesTypeUseCase;
 import com.zzu.gfms.domain.GetWorkTypeUseCase;
 import com.zzu.gfms.domain.SaveClothesTypeUseCase;
 import com.zzu.gfms.domain.SaveWorkTypeUseCase;
+import com.zzu.gfms.fragment.MeFragment;
 import com.zzu.gfms.fragment.ModifyAuditFragment;
 import com.zzu.gfms.fragment.WorkRecordFragment;
 import com.zzu.gfms.fragment.WorkStatisticsFragment;
@@ -26,6 +29,7 @@ import java.util.List;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,10 +47,19 @@ public class MainActivity extends AppCompatActivity {
 
     private void initTabs(){
         tabSegment = (QMUITabSegment) findViewById(R.id.tabs);
-        QMUITabSegment.Tab workRecord = new QMUITabSegment.Tab("工作记录");
-        QMUITabSegment.Tab modifyAudit = new QMUITabSegment.Tab("修改审核");
-        QMUITabSegment.Tab workStatistics = new QMUITabSegment.Tab("工作统计");
-        tabSegment.addTab(workRecord).addTab(modifyAudit).addTab(workStatistics);
+        QMUITabSegment.Tab workRecord = new QMUITabSegment.Tab(
+                ContextCompat.getDrawable(this, R.mipmap.icon_work_record),null,
+                "工作记录",true);
+        QMUITabSegment.Tab modifyAudit = new QMUITabSegment.Tab(
+                ContextCompat.getDrawable(this, R.mipmap.icon_modify_audit),null,
+                "修改审核",true);
+        QMUITabSegment.Tab workStatistics = new QMUITabSegment.Tab(
+                ContextCompat.getDrawable(this, R.mipmap.icon_work_statistics),null,
+                "工作统计", true);
+        QMUITabSegment.Tab me = new QMUITabSegment.Tab(
+                ContextCompat.getDrawable(this, R.mipmap.icon_me),null,
+                "我的",true);
+        tabSegment.addTab(workRecord).addTab(modifyAudit).addTab(workStatistics).addTab(me);
     }
 
     private void initPagers(){
@@ -54,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         fragments.add(new WorkRecordFragment());
         fragments.add(new ModifyAuditFragment());
         fragments.add(new WorkStatisticsFragment());
+        fragments.add(new MeFragment());
 
         FragmentPagerAdapter adapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
@@ -69,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setAdapter(adapter);
-        viewPager.setOffscreenPageLimit(2);
+        viewPager.setOffscreenPageLimit(3);
         tabSegment.setupWithViewPager(viewPager, false);
     }
 
@@ -77,33 +91,17 @@ public class MainActivity extends AppCompatActivity {
         if (ConstantUtil.allClothesTypes == null || ConstantUtil.allClothesTypes.size() <= 0){
             new GetClothesTypeUseCase()
                     .get(ConstantUtil.worker.getWorkerID(), ConstantUtil.worker.getEnterpriseID())
-                    .execute(new Observer<List<ClothesType>>() {
-
-                int i = 0;
-                @Override
-                public void onSubscribe(Disposable d) {
-
-                }
-
-                @Override
-                public void onNext(List<ClothesType> clothesTypes) {
-                    i++;
-                    ConstantUtil.allClothesTypes = clothesTypes;
-                    if (i == 2){
-                        new SaveClothesTypeUseCase(clothesTypes).execute();
-                    }
-                }
-
-                @Override
-                public void onError(Throwable e) {
-                    LogUtils.d("initClothesType onError " + ExceptionUtil.parseErrorMessage(e));
-                }
-
-                @Override
-                public void onComplete() {
-
-                }
-            });
+                    .execute(new Consumer<List<ClothesType>>() {
+                        int i = 0;
+                        @Override
+                        public void accept(List<ClothesType> clothesTypes) throws Exception {
+                            i++;
+                            ConstantUtil.allClothesTypes = clothesTypes;
+                            if (i == 2){
+                                new SaveClothesTypeUseCase(clothesTypes).execute();
+                            }
+                        }
+                    });
         }
     }
 
@@ -111,34 +109,20 @@ public class MainActivity extends AppCompatActivity {
         if (ConstantUtil.workTypes == null || ConstantUtil.workTypes.size() <= 0){
             new GetWorkTypeUseCase()
                     .get(ConstantUtil.worker.getWorkerID(), ConstantUtil.worker.getEnterpriseID())
-                    .execute(new Observer<List<WorkType>>() {
-                int i = 0;
-                @Override
-                public void onSubscribe(Disposable d) {
-
-                }
-
-                @Override
-                public void onNext(List<WorkType> workTypes) {
-                    i++;
-                    ConstantUtil.workTypes = workTypes;
-                    if (i == 2){
-                        new SaveWorkTypeUseCase(workTypes).execute();
-                    }
-                }
-
-                @Override
-                public void onError(Throwable e) {
-                    LogUtils.d("initWorkType onError " + ExceptionUtil.parseErrorMessage(e));
-                }
-
-                @Override
-                public void onComplete() {
-
-                }
-            });
+                    .execute(new Consumer<List<WorkType>>() {
+                        int i = 0;
+                        @Override
+                        public void accept(List<WorkType> workTypes) throws Exception {
+                            i++;
+                            ConstantUtil.workTypes = workTypes;
+                            if (i == 2){
+                                new SaveWorkTypeUseCase(workTypes).execute();
+                            }
+                        }
+                    });
         }
     }
+
 
     @Override
     public void onBackPressed() {

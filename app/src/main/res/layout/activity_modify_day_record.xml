@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.zzu.gfms.ModifyDayRecordActivity">
+    tools:context="com.zzu.gfms.activity.ModifyDayRecordActivity">
 
     <com.qmuiteam.qmui.widget.QMUITopBar
         android:id="@+id/top_bar"

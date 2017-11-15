@@ -1,4 +1,4 @@
-package com.zzu.gfms;
+package com.zzu.gfms.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.zzu.gfms.R;
 import com.zzu.gfms.app.BaseActivity;
 import com.zzu.gfms.event.ModifyDetailRecord;
 import com.zzu.gfms.utils.ConstantUtil;

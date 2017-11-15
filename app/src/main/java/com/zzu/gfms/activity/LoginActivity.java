@@ -1,12 +1,15 @@
-package com.zzu.gfms;
+package com.zzu.gfms.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
+import com.zzu.gfms.R;
 import com.zzu.gfms.app.BaseActivity;
 import com.zzu.gfms.data.dbflow.Worker;
 import com.zzu.gfms.domain.LoginUseCase;
@@ -25,6 +28,8 @@ public class LoginActivity extends BaseActivity {
 
     private QMUITipDialog loading;
 
+    private Observer<Worker> loginObserver;
+
     private Disposable disposable;
 
     @Override
@@ -32,16 +37,20 @@ public class LoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         initView();
-//        Worker worker = new Worker();
-//        worker.setEnterpriseID(1);
-//        worker.setName("kong");
-//        worker.setWorkerID(1);
-//        ConstantUtil.worker = worker;
     }
 
     private void initView(){
         userNameEdit = (EditText) findViewById(R.id.edit_text_user_name);
+        userNameEdit.setText("kongguoguang");
         passwordEdit = (EditText) findViewById(R.id.edit_text_password);
+        passwordEdit.setText("123456");
+        passwordEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                login();
+                return false;
+            }
+        });
         loading = new QMUITipDialog.Builder(this)
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
                 .setTipWord("正在登录")
@@ -49,9 +58,12 @@ public class LoginActivity extends BaseActivity {
     }
 
     public void onClick(View view) {
+        login();
+    }
 
-//        startActivity(new Intent(this, MainActivity.class));
-
+    private void login(){
+        userNameEdit.clearFocus();
+        passwordEdit.clearFocus();
         String username = userNameEdit.getText().toString();
         String password = passwordEdit.getText().toString();
 
@@ -59,8 +71,13 @@ public class LoginActivity extends BaseActivity {
             showErrorDialog("用户名和密码不能为空");
         }else {
             loading.show();
-            new LoginUseCase().login(username, password)
-                    .execute(new Observer<Worker>() {
+            new LoginUseCase().login(username, password).execute(getLoginObserver());
+        }
+    }
+
+    private Observer<Worker> getLoginObserver(){
+        if (loginObserver == null){
+            loginObserver = new Observer<Worker>() {
                 @Override
                 public void onSubscribe(@NonNull Disposable d) {
                     disposable = d;
@@ -85,13 +102,11 @@ public class LoginActivity extends BaseActivity {
                 public void onComplete() {
 
                 }
-            });
+            };
         }
 
-
+        return loginObserver;
     }
-
-
 
     @Override
     protected void onDestroy() {

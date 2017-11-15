@@ -40,4 +40,8 @@
     <color name="colorHelper_square_alpha_background">@color/app_color_theme_4</color>
     <color name="colorHelper_square_from_ratio_background">@color/app_color_blue</color>
     <color name="colorHelper_square_to_ratio_background">@color/app_color_theme_3</color>
+
+    <color name="bg_not_check">#eba470</color>
+    <color name="bg_not_pass">#a8e067</color>
+    <color name="bg_pass">#ff6b6b</color>
 </resources>

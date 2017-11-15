@@ -33,7 +33,7 @@ public class ModifyAuditFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         QMUITopBar topBar = (QMUITopBar) view.findViewById(R.id.top_bar);
-        topBar.setTitle("修改审核");
+        topBar.setTitle("申请记录");
     }
 
 }

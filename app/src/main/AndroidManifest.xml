@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name=".GfmsApplication"
+        android:name=".activity.GfmsApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -13,13 +13,14 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
+        <activity
+            android:name=".activity.LoginActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".LoginActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".InitActivity"
+            android:name=".activity.InitActivity"
             android:theme="@style/TranslucentActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,12 +29,20 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AddDayRecordActivity"
+            android:name=".activity.AddDayRecordActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".AddDetailRecordActivity" />
-        <activity android:name=".ShowDayRecordActivity" />
-        <activity android:name=".ModifyDayRecordActivity" />
-        <activity android:name=".ModifyDetailRecordActivity"></activity>
+        <activity
+            android:name=".activity.AddDetailRecordActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.ShowDayRecordActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.ModifyDayRecordActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.ModifyDetailRecordActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

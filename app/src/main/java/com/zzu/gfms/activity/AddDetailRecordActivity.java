@@ -1,4 +1,4 @@
-package com.zzu.gfms;
+package com.zzu.gfms.activity;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.popup.QMUIPopup;
+import com.zzu.gfms.R;
 import com.zzu.gfms.app.BaseActivity;
 import com.zzu.gfms.data.dbflow.ClothesType;
 import com.zzu.gfms.data.dbflow.DetailRecord;

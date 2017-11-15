@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.zzu.gfms.AddDetailRecordActivity">
+    tools:context="com.zzu.gfms.activity.AddDetailRecordActivity">
 
     <com.qmuiteam.qmui.widget.QMUITopBar
         android:id="@+id/top_bar"
@@ -42,7 +42,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:text="选择"
-            android:drawableRight="@mipmap/icon_right_arrow"
+            android:drawableRight="@mipmap/icon_right_arrow_blue"
             android:textColor="#13227a"
             android:gravity="center_vertical"
             android:paddingTop="8dp"
@@ -85,7 +85,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:text="选择"
-            android:drawableRight="@mipmap/icon_right_arrow"
+            android:drawableRight="@mipmap/icon_right_arrow_blue"
             android:textColor="#13227a"
             android:gravity="center_vertical"
             android:paddingTop="8dp"

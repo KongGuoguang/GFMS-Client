@@ -1,4 +1,4 @@
-package com.zzu.gfms;
+package com.zzu.gfms.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
+import com.zzu.gfms.R;
 import com.zzu.gfms.adapter.DetailRecordAdapter;
 import com.zzu.gfms.app.BaseActivity;
 import com.zzu.gfms.data.dbflow.DetailRecord;
