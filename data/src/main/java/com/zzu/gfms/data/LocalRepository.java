@@ -15,6 +15,7 @@ import com.zzu.gfms.data.dbflow.DetailRecord;
 import com.zzu.gfms.data.dbflow.DetailRecordDraft;
 import com.zzu.gfms.data.dbflow.DetailRecordDraft_Table;
 import com.zzu.gfms.data.dbflow.DetailRecord_Table;
+import com.zzu.gfms.data.dbflow.OperationRecord;
 import com.zzu.gfms.data.dbflow.WorkType;
 import com.zzu.gfms.data.dbflow.WorkType_Table;
 import com.zzu.gfms.data.dbflow.Worker;
@@ -283,5 +284,9 @@ public class LocalRepository {
                 e.onComplete();
             }
         });
+    }
+
+    public static Observable<List<OperationRecord>> getOperationRecords(long workerId){
+        return null;
     }
 }

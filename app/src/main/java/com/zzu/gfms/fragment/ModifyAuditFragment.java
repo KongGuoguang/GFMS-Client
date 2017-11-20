@@ -8,8 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.qmuiteam.qmui.widget.QMUIEmptyView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.zzu.gfms.R;
+import com.zzu.gfms.data.dbflow.OperationRecord;
+import com.zzu.gfms.domain.GetOperationRecordsUseCase;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,6 +27,17 @@ public class ModifyAuditFragment extends Fragment {
         // Required empty public constructor
     }
 
+    private QMUIEmptyView emptyView;
+
+    private List<OperationRecord> operationRecordList = new ArrayList<>();
+
+    private GetOperationRecordsUseCase getOperationRecordsUseCase;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initUseCase();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -34,6 +51,23 @@ public class ModifyAuditFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         QMUITopBar topBar = (QMUITopBar) view.findViewById(R.id.top_bar);
         topBar.setTitle("申请记录");
+        emptyView = (QMUIEmptyView) view.findViewById(R.id.empty_view);
+
+        loadOperationRecords();
     }
+
+    private void initUseCase(){
+        getOperationRecordsUseCase = new GetOperationRecordsUseCase();
+    }
+
+    private void loadOperationRecords(){
+        if (operationRecordList.size() < 1){
+            emptyView.show(true);
+        }
+
+
+    }
+
+
 
 }

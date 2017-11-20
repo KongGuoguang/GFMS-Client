@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DateTimePicker"><attr format="color" name="dtp_color"/><attr format="dimension" name="dtp_numberSize"/><attr format="dimension" name="dtp_separatorSize"/><attr format="integer" name="dtp_startYear"/><attr format="integer" name="dtp_endYear"/><attr format="dimension" name="dtp_numberSpacing"/><attr format="dimension" name="dtp_dateTimeSpacing"/><attr format="color" name="dtp_background"/></declare-styleable>
+    <declare-styleable name="NumberPicker"><attr format="color" name="np_textColor"/><attr format="float|dimension" name="np_textSize"/><attr format="integer" name="np_startNumber"/><attr format="integer" name="np_endNumber"/><attr format="integer" name="np_currentNumber"/><attr format="dimension" name="np_verticalSpacing"/><attr format="string|reference" name="np_flagText"/><attr format="dimension" name="np_flagTextSize"/><attr format="color" name="np_flagTextColor"/><attr format="color" name="np_background"/><attr format="integer" name="np_rowNumber"/></declare-styleable>
+    <string name="day">日</string>
+    <string name="month">月</string>
+    <string name="separator">：</string>
+    <string name="year">年</string>
+</resources>

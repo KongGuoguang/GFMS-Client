@@ -8,6 +8,7 @@ import com.zzu.gfms.data.dbflow.ClothesType;
 import com.zzu.gfms.data.dbflow.DayRecord;
 import com.zzu.gfms.data.dbflow.DetailRecord;
 import com.zzu.gfms.data.dbflow.DetailRecordDraft;
+import com.zzu.gfms.data.dbflow.OperationRecord;
 import com.zzu.gfms.data.dbflow.WorkType;
 import com.zzu.gfms.data.dbflow.Worker;
 import com.zzu.gfms.data.http.Retrofit2Util;
@@ -110,5 +111,9 @@ public class DataRepository {
 
     public static Observable<Boolean> convertDayRecordState(String dayRecordId, String state){
         return LocalRepository.convertDayRecordState(dayRecordId, state);
+    }
+
+    public static Observable<List<OperationRecord>> getOperationRecords(long workerId){
+        return LocalRepository.getOperationRecords(workerId);
     }
 }
