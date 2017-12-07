@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.qmuiteam.qmui.widget.popup.QMUIPopup;
 import com.qmuiteam.qmui.widget.pullRefreshLayout.QMUIPullRefreshLayout;
 import com.zzu.gfms.activity.AddDayRecordActivity;
 import com.zzu.gfms.activity.ShowDayRecordActivity;
@@ -29,10 +30,12 @@ import com.zzu.gfms.event.SubmitModifyApplicationSuccess;
 import com.zzu.gfms.utils.ConstantUtil;
 import com.zzu.gfms.utils.DayUtil;
 import com.zzu.gfms.view.CalendarView;
+import com.zzu.gfms.view.MonthPicker;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
@@ -50,13 +53,15 @@ public class WorkRecordFragment extends Fragment {
         // Required empty public constructor
     }
 
+    private TextView monthText;
+
     private TextView dayCount;
 
     private TextView workCount;
 
     private QMUIPullRefreshLayout pullRefreshLayout;
 
-    private List<Day> days;
+    private List<Day> days = new ArrayList<>();
 
     private List<DayRecord> dayRecords;
 
@@ -64,15 +69,19 @@ public class WorkRecordFragment extends Fragment {
 
     private GetDayRecordsOfMonthUseCase getDayRecordsOfMonthUseCase;
 
-    private CalendarAdapter adapter;
+    private CalendarAdapter calendarAdapter;
 
-    private int year, month;
+    private int currentYear, currenMonth, currentDay;
 
     private Disposable disposable;
 
     private boolean isRefreshing;
 
     private Consumer<List<DayRecord>> dayRecordsConsumer;
+
+    private QMUIPopup selectMonthPopup;
+
+    private Calendar calendar;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -92,9 +101,25 @@ public class WorkRecordFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        calendar = Calendar.getInstance();
+        currentYear = DayUtil.getYear(calendar);
+        currenMonth = DayUtil.getMonth(calendar);
+        currentDay = DayUtil.getDayOfMonth(calendar);
+
         QMUITopBar topBar = (QMUITopBar) view.findViewById(R.id.top_bar);
         topBar.setTitle("工作日历");
-        TextView date = (TextView) view.findViewById(R.id.text_date);
+
+        monthText = (TextView) view.findViewById(R.id.text_month);
+        final String dateStr = currentYear + "年" + this.currenMonth + "月";
+        monthText.setText(dateStr);
+        monthText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectMonth();
+            }
+        });
+
         dayCount = (TextView) view.findViewById(R.id.text_day_count);
         workCount = (TextView) view.findViewById(R.id.text_work_count);
 
@@ -117,16 +142,9 @@ public class WorkRecordFragment extends Fragment {
         });
 
         CalendarView calendarView = (CalendarView) view.findViewById(R.id.calendar_view);
-
-        final Calendar calendar = Calendar.getInstance();
-        year = DayUtil.getYear(calendar);
-        month = DayUtil.getMonth(calendar);
-        final String dateStr = year + "年" + month + "月";
-        date.setText(dateStr);
-
-        days = DayUtil.getAllDays(calendar);
-        adapter = new CalendarAdapter(days);
-        calendarView.setAdapter(adapter);
+        days.addAll(DayUtil.getAllDays(calendar));
+        calendarAdapter = new CalendarAdapter(days);
+        calendarView.setAdapter(calendarAdapter);
         calendarView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -171,7 +189,7 @@ public class WorkRecordFragment extends Fragment {
      */
     private void loadDayRecordsOfMonth(){
         disposable = getDayRecordsOfMonthUseCase
-                .get(ConstantUtil.worker.getWorkerID(), year, month)
+                .get(ConstantUtil.worker.getWorkerID(), currentYear, currenMonth)
                 .execute(getDayRecordsConsumer());
     }
 
@@ -195,7 +213,7 @@ public class WorkRecordFragment extends Fragment {
                         dayCount.setText(getString(R.string.day_count, dayRecords.size()));
                         WorkRecordFragment.this.dayRecords = dayRecords;
                         addDayRecordsToDays();
-                        adapter.notifyDataSetChanged();
+                        calendarAdapter.notifyDataSetChanged();
 
                         if (i == 2){
                             saveAllDayRecordsUseCase.save(dayRecords).execute();
@@ -256,5 +274,37 @@ public class WorkRecordFragment extends Fragment {
             disposable.dispose();
         }
         EventBus.getDefault().unregister(this);
+    }
+
+    private void selectMonth(){
+
+        if (selectMonthPopup == null){
+            selectMonthPopup = new QMUIPopup(getActivity(), QMUIPopup.DIRECTION_BOTTOM);
+            MonthPicker monthPicker = new MonthPicker(getActivity());
+            monthPicker.setOnMonthChangedListener(new MonthPicker.OnMonthChangedListener() {
+                @Override
+                public void onMonthChanged(MonthPicker view, int year, int month) {
+                    currentYear = year;
+                    currenMonth = month;
+                    calendar.set(currentYear, currenMonth -1, currentDay);
+                    days.clear();
+                    days.addAll(DayUtil.getAllDays(calendar));
+                    calendarAdapter.notifyDataSetChanged();
+
+                    final String dateStr = currentYear + "年" + currenMonth + "月";
+                    monthText.setText(dateStr);
+                    dayCount.setText("");
+                    workCount.setText("");
+
+                    if (disposable != null && !disposable.isDisposed()){
+                        disposable.dispose();
+                    }
+                    loadDayRecordsOfMonth();
+                }
+            });
+            selectMonthPopup.setContentView(monthPicker);
+            selectMonthPopup.setAnimStyle(QMUIPopup.ANIM_GROW_FROM_CENTER);
+        }
+        selectMonthPopup.show(monthText);
     }
 }

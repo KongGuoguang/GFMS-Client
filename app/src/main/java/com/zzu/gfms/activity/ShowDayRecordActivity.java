@@ -78,7 +78,7 @@ public class ShowDayRecordActivity extends BaseActivity {
     }
 
     private void initView(){
-        TextView dateText = (TextView) findViewById(R.id.text_date);
+        TextView dateText = (TextView) findViewById(R.id.text_month);
         String dateStr = "工作日期：" + year + "年" + month + "月" + day + "日";
         dateText.setText(dateStr);
 

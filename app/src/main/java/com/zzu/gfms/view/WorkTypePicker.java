@@ -1,8 +1,10 @@
 package com.zzu.gfms.view;
 
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
@@ -11,7 +13,9 @@ import android.widget.NumberPicker;
 import com.zzu.gfms.R;
 import com.zzu.gfms.data.dbflow.WorkType;
 import com.zzu.gfms.utils.ConstantUtil;
+import com.zzu.gfms.utils.ViewUtil;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 /**
@@ -23,11 +27,7 @@ import java.util.List;
 
 public class WorkTypePicker extends FrameLayout {
 
-    private NumberPicker numberPicker;
-
     private List<WorkType> workTypes;
-
-    private String[] workNames;
 
     private OnWorkSelectedListener onWorkSelectedListener;
 
@@ -43,13 +43,14 @@ public class WorkTypePicker extends FrameLayout {
 
     private void init(Context context){
         LayoutInflater.from(context).inflate(R.layout.view_work_type_picker, this, true);
-        numberPicker = (NumberPicker) findViewById(R.id.picker);
+        NumberPicker numberPicker = (NumberPicker) findViewById(R.id.picker);
         numberPicker.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
+        ViewUtil.setNumberPickerDividerColor(context, numberPicker);
         workTypes = ConstantUtil.workTypes;
         if (workTypes != null){
             int size = workTypes.size();
             if (size > 0){
-                workNames = new String[size];
+                String[] workNames = new String[size];
                 for (int i = 0; i < size; i++){
                     workNames[i] = workTypes.get(i).getName();
                 }
@@ -65,6 +66,8 @@ public class WorkTypePicker extends FrameLayout {
         }
 
     }
+
+
 
     public void setOnWorkSelectedListener(OnWorkSelectedListener listener){
         onWorkSelectedListener = listener;

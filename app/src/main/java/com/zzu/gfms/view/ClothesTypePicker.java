@@ -11,6 +11,7 @@ import android.widget.NumberPicker;
 import com.zzu.gfms.R;
 import com.zzu.gfms.data.dbflow.ClothesType;
 import com.zzu.gfms.utils.ConstantUtil;
+import com.zzu.gfms.utils.ViewUtil;
 
 import java.util.List;
 
@@ -54,8 +55,10 @@ public class ClothesTypePicker extends FrameLayout {
         childPicker = (NumberPicker) findViewById(R.id.picker_child);
         childPicker.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
         childPicker.setOnValueChangedListener(onValueChangeListener);
+        ViewUtil.setNumberPickerDividerColor(context, fatherPicker, childPicker);
         initFatherPicker();
     }
+
 
     private void initFatherPicker(){
         fatherClothesTypes = ConstantUtil.getChildClothesType(0);

@@ -25,10 +25,9 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile project(':domain')
-    compile project(':datetimepicker')
     compile 'com.android.support:appcompat-v7:25.4.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.blankj:utilcode:1.9.2'
+    compile 'com.blankj:utilcode:1.9.3'
     compile 'com.qmuiteam:qmui:1.0.4'
     compile 'com.android.support:support-v4:25.4.0'
     testCompile 'junit:junit:4.12'

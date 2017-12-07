@@ -147,6 +147,9 @@ public class DayUtil {
     }
 
     public static List<Day> getAllDays(Calendar calendar){
+
+        boolean isCurrentMonth = getMonth(Calendar.getInstance()) == getMonth(calendar);
+
         List<Day> allDays = new ArrayList<>();
         int year = getYear(calendar);
         int month = getMonth(calendar);
@@ -167,7 +170,7 @@ public class DayUtil {
             Day day = new Day(i, true);
             day.setYear(year);
             day.setMonth(month);
-            if (i == dayOfMonth){
+            if (isCurrentMonth && i == dayOfMonth){
                 day.setToday(true);
             }
             allDays.add(day);
