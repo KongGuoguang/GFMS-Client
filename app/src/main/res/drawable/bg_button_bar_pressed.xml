@@ -3,9 +3,6 @@
     <!-- rectangle 表示为矩形 -->
 
     <!-- 填充的颜色 -->
-    <solid android:color="#FF22CFF4"/>
+    <solid android:color="#7F22CFF4"/>
 
-
-    <!-- android:radius 圆角的半径 -->
-    <corners android:radius="4dp"/>
 </shape>

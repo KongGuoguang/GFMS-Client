@@ -1,6 +1,9 @@
 package com.zzu.gfms.data;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.provider.SyncStateContract;
 
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.zzu.gfms.data.bean.DayAndDetailRecords;
@@ -26,9 +29,12 @@ import io.reactivex.Observable;
 
 public class DataRepository {
 
+    private static SharedPreferences preferences;
+
     public static void init(Context context){
         Retrofit2Util.createServerInterface(context);
         FlowManager.init(context);
+        preferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     public static Observable<Worker> login(String userName, String password){
@@ -115,5 +121,26 @@ public class DataRepository {
 
     public static Observable<List<OperationRecord>> getOperationRecords(long workerId){
         return LocalRepository.getOperationRecords(workerId);
+    }
+
+    public static void saveUserNameWithPassword(String userName, String password){
+        preferences.edit()
+                .putString("user_name", userName)
+                .putString("password", password)
+                .apply();
+    }
+
+    public static void clearPassword(){
+        preferences.edit()
+                .remove("password")
+                .apply();
+    }
+
+    public static String getUserName(){
+        return preferences.getString("user_name", "");
+    }
+
+    public static String getPassword(){
+        return preferences.getString("password", "");
     }
 }

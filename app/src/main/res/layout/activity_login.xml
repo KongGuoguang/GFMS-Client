@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="60dp"
         android:textSize="30sp"
-        android:text="员工工作管理系统" />
+        android:text="易合工管理系统" />
 
     <TextView
         android:id="@+id/text_sub_title"
@@ -30,15 +30,14 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
-        android:layout_marginTop="50dp"
-        >
+        android:layout_marginTop="50dp">
 
         <EditText
             android:id="@+id/edit_text_user_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:drawableLeft="@mipmap/icon_user"
             android:drawableStart="@mipmap/icon_user"
             android:drawablePadding="5dp"
@@ -62,15 +61,17 @@
             android:id="@+id/edit_text_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:inputType="textPassword"
             android:drawableLeft="@mipmap/icon_password"
             android:drawableStart="@mipmap/icon_password"
             android:drawablePadding="6dp"
             android:hint="@string/hint_password"
             android:maxLines="1"
+            android:maxLength="20"
             android:imeOptions="actionDone"
-            android:imeActionLabel="登录"/>
+            android:imeActionLabel="登录"
+            android:digits="@string/digits"/>
 
     </android.support.design.widget.TextInputLayout>
 

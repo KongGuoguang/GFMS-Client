@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 
+import com.zzu.gfms.data.DataRepository;
 import com.zzu.gfms.data.dbflow.Worker;
 import com.zzu.gfms.domain.GetWorkerUseCase;
 import com.zzu.gfms.utils.ConstantUtil;
@@ -22,9 +23,8 @@ public class InitActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_init);
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String userName = preferences.getString(Constants.USER_NAME, "");
-        String password = preferences.getString(Constants.PASSWORD, "");
+        String userName = DataRepository.getUserName();
+        String password = DataRepository.getPassword();
 
         if (TextUtils.isEmpty(userName) || TextUtils.isEmpty(password)){
             startActivity(new Intent(this, LoginActivity.class));

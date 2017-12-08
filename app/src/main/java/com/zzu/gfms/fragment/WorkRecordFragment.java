@@ -202,14 +202,15 @@ public class WorkRecordFragment extends Fragment {
                     i++;
 
                     if (dayRecords != null && dayRecords.size() > 0){
-
                         Iterator<DayRecord> iterator = dayRecords.iterator();
                         while(iterator.hasNext()){
                             DayRecord dayRecord = iterator.next();
+                            dayRecord.initDayInt();
                             if(ConvertState.DAY_RECORD_MODIFY_PASSED.equals(dayRecord.getConvertState())){
                                 iterator.remove();
                             }
                         }
+                        LogUtils.d(dayRecords);
                         dayCount.setText(getString(R.string.day_count, dayRecords.size()));
                         WorkRecordFragment.this.dayRecords = dayRecords;
                         addDayRecordsToDays();

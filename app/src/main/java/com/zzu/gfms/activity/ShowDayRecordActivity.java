@@ -11,6 +11,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
+import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.zzu.gfms.R;
 import com.zzu.gfms.adapter.DetailRecordAdapter;
@@ -40,8 +42,6 @@ public class ShowDayRecordActivity extends BaseActivity {
 
     private TextView totalWorkCount;
 
-    private EditText modifyReasonEdit;
-
     private List<DetailRecord> detailRecordList = new ArrayList<>();
     private DetailRecordAdapter adapter;
 
@@ -56,6 +56,10 @@ public class ShowDayRecordActivity extends BaseActivity {
     private Disposable getDetailRecordsDisposable;
 
     private Disposable submitModifyApplicationDisposable;
+
+    private QMUIDialog.EditTextDialogBuilder editTextDialogBuilder;
+
+    private QMUIDialog applyModifyDialog;
 
 
     @Override
@@ -84,8 +88,6 @@ public class ShowDayRecordActivity extends BaseActivity {
 
         totalWorkCount = (TextView) findViewById(R.id.text_count);
 
-        modifyReasonEdit = (EditText) findViewById(R.id.edit_modify_reason);
-
         QMUITopBar topBar = (QMUITopBar) findViewById(R.id.top_bar);
         topBar.setTitle("日报详情");
         topBar.addLeftBackImageButton()
@@ -93,6 +95,17 @@ public class ShowDayRecordActivity extends BaseActivity {
                     @Override
                     public void onClick(View v) {
                         finish();
+                    }
+                });
+        topBar.addRightImageButton(R.mipmap.icon_modify, R.id.topbar_right_modify_button)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (ConvertState.DAY_RECORD_MODIFY_NOT_CHECK.equals(convertState)){
+                            showErrorDialog("修改申请正在审核，请勿重复申请！");
+                        }else {
+                            showApplyModifyDialog();
+                        }
                     }
                 });
 
@@ -107,11 +120,6 @@ public class ShowDayRecordActivity extends BaseActivity {
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
                 .setTipWord("正在提交申请")
                 .create();
-
-        TextView submit = (TextView) findViewById(R.id.button_submit);
-        if (ConvertState.DAY_RECORD_MODIFY_NOT_CHECK.equals(convertState)){
-            ViewUtil.setViewEnable(submit, false);
-        }
     }
 
     private void initUseCase(){
@@ -171,23 +179,68 @@ public class ShowDayRecordActivity extends BaseActivity {
         }
     }
 
-    public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.button_cancel:
-                finish();
-                break;
-            case R.id.button_submit:
-                submitModifyApplication();
-                break;
+    private void showApplyModifyDialog(){
+        if (applyModifyDialog == null){
+
+            final QMUIDialog.EditTextDialogBuilder builder = new QMUIDialog.EditTextDialogBuilder(this);
+            builder.setTitle("申请修改")
+                    .setPlaceholder("请输入修改原因")
+                    .addAction("取消", new QMUIDialogAction.ActionListener() {
+                        @Override
+                        public void onClick(QMUIDialog dialog, int index) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .addAction("确认申请", new QMUIDialogAction.ActionListener() {
+                        @Override
+                        public void onClick(QMUIDialog dialog, int index) {
+                            dialog.dismiss();
+                            submitModifyApplication(builder.getEditText().getText().toString());
+                        }
+                    });
+
+            applyModifyDialog = builder.create();
         }
+
+        applyModifyDialog.show();
+    }
+
+
+    private void showModifyReasonDialog(){
+        if (editTextDialogBuilder == null){
+            editTextDialogBuilder = new QMUIDialog.EditTextDialogBuilder(this);
+            editTextDialogBuilder.setTitle("申请修改")
+                    .setPlaceholder("请输入修改原因")
+                    .addAction("取消", new QMUIDialogAction.ActionListener() {
+                        @Override
+                        public void onClick(QMUIDialog dialog, int index) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .addAction("确认申请", new QMUIDialogAction.ActionListener() {
+                        @Override
+                        public void onClick(QMUIDialog dialog, int index) {
+                            dialog.dismiss();
+                            submitModifyApplication();
+                        }
+                    });
+
+        }
+
+        editTextDialogBuilder.show();
+
     }
 
     private void submitModifyApplication(){
-        if (TextUtils.isEmpty(modifyReasonEdit.getText())){
+
+        String modifyReason = editTextDialogBuilder.getEditText().getText().toString();
+
+        if (TextUtils.isEmpty(modifyReason)){
             showErrorDialog("修改原因不能为空");
+            return;
         }
         loading.show();
-        submitModifyApplicationUseCase.submit(dayRecordId, modifyReasonEdit.getText().toString())
+        submitModifyApplicationUseCase.submit(dayRecordId, modifyReason)
                 .execute(new Observer<Boolean>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -197,7 +250,42 @@ public class ShowDayRecordActivity extends BaseActivity {
                     @Override
                     public void onNext(Boolean aBoolean) {
                         loading.dismiss();
-                        showToast("修改申请提交成功！");
+                        showToast("已发送申请，等待审核");
+                        EventBus.getDefault().post(new SubmitModifyApplicationSuccess());
+                        finish();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        loading.dismiss();
+                        showToast(ExceptionUtil.parseErrorMessage(e));
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private void submitModifyApplication(String modifyReason){
+
+        if (TextUtils.isEmpty(modifyReason)){
+            showErrorDialog("修改原因不能为空");
+            return;
+        }
+        loading.show();
+        submitModifyApplicationUseCase.submit(dayRecordId, modifyReason)
+                .execute(new Observer<Boolean>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        submitModifyApplicationDisposable = d;
+                    }
+
+                    @Override
+                    public void onNext(Boolean aBoolean) {
+                        loading.dismiss();
+                        showToast("已发送申请，等待审核");
                         EventBus.getDefault().post(new SubmitModifyApplicationSuccess());
                         finish();
                     }

@@ -17,12 +17,16 @@ import com.zzu.gfms.domain.GetClothesTypeUseCase;
 import com.zzu.gfms.domain.GetWorkTypeUseCase;
 import com.zzu.gfms.domain.SaveClothesTypeUseCase;
 import com.zzu.gfms.domain.SaveWorkTypeUseCase;
+import com.zzu.gfms.event.SubmitModifyApplicationSuccess;
 import com.zzu.gfms.fragment.MeFragment;
 import com.zzu.gfms.fragment.ModifyAuditFragment;
 import com.zzu.gfms.fragment.WorkRecordFragment;
 import com.zzu.gfms.fragment.WorkStatisticsFragment;
 import com.zzu.gfms.utils.ConstantUtil;
 import com.zzu.gfms.utils.ExceptionUtil;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
 
     private QMUITabSegment tabSegment;
 
+    private ViewPager viewPager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         initPagers();
         initWorkType();
         initClothesType();
+        EventBus.getDefault().register(this);
     }
 
     private void initTabs(){
@@ -81,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setAdapter(adapter);
         viewPager.setOffscreenPageLimit(3);
         tabSegment.setupWithViewPager(viewPager, false);
@@ -123,9 +130,23 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
 
     @Override
     public void onBackPressed() {
         moveTaskToBack(false);
+    }
+
+    /**
+     * 接收到修改日志申请发送成功事件
+     * @param event
+     */
+    @Subscribe
+    public void onSubmitModifyApplicationSuccess(SubmitModifyApplicationSuccess event){
+        viewPager.setCurrentItem(1, true);
     }
 }

@@ -1,5 +1,7 @@
 package com.zzu.gfms.data.dbflow;
 
+import android.text.TextUtils;
+
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.ForeignKey;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
@@ -35,6 +37,8 @@ public class DayRecord extends BaseModel {
 
     @Column
     private int total;
+
+    private int dayInt;
 
     private List<DetailRecord> detailRecords;
 
@@ -94,15 +98,51 @@ public class DayRecord extends BaseModel {
         this.detailRecords = detailRecords;
     }
 
+    public int getDayInt() {
+        return dayInt;
+    }
+
+    public void setDayInt(int dayInt) {
+        this.dayInt = dayInt;
+    }
+
+    public void initDayInt(){
+        if (TextUtils.isEmpty(day)) return;
+
+        String[] array = day.split("-");
+
+        StringBuilder builder = new StringBuilder();
+
+        for (String string : array){
+
+            if (TextUtils.isEmpty(string)) continue;
+
+            if (string.length() == 1){
+                string = "0" + string;
+            }
+
+            builder.append(string);
+        }
+
+        try {
+            dayInt = Integer.parseInt(builder.toString());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
     @Override
     public String toString() {
         return "DayRecord{" +
-                "dayRecordID=" + dayRecordID +
+                "dayRecordID='" + dayRecordID + '\'' +
                 ", workerID=" + workerID +
-                ", day=" + day +
-                ", submit=" + submit +
+                ", day='" + day + '\'' +
+                ", submit='" + submit + '\'' +
                 ", convertState='" + convertState + '\'' +
                 ", total=" + total +
+                ", dayInt=" + dayInt +
+                ", detailRecords=" + detailRecords +
                 '}';
     }
 }

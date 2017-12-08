@@ -2,7 +2,9 @@ package com.zzu.gfms.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -11,10 +13,12 @@ import android.widget.TextView;
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.zzu.gfms.R;
 import com.zzu.gfms.app.BaseActivity;
+import com.zzu.gfms.data.DataRepository;
 import com.zzu.gfms.data.dbflow.Worker;
 import com.zzu.gfms.domain.LoginUseCase;
 import com.zzu.gfms.utils.ConstantUtil;
 import com.zzu.gfms.utils.ExceptionUtil;
+import com.zzu.gfms.utils.ViewUtil;
 
 import io.reactivex.Observer;
 import io.reactivex.annotations.NonNull;
@@ -24,7 +28,11 @@ public class LoginActivity extends BaseActivity {
 
     private EditText userNameEdit;
 
+    private String userName;
+
     private EditText passwordEdit;
+
+    private String password;
 
     private QMUITipDialog loading;
 
@@ -41,9 +49,10 @@ public class LoginActivity extends BaseActivity {
 
     private void initView(){
         userNameEdit = (EditText) findViewById(R.id.edit_text_user_name);
-        userNameEdit.setText("kongguoguang");
+        userNameEdit.setText(DataRepository.getUserName());
+
         passwordEdit = (EditText) findViewById(R.id.edit_text_password);
-        passwordEdit.setText("123456");
+        //passwordEdit.setText("123456");
         passwordEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -64,14 +73,14 @@ public class LoginActivity extends BaseActivity {
     private void login(){
         userNameEdit.clearFocus();
         passwordEdit.clearFocus();
-        String username = userNameEdit.getText().toString();
-        String password = passwordEdit.getText().toString();
+        userName = userNameEdit.getText().toString();
+        password = passwordEdit.getText().toString();
 
-        if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)){
+        if (TextUtils.isEmpty(userName) || TextUtils.isEmpty(password)){
             showErrorDialog("用户名和密码不能为空");
         }else {
             loading.show();
-            new LoginUseCase().login(username, password).execute(getLoginObserver());
+            new LoginUseCase().login(userName, password).execute(getLoginObserver());
         }
     }
 
@@ -86,9 +95,11 @@ public class LoginActivity extends BaseActivity {
                 @Override
                 public void onNext(@NonNull Worker worker) {
                     loading.dismiss();
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    worker.setPassWord(password);
                     ConstantUtil.worker = worker;
                     worker.async().save();
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    DataRepository.saveUserNameWithPassword(userName, password);
                     finish();
                 }
 
