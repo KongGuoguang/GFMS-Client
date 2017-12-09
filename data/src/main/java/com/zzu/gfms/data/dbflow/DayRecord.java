@@ -38,6 +38,7 @@ public class DayRecord extends BaseModel {
     @Column
     private int total;
 
+    @Column
     private int dayInt;
 
     private List<DetailRecord> detailRecords;

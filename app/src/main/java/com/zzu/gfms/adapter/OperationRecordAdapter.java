@@ -25,6 +25,10 @@ public class OperationRecordAdapter extends RecyclerView.Adapter<OperationRecord
 
     private List<OperationRecord> operationRecords;
 
+    public OperationRecordAdapter(List<OperationRecord> operationRecords){
+        this.operationRecords = operationRecords;
+    }
+
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

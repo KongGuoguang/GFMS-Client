@@ -9,7 +9,7 @@ import android.widget.DatePicker;
 import android.widget.FrameLayout;
 
 import com.zzu.gfms.R;
-import com.zzu.gfms.utils.DayUtil;
+import com.zzu.gfms.utils.CalendarUtil;
 import com.zzu.gfms.utils.ViewUtil;
 
 import java.util.Calendar;
@@ -42,9 +42,9 @@ public class SpinnerDatePicker extends FrameLayout{
 
     private void init(Context context){
         Calendar calendar = Calendar.getInstance();
-        year = DayUtil.getYear(calendar);
-        monthOfYear = DayUtil.getMonth(calendar);
-        dayOfMonth = DayUtil.getDayOfMonth(calendar);
+        year = CalendarUtil.getYear(calendar);
+        monthOfYear = CalendarUtil.getMonth(calendar);
+        dayOfMonth = CalendarUtil.getDayOfMonth(calendar);
 
         LayoutInflater.from(context).inflate(R.layout.view_date_picker, this, true);
         DatePicker datePicker = (DatePicker) findViewById(R.id.date_picker);

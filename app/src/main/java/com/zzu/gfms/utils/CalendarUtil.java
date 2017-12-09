@@ -13,7 +13,7 @@ import java.util.List;
  * Summary:
  */
 
-public class DayUtil {
+public class CalendarUtil {
 
     /**
      * 获取当前年份
@@ -194,4 +194,5 @@ public class DayUtil {
     public static int getLastDayOfMonth(Calendar calendar){
         return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
     }
+
 }

@@ -16,14 +16,14 @@ import com.zzu.gfms.data.dbflow.DetailRecordDraft;
 import com.zzu.gfms.data.dbflow.DetailRecordDraft_Table;
 import com.zzu.gfms.data.dbflow.DetailRecord_Table;
 import com.zzu.gfms.data.dbflow.OperationRecord;
+import com.zzu.gfms.data.dbflow.OperationRecord_Table;
 import com.zzu.gfms.data.dbflow.WorkType;
 import com.zzu.gfms.data.dbflow.WorkType_Table;
 import com.zzu.gfms.data.dbflow.Worker;
 import com.zzu.gfms.data.dbflow.Worker_Table;
-import com.zzu.gfms.data.utils.CalendarUtil;
+import com.zzu.gfms.data.utils.DateUtil;
 
 import java.text.DecimalFormat;
-import java.util.Calendar;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -66,7 +66,14 @@ public class LocalRepository {
     }
 
 
-    public static Observable<List<DayRecord>> getDayRecordsOfMonth(final long workerId, final int year, final int month){
+    /**
+     * 获取某个月份的工作日报记录
+     * @param workerId 员工id
+     * @param year 年份
+     * @param month 月份
+     * @return 日报记录列表
+     */
+    public static Observable<List<DayRecord>> getDayRecords(final long workerId, final int year, final int month){
 
         return Observable.create(new ObservableOnSubscribe<List<DayRecord>>() {
             @Override
@@ -84,7 +91,40 @@ public class LocalRepository {
         });
     }
 
-    public static Observable<Boolean> saveDayRecordsOfMonth(final List<DayRecord> dayRecords){
+    /**
+     * 获取起止日期内的工作日报记录
+     * @param workerId 员工id
+     * @param startYear 起始年份
+     * @param startMonth 起始月份
+     * @param startDay 起始天数
+     * @param endYear 终止年份
+     * @param endMonth 终止月份
+     * @param endDay 终止天数
+     * @return 日报记录列表
+     */
+    public static Observable<List<DayRecord>> getDayRecords(final long workerId, final int startYear,
+                                                            final int startMonth, final int startDay,
+                                                            final int endYear, final int endMonth,
+                                                            final int endDay){
+        return Observable.create(new ObservableOnSubscribe<List<DayRecord>>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<List<DayRecord>> e) throws Exception {
+
+                int start = DateUtil.getDateInt(startYear, startMonth, startDay);
+                int end = DateUtil.getDateInt(endYear, endMonth, endDay);
+
+                List<DayRecord> dayRecords = new Select().from(DayRecord.class)
+                        .where(DayRecord_Table.workerID.eq(workerId))
+                        .and(DayRecord_Table.dayInt.greaterThanOrEq(start))
+                        .and(DayRecord_Table.dayInt.lessThanOrEq(end))
+                        .queryList();
+                e.onNext(dayRecords);
+                e.onComplete();
+            }
+        });
+    }
+
+    public static Observable<Boolean> saveDayRecord(final List<DayRecord> dayRecords){
         return Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
             public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
@@ -95,7 +135,9 @@ public class LocalRepository {
                                     public void processModel(DayRecord dayRecord, DatabaseWrapper wrapper) {
                                         dayRecord.save();
                                     }
-                        }).addAll(dayRecords).build());
+                        })
+                                .addAll(dayRecords)
+                                .build());
                 e.onNext(true);
                 e.onComplete();
             }
@@ -286,7 +328,42 @@ public class LocalRepository {
         });
     }
 
-    public static Observable<List<OperationRecord>> getOperationRecords(long workerId){
-        return null;
+    /**
+     * 保存修改申请操作记录到本地数据库
+     * @param operationRecords
+     * @return
+     */
+    public static Observable<Boolean> saveOperationRecord(final List<OperationRecord> operationRecords){
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
+                FlowManager.getDatabase(AppDatabase.class)
+                        .executeTransaction(new ProcessModelTransaction.Builder<>(
+                                new ProcessModelTransaction.ProcessModel<OperationRecord>() {
+                                    @Override
+                                    public void processModel(OperationRecord operationRecord, DatabaseWrapper wrapper) {
+                                        operationRecord.save();
+                                    }
+                                })
+                                .addAll(operationRecords)
+                                .build());
+
+                e.onNext(true);
+                e.onComplete();
+            }
+        });
+    }
+
+    public static Observable<List<OperationRecord>> getOperationRecords(final long workerId){
+        return Observable.create(new ObservableOnSubscribe<List<OperationRecord>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<OperationRecord>> e) throws Exception {
+                List<OperationRecord> operationRecords = new Select().from(OperationRecord.class)
+                        .where(OperationRecord_Table.workerID.eq(workerId))
+                        .queryList();
+                e.onNext(operationRecords);
+                e.onComplete();
+            }
+        });
     }
 }

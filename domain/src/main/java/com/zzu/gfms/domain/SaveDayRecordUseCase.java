@@ -14,17 +14,17 @@ import io.reactivex.Observable;
  * Summary:
  */
 
-public class SaveAllDayRecordsUseCase extends BaseUseCase<Boolean> {
+public class SaveDayRecordUseCase extends BaseUseCase<Boolean> {
 
-    List<DayRecord> dayRecords;
+    private List<DayRecord> dayRecords;
 
-    public SaveAllDayRecordsUseCase save(List<DayRecord> dayRecords){
+    public SaveDayRecordUseCase save(List<DayRecord> dayRecords){
         this.dayRecords = dayRecords;
         return this;
     }
 
     @Override
     public Observable<Boolean> buildObservable() {
-        return DataRepository.saveDayRecordsOfMonth(dayRecords);
+        return DataRepository.saveDayRecord(dayRecords);
     }
 }

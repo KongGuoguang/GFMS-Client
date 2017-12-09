@@ -4,6 +4,7 @@ import com.zzu.gfms.data.bean.DayAndDetailRecords;
 import com.zzu.gfms.data.dbflow.ClothesType;
 import com.zzu.gfms.data.dbflow.DayRecord;
 import com.zzu.gfms.data.dbflow.DetailRecord;
+import com.zzu.gfms.data.dbflow.OperationRecord;
 import com.zzu.gfms.data.dbflow.WorkType;
 import com.zzu.gfms.data.dbflow.Worker;
 
@@ -61,4 +62,8 @@ public interface ServerInterface {
     @POST("dayrecord/applyModify")
     Observable<HttpReply> submitModifyApplication(@Field("dayRecordID") String dayRecordID,
                                                   @Field("modifyReason") String modifyReason);
+
+    //获取衣服类型
+    @GET("clothestype/getOperationRecord/{workerId}")
+    Observable<HttpReply<List<OperationRecord>>> getOperationRecord(@Path("workerId") long workerId);
 }

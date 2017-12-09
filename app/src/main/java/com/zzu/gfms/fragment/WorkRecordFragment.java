@@ -23,12 +23,12 @@ import com.zzu.gfms.adapter.CalendarAdapter;
 import com.zzu.gfms.bean.Day;
 import com.zzu.gfms.data.dbflow.DayRecord;
 import com.zzu.gfms.data.utils.ConvertState;
-import com.zzu.gfms.domain.GetDayRecordsOfMonthUseCase;
-import com.zzu.gfms.domain.SaveAllDayRecordsUseCase;
+import com.zzu.gfms.domain.GetDayRecordsUseCase;
+import com.zzu.gfms.domain.SaveDayRecordUseCase;
 import com.zzu.gfms.event.AddDayRecordSuccess;
 import com.zzu.gfms.event.SubmitModifyApplicationSuccess;
 import com.zzu.gfms.utils.ConstantUtil;
-import com.zzu.gfms.utils.DayUtil;
+import com.zzu.gfms.utils.CalendarUtil;
 import com.zzu.gfms.view.CalendarView;
 import com.zzu.gfms.view.MonthPicker;
 
@@ -65,9 +65,9 @@ public class WorkRecordFragment extends Fragment {
 
     private List<DayRecord> dayRecords;
 
-    private SaveAllDayRecordsUseCase saveAllDayRecordsUseCase;
+    private SaveDayRecordUseCase saveDayRecordUseCase;
 
-    private GetDayRecordsOfMonthUseCase getDayRecordsOfMonthUseCase;
+    private GetDayRecordsUseCase getDayRecordsUseCase;
 
     private CalendarAdapter calendarAdapter;
 
@@ -86,8 +86,8 @@ public class WorkRecordFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        saveAllDayRecordsUseCase = new SaveAllDayRecordsUseCase();
-        getDayRecordsOfMonthUseCase = new GetDayRecordsOfMonthUseCase();
+        saveDayRecordUseCase = new SaveDayRecordUseCase();
+        getDayRecordsUseCase = new GetDayRecordsUseCase();
         EventBus.getDefault().register(this);
     }
 
@@ -103,9 +103,9 @@ public class WorkRecordFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         calendar = Calendar.getInstance();
-        currentYear = DayUtil.getYear(calendar);
-        currenMonth = DayUtil.getMonth(calendar);
-        currentDay = DayUtil.getDayOfMonth(calendar);
+        currentYear = CalendarUtil.getYear(calendar);
+        currenMonth = CalendarUtil.getMonth(calendar);
+        currentDay = CalendarUtil.getDayOfMonth(calendar);
 
         QMUITopBar topBar = (QMUITopBar) view.findViewById(R.id.top_bar);
         topBar.setTitle("工作日历");
@@ -142,7 +142,7 @@ public class WorkRecordFragment extends Fragment {
         });
 
         CalendarView calendarView = (CalendarView) view.findViewById(R.id.calendar_view);
-        days.addAll(DayUtil.getAllDays(calendar));
+        days.addAll(CalendarUtil.getAllDays(calendar));
         calendarAdapter = new CalendarAdapter(days);
         calendarView.setAdapter(calendarAdapter);
         calendarView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -165,7 +165,7 @@ public class WorkRecordFragment extends Fragment {
                     if (dayRecord != null){
                         intent.putExtra("dayRecordId", dayRecord.getDayRecordID());
                         switch (dayRecord.getConvertState()){
-                            case ConvertState.DAY_RECORD_TEMPORARY:
+                            case ConvertState.DAY_RECORD_MODIFY_PASSED:
                                 intent.setClass(getActivity(), ModifyDayRecordActivity.class);
                                 break;
                             case ConvertState.DAY_RECORD_MODIFY_NOT_CHECK:
@@ -188,7 +188,7 @@ public class WorkRecordFragment extends Fragment {
      * 加载本月工作记录
      */
     private void loadDayRecordsOfMonth(){
-        disposable = getDayRecordsOfMonthUseCase
+        disposable = getDayRecordsUseCase
                 .get(ConstantUtil.worker.getWorkerID(), currentYear, currenMonth)
                 .execute(getDayRecordsConsumer());
     }
@@ -206,18 +206,17 @@ public class WorkRecordFragment extends Fragment {
                         while(iterator.hasNext()){
                             DayRecord dayRecord = iterator.next();
                             dayRecord.initDayInt();
-                            if(ConvertState.DAY_RECORD_MODIFY_PASSED.equals(dayRecord.getConvertState())){
+                            if(ConvertState.DAY_RECORD_MODIFY_HISTORY.equals(dayRecord.getConvertState())){
                                 iterator.remove();
                             }
                         }
-                        LogUtils.d(dayRecords);
                         dayCount.setText(getString(R.string.day_count, dayRecords.size()));
                         WorkRecordFragment.this.dayRecords = dayRecords;
                         addDayRecordsToDays();
                         calendarAdapter.notifyDataSetChanged();
 
                         if (i == 2){
-                            saveAllDayRecordsUseCase.save(dayRecords).execute();
+                            saveDayRecordUseCase.save(dayRecords).execute();
                         }
                     }
 
@@ -239,7 +238,7 @@ public class WorkRecordFragment extends Fragment {
 
         int totalCount = 0;
         for (DayRecord dayRecord: dayRecords){
-            if (ConvertState.DAY_RECORD_MODIFY_PASSED.equals(dayRecord.getConvertState())){
+            if (ConvertState.DAY_RECORD_MODIFY_HISTORY.equals(dayRecord.getConvertState())){
                 continue;
             }
             totalCount = totalCount + dayRecord.getTotal();
@@ -289,7 +288,7 @@ public class WorkRecordFragment extends Fragment {
                     currenMonth = month;
                     calendar.set(currentYear, currenMonth -1, currentDay);
                     days.clear();
-                    days.addAll(DayUtil.getAllDays(calendar));
+                    days.addAll(CalendarUtil.getAllDays(calendar));
                     calendarAdapter.notifyDataSetChanged();
 
                     final String dateStr = currentYear + "年" + currenMonth + "月";

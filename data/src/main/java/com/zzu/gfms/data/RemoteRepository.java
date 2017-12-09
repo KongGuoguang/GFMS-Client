@@ -5,6 +5,7 @@ import com.zzu.gfms.data.bean.DayAndDetailRecords;
 import com.zzu.gfms.data.dbflow.ClothesType;
 import com.zzu.gfms.data.dbflow.DayRecord;
 import com.zzu.gfms.data.dbflow.DetailRecord;
+import com.zzu.gfms.data.dbflow.OperationRecord;
 import com.zzu.gfms.data.dbflow.WorkType;
 import com.zzu.gfms.data.dbflow.Worker;
 import com.zzu.gfms.data.http.GFMSException;
@@ -188,6 +189,30 @@ public class RemoteRepository {
                             public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
                                 if (status == 0){
                                     e.onNext(true);
+                                }else {
+                                    e.onError(new GFMSException(status, httpReply.getMessage()));
+                                }
+                                e.onComplete();
+                            }
+                        });
+                    }
+                });
+    }
+
+    public static Observable<List<OperationRecord>> getOperationRecords(long workerId){
+        return Retrofit2Util.getServerInterface()
+                .getOperationRecord(workerId)
+                .flatMap(new Function<HttpReply<List<OperationRecord>>, Observable<List<OperationRecord>>>() {
+                    @Override
+                    public Observable<List<OperationRecord>> apply(final HttpReply<List<OperationRecord>> httpReply) throws Exception {
+                        final int status = httpReply.getStatus();
+
+                        return Observable.create(new ObservableOnSubscribe<List<OperationRecord>>() {
+                            @Override
+                            public void subscribe(ObservableEmitter<List<OperationRecord>> e) throws Exception {
+                                if (status == 0){
+                                    List<OperationRecord> operationRecords = httpReply.getData();
+                                    e.onNext(operationRecords);
                                 }else {
                                     e.onError(new GFMSException(status, httpReply.getMessage()));
                                 }

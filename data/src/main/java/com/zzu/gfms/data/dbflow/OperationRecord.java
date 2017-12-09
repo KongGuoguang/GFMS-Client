@@ -22,6 +22,9 @@ public class OperationRecord extends BaseModel {
     private long checkWorkerID;
 
     @Column
+    private long workerID;
+
+    @Column
     private String dayRecordID;
 
     @Column
@@ -53,6 +56,14 @@ public class OperationRecord extends BaseModel {
 
     public void setCheckWorkerID(long checkWorkerID) {
         this.checkWorkerID = checkWorkerID;
+    }
+
+    public long getWorkerID() {
+        return workerID;
+    }
+
+    public void setWorkerID(long workerID) {
+        this.workerID = workerID;
     }
 
     public String getDayRecordID() {

@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
@@ -123,7 +124,7 @@ class OkHttp3Util {
             ResponseBody responseBody = response.peekBody(1024 * 1024);
 
             LogUtils.d("OkHttpLog",
-                    String.format("接收响应:%s %n" +
+                    String.format(Locale.CHINESE,"接收响应:%s %n" +
                                     "httpCode:%s %n" +
                                     "responseBody:%s %n" +
                                     "time consuming:%.1fms %n",
@@ -148,39 +149,5 @@ class OkHttp3Util {
 
         @Override
         public X509Certificate[] getAcceptedIssuers() {return new X509Certificate[0];}
-    }
-
-    /** 拦截器压缩http请求体，许多服务器无法解析 */
-    static class GzipRequestInterceptor implements Interceptor {
-        @Override public Response intercept(Chain chain) throws IOException {
-            Request originalRequest = chain.request();
-            if (originalRequest.body() == null || originalRequest.header("Content-Encoding") != null) {
-                return chain.proceed(originalRequest);
-            }
-
-            Request compressedRequest = originalRequest.newBuilder()
-                    .header("Content-Encoding", "gzip")
-                    .method(originalRequest.method(), gzip(originalRequest.body()))
-                    .build();
-            return chain.proceed(compressedRequest);
-        }
-
-        private RequestBody gzip(final RequestBody body) {
-            return new RequestBody() {
-                @Override public MediaType contentType() {
-                    return body.contentType();
-                }
-
-                @Override public long contentLength() {
-                    return -1; // 无法知道压缩后的数据大小
-                }
-
-                @Override public void writeTo(BufferedSink sink) throws IOException {
-                    BufferedSink gzipSink = Okio.buffer(new GzipSink(sink));
-                    body.writeTo(gzipSink);
-                    gzipSink.close();
-                }
-            };
-        }
     }
 }

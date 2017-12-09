@@ -3,7 +3,6 @@ package com.zzu.gfms.data;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.provider.SyncStateContract;
 
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.zzu.gfms.data.bean.DayAndDetailRecords;
@@ -37,6 +36,27 @@ public class DataRepository {
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
+    public static void saveUserNameWithPassword(String userName, String password){
+        preferences.edit()
+                .putString("user_name", userName)
+                .putString("password", password)
+                .apply();
+    }
+
+    public static void clearPassword(){
+        preferences.edit()
+                .remove("password")
+                .apply();
+    }
+
+    public static String getUserName(){
+        return preferences.getString("user_name", "");
+    }
+
+    public static String getPassword(){
+        return preferences.getString("password", "");
+    }
+
     public static Observable<Worker> login(String userName, String password){
         return RemoteRepository.login(userName, password);
     }
@@ -61,8 +81,8 @@ public class DataRepository {
         return RemoteRepository.submitDayRecord(dayAndDetailRecords);
     }
 
-    public static Observable<Boolean> saveDayRecordsOfMonth(List<DayRecord> dayRecords){
-        return LocalRepository.saveDayRecordsOfMonth(dayRecords);
+    public static Observable<Boolean> saveDayRecord(List<DayRecord> dayRecords){
+        return LocalRepository.saveDayRecord(dayRecords);
     }
 
     /**
@@ -70,10 +90,17 @@ public class DataRepository {
      * @param workerId
      * @return
      */
-    public static Observable<List<DayRecord>> getDayRecordsOfMonth(long workerId, int year, int month){
-        return Observable.concat(LocalRepository.getDayRecordsOfMonth(workerId, year, month),
+    public static Observable<List<DayRecord>> getDayRecords(long workerId, int year, int month){
+        return Observable.concat(LocalRepository.getDayRecords(workerId, year, month),
                 RemoteRepository.getDayRecordOfMonth(workerId, year, month));
     }
+
+    public static Observable<List<DayRecord>> getDayRecords(long workerId, int startYear, int startMonth, int startDay,
+                                                            int endYear, int endMonth, int endDay){
+        return LocalRepository.getDayRecords(workerId, startYear, startMonth, startDay,
+                endYear, endMonth, endDay);
+    }
+
 
     public static Observable<Boolean> saveDetailRecords(List<DetailRecord> detailRecords){
         return LocalRepository.saveDetailRecords(detailRecords);
@@ -119,28 +146,13 @@ public class DataRepository {
         return LocalRepository.convertDayRecordState(dayRecordId, state);
     }
 
+    public static Observable<Boolean> saveOperationRecord(List<OperationRecord> operationRecords){
+        return LocalRepository.saveOperationRecord(operationRecords);
+    }
+
     public static Observable<List<OperationRecord>> getOperationRecords(long workerId){
-        return LocalRepository.getOperationRecords(workerId);
+        return Observable.concat(LocalRepository.getOperationRecords(workerId), RemoteRepository.getOperationRecords(workerId));
     }
 
-    public static void saveUserNameWithPassword(String userName, String password){
-        preferences.edit()
-                .putString("user_name", userName)
-                .putString("password", password)
-                .apply();
-    }
 
-    public static void clearPassword(){
-        preferences.edit()
-                .remove("password")
-                .apply();
-    }
-
-    public static String getUserName(){
-        return preferences.getString("user_name", "");
-    }
-
-    public static String getPassword(){
-        return preferences.getString("password", "");
-    }
 }

@@ -1,5 +1,7 @@
 package com.zzu.gfms.domain;
 
+import com.blankj.utilcode.util.LogUtils;
+
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -18,6 +20,8 @@ public abstract class BaseUseCase<T> {
 
     public abstract Observable<T> buildObservable();
 
+    private Consumer<Throwable> throwableConsumer;
+
     public void execute(Observer<T> observer){
         buildObservable().subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -25,9 +29,19 @@ public abstract class BaseUseCase<T> {
     }
 
     public Disposable execute(Consumer<T> consumer){
+
+        if (throwableConsumer == null){
+            throwableConsumer = new Consumer<Throwable>() {
+                @Override
+                public void accept(Throwable throwable) throws Exception {
+                    LogUtils.d(throwable.toString());
+                }
+            };
+        }
+
         return buildObservable().subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(consumer);
+                .subscribe(consumer, throwableConsumer);
     }
 
     public void execute(){

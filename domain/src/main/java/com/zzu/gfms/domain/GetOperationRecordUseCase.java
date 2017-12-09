@@ -14,9 +14,14 @@ import io.reactivex.Observable;
  * Summary:
  */
 
-public class GetOperationRecordsUseCase extends BaseUseCase<List<OperationRecord>> {
+public class GetOperationRecordUseCase extends BaseUseCase<List<OperationRecord>> {
 
     private long workerId;
+
+    public GetOperationRecordUseCase get(long workerId){
+        this.workerId = workerId;
+        return this;
+    }
 
     @Override
     public Observable<List<OperationRecord>> buildObservable() {
