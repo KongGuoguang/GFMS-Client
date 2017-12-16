@@ -6,9 +6,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.MotionEvent;
 
-import com.blankj.utilcode.util.LogUtils;
 import com.qmuiteam.qmui.widget.QMUITabSegment;
 import com.zzu.gfms.R;
 import com.zzu.gfms.data.dbflow.ClothesType;
@@ -23,7 +21,6 @@ import com.zzu.gfms.fragment.ModifyAuditFragment;
 import com.zzu.gfms.fragment.WorkRecordFragment;
 import com.zzu.gfms.fragment.WorkStatisticsFragment;
 import com.zzu.gfms.utils.ConstantUtil;
-import com.zzu.gfms.utils.ExceptionUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -31,8 +28,6 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
 public class MainActivity extends AppCompatActivity {
@@ -95,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initClothesType() {
-        if (ConstantUtil.allClothesTypes == null || ConstantUtil.allClothesTypes.size() <= 0){
+        if (ConstantUtil.clothesTypes == null || ConstantUtil.clothesTypes.size() <= 0){
             new GetClothesTypeUseCase()
                     .get(ConstantUtil.worker.getWorkerID(), ConstantUtil.worker.getEnterpriseID())
                     .execute(new Consumer<List<ClothesType>>() {
@@ -103,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void accept(List<ClothesType> clothesTypes) throws Exception {
                             i++;
-                            ConstantUtil.allClothesTypes = clothesTypes;
+                            ConstantUtil.setClothesTypes(clothesTypes);
                             if (i == 2){
                                 new SaveClothesTypeUseCase(clothesTypes).execute();
                             }
@@ -121,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void accept(List<WorkType> workTypes) throws Exception {
                             i++;
-                            ConstantUtil.workTypes = workTypes;
+                            ConstantUtil.setWorkTypes(workTypes);
                             if (i == 2){
                                 new SaveWorkTypeUseCase(workTypes).execute();
                             }

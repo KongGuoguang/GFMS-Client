@@ -44,4 +44,8 @@
     <color name="bg_not_check">#eba470</color>
     <color name="bg_not_pass">#a8e067</color>
     <color name="bg_pass">#ff6b6b</color>
+
+    <color name="bg_common_item">#7F31BDF3</color>
+    <color name="bg_common_item_pressed">#5F31BDF3</color>
+
 </resources>

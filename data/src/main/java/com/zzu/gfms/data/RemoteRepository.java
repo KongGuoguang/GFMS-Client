@@ -12,13 +12,11 @@ import com.zzu.gfms.data.http.GFMSException;
 import com.zzu.gfms.data.http.HttpReply;
 import com.zzu.gfms.data.http.Retrofit2Util;
 
-import java.text.DecimalFormat;
 import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.ObservableSource;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Function;
 
@@ -30,8 +28,6 @@ import io.reactivex.functions.Function;
  */
 
 public class RemoteRepository {
-
-    private static Gson gson = new Gson();
 
     public static Observable<Worker> login(String userName, String password){
         return Retrofit2Util.getServerInterface()
@@ -57,11 +53,10 @@ public class RemoteRepository {
                 });
     }
 
-    public static Observable<List<DayRecord>> getDayRecordOfMonth(long workerId, int year, int month){
+    public static Observable<List<DayRecord>> getDayRecordOfMonth(long workerId, String yearMonth){
 
         return Retrofit2Util.getServerInterface()
-                .getDayRecordOfMonth(String.valueOf(workerId), String.valueOf(year),
-                        new DecimalFormat("00").format(month))
+                .getDayRecord(String.valueOf(workerId), yearMonth)
                 .flatMap(new Function<HttpReply<List<DayRecord>>, Observable<List<DayRecord>>>() {
                     @Override
                     public Observable<List<DayRecord>> apply(@NonNull final HttpReply<List<DayRecord>> httpReply) throws Exception {

@@ -1,7 +1,5 @@
 package com.zzu.gfms.activity;
 
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -101,7 +99,7 @@ public class AddDetailRecordActivity extends BaseActivity {
             WorkTypePicker workTypePicker = new WorkTypePicker(this);
             workTypePicker.setOnWorkSelectedListener(new WorkTypePicker.OnWorkSelectedListener() {
                 @Override
-                public void onWorkSelected(WorkType workType) {
+                public void onWorkSelected(WorkTypePicker workTypePicker, WorkType workType) {
                     workTypeText.setText(workType.getName());
                     detailRecord.setWorkTypeID(workType.getWorkTypeID());
                 }

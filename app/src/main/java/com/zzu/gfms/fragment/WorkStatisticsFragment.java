@@ -4,24 +4,43 @@ package com.zzu.gfms.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.qmuiteam.qmui.widget.popup.QMUIPopup;
 import com.zzu.gfms.R;
+import com.zzu.gfms.adapter.SimpleDetailRecordAdapter;
+import com.zzu.gfms.app.BaseFragment;
 import com.zzu.gfms.data.dbflow.ClothesType;
+import com.zzu.gfms.data.dbflow.DetailRecord;
 import com.zzu.gfms.data.dbflow.WorkType;
+import com.zzu.gfms.data.utils.DateUtil;
+import com.zzu.gfms.domain.GetDetailRecordsUseCase;
+import com.zzu.gfms.domain.SaveDetailRecordsUseCase;
+import com.zzu.gfms.utils.CalendarUtil;
+import com.zzu.gfms.utils.ConstantUtil;
+import com.zzu.gfms.utils.ExceptionUtil;
 import com.zzu.gfms.view.ClothesTypePicker;
 import com.zzu.gfms.view.SpinnerDatePicker;
 import com.zzu.gfms.view.WorkTypePicker;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+
 /**
  * A simple {@link Fragment} subclass.
  */
-public class WorkStatisticsFragment extends Fragment implements View.OnClickListener{
+public class WorkStatisticsFragment extends BaseFragment implements View.OnClickListener{
 
 
     public WorkStatisticsFragment() {
@@ -31,6 +50,8 @@ public class WorkStatisticsFragment extends Fragment implements View.OnClickList
     private TextView startDateText;
 
     private TextView selectStartDate;
+
+    private QMUIPopup selectStartDatePopup;
 
     private int startYear;
 
@@ -42,6 +63,8 @@ public class WorkStatisticsFragment extends Fragment implements View.OnClickList
 
     private TextView selectEndDate;
 
+    private QMUIPopup selectEndDatePopup;
+
     private int endYear;
 
     private int endMonth;
@@ -52,23 +75,35 @@ public class WorkStatisticsFragment extends Fragment implements View.OnClickList
 
     private TextView selectClothType;
 
+    private QMUIPopup selectClothesTypePopup;
+
     private int clothesId;
 
     private TextView workTypeText;
 
     private TextView selectWorkType;
 
+    private QMUIPopup selectWorkTypePopup;
+
     private int workTypeId;
 
-    private TextView select;
+    private RecyclerView recyclerView;
 
-    private QMUIPopup selectStartDatePopup;
+    private SimpleDetailRecordAdapter simpleDetailRecordAdapter;
 
-    private QMUIPopup selectEndDatePopup;
+    private QMUITipDialog loading;
 
-    private QMUIPopup selectClothesTypePopup;
+    private GetDetailRecordsUseCase getDetailRecordsUseCase;
 
-    private QMUIPopup selectWorkTypePopup;
+    private SaveDetailRecordsUseCase saveDetailRecordsUseCase;
+
+    private List<DetailRecord> detailRecordList = new ArrayList<>();
+
+    private Observer<List<DetailRecord>> datailRecordsObserver;
+
+    private Disposable disposable;
+
+    private int resultCount;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,6 +121,8 @@ public class WorkStatisticsFragment extends Fragment implements View.OnClickList
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initView(view);
+        initUseCase();
+        initDate();
     }
 
     private void initView(View view){
@@ -108,8 +145,36 @@ public class WorkStatisticsFragment extends Fragment implements View.OnClickList
         selectWorkType = (TextView) view.findViewById(R.id.text_select_work);
         selectWorkType.setOnClickListener(this);
 
-        select = (TextView) view.findViewById(R.id.text_select);
+        TextView select = (TextView) view.findViewById(R.id.text_select);
         select.setOnClickListener(this);
+
+        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        simpleDetailRecordAdapter = new SimpleDetailRecordAdapter(detailRecordList);
+        recyclerView.setAdapter(simpleDetailRecordAdapter);
+
+        loading = new QMUITipDialog.Builder(getActivity())
+                .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
+                .setTipWord("正在查询")
+                .create();
+    }
+
+    private void initUseCase(){
+        getDetailRecordsUseCase = new GetDetailRecordsUseCase();
+        saveDetailRecordsUseCase = new SaveDetailRecordsUseCase();
+    }
+
+    private void initDate(){
+        Calendar calendar = Calendar.getInstance();
+        endYear = CalendarUtil.getYear(calendar);
+        endMonth = CalendarUtil.getMonth(calendar);
+        endDay = CalendarUtil.getDayOfMonth(calendar);
+
+
+        calendar.set(Calendar.YEAR, endYear - 1);
+        startYear = CalendarUtil.getYear(calendar);
+        startMonth = CalendarUtil.getMonth(calendar);
+        startDay = CalendarUtil.getDayOfMonth(calendar);
     }
 
     @Override
@@ -127,9 +192,16 @@ public class WorkStatisticsFragment extends Fragment implements View.OnClickList
             case R.id.text_select_work:
                 selectWorkType();
                 break;
+            case R.id.text_select:
+                startSelect();
+                break;
+
         }
     }
 
+    /**
+     * 选择起始日期
+     */
     private void selectStartDate(){
         if (selectStartDatePopup == null){
             selectStartDatePopup = new QMUIPopup(getActivity(), QMUIPopup.DIRECTION_BOTTOM);
@@ -151,6 +223,9 @@ public class WorkStatisticsFragment extends Fragment implements View.OnClickList
         selectStartDatePopup.show(startDateText);
     }
 
+    /**
+     * 选择结束日期
+     */
     private void selectEndDate(){
         if (selectEndDatePopup == null){
             selectEndDatePopup = new QMUIPopup(getActivity(), QMUIPopup.DIRECTION_BOTTOM);
@@ -172,6 +247,9 @@ public class WorkStatisticsFragment extends Fragment implements View.OnClickList
         selectEndDatePopup.show(endDateText);
     }
 
+    /**
+     * 选择衣服类型
+     */
     private void selectClothesType(){
         if (selectClothesTypePopup == null){
             selectClothesTypePopup = new QMUIPopup(getActivity(), QMUIPopup.DIRECTION_BOTTOM);
@@ -189,13 +267,16 @@ public class WorkStatisticsFragment extends Fragment implements View.OnClickList
         selectClothesTypePopup.show(clothesTypeText);
     }
 
+    /**
+     * 选择工作类型
+     */
     private void selectWorkType(){
         if (selectWorkTypePopup == null){
             selectWorkTypePopup = new QMUIPopup(getActivity(), QMUIPopup.DIRECTION_BOTTOM);
             WorkTypePicker workTypePicker = new WorkTypePicker(getActivity());
             workTypePicker.setOnWorkSelectedListener(new WorkTypePicker.OnWorkSelectedListener() {
                 @Override
-                public void onWorkSelected(WorkType workType) {
+                public void onWorkSelected(WorkTypePicker workTypePicker, WorkType workType) {
                     workTypeText.setText(workType.getName());
                     workTypeId = workType.getWorkTypeID();
                 }
@@ -204,5 +285,88 @@ public class WorkStatisticsFragment extends Fragment implements View.OnClickList
             selectWorkTypePopup.setAnimStyle(QMUIPopup.ANIM_GROW_FROM_CENTER);
         }
         selectWorkTypePopup.show(workTypeText);
+    }
+
+    /**
+     * 开始查询
+     */
+    private void startSelect(){
+
+        int start = CalendarUtil.getDateInt(startYear, startMonth, startDay);
+        int end = CalendarUtil.getDateInt(endYear, endMonth, endDay);
+        if (start > end){
+            showToast("工作日期选择有误，请重新选择");
+            return;
+        }
+
+        loading.show();
+        if (detailRecordList.size() > 0){
+            detailRecordList.clear();
+            simpleDetailRecordAdapter.notifyDataSetChanged();
+        }
+
+        if (disposable != null && !disposable.isDisposed()){
+            disposable.dispose();
+        }
+
+        getDetailRecordsUseCase.get(ConstantUtil.worker.getWorkerID(),
+                CalendarUtil.formatDate(startYear, startMonth, startDay),
+                CalendarUtil.formatDate(endYear, endMonth, endDay), clothesId, workTypeId)
+                .execute(getDetailRecordsObserver());
+    }
+
+    private Observer<List<DetailRecord>> getDetailRecordsObserver(){
+        resultCount = 0;
+        if (datailRecordsObserver == null){
+            datailRecordsObserver = new Observer<List<DetailRecord>>() {
+
+                @Override
+                public void onSubscribe(Disposable d) {
+                    disposable = d;
+                }
+
+                @Override
+                public void onNext(List<DetailRecord> detailRecords) {
+                    loading.dismiss();
+                    resultCount++;
+                    if (detailRecords != null && detailRecords.size() > 0){
+                        detailRecordList.clear();
+                        detailRecordList.addAll(detailRecords);
+                        simpleDetailRecordAdapter.notifyDataSetChanged();
+
+                        if (resultCount == 2){
+                            saveDetailRecordsUseCase.save(detailRecords).execute();
+                        }
+                    }
+
+                    if (resultCount == 2 && detailRecordList.size() == 0){
+                        showErrorDialog("该段日期内没有数据，请重新选择");
+                    }
+
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    resultCount++;
+                    if (resultCount == 2 && detailRecordList.size() == 0){
+                        showErrorDialog(ExceptionUtil.parseErrorMessage(e));
+                    }
+                }
+
+                @Override
+                public void onComplete() {
+
+                }
+            };
+        }
+        return datailRecordsObserver;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (disposable != null && !disposable.isDisposed()){
+            disposable.dispose();
+        }
     }
 }

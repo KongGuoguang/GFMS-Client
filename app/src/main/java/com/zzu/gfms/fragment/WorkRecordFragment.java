@@ -83,6 +83,8 @@ public class WorkRecordFragment extends Fragment {
 
     private Calendar calendar;
 
+    private int resultCount;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -189,23 +191,27 @@ public class WorkRecordFragment extends Fragment {
      */
     private void loadDayRecordsOfMonth(){
         disposable = getDayRecordsUseCase
-                .get(ConstantUtil.worker.getWorkerID(), currentYear, currenMonth)
+                .get(ConstantUtil.worker.getWorkerID(), CalendarUtil.formatDate(currentYear, currenMonth))
                 .execute(getDayRecordsConsumer());
     }
 
     private Consumer<List<DayRecord>> getDayRecordsConsumer(){
+        resultCount = 0;
+
         if (dayRecordsConsumer == null){
             dayRecordsConsumer = new Consumer<List<DayRecord>>() {
-                int i = 0;
+
                 @Override
                 public void accept(List<DayRecord> dayRecords) throws Exception {
-                    i++;
+
+                    LogUtils.d("dayRecordsConsumer, accept");
+
+                    resultCount++;
 
                     if (dayRecords != null && dayRecords.size() > 0){
                         Iterator<DayRecord> iterator = dayRecords.iterator();
                         while(iterator.hasNext()){
                             DayRecord dayRecord = iterator.next();
-                            dayRecord.initDayInt();
                             if(ConvertState.DAY_RECORD_MODIFY_HISTORY.equals(dayRecord.getConvertState())){
                                 iterator.remove();
                             }
@@ -215,17 +221,16 @@ public class WorkRecordFragment extends Fragment {
                         addDayRecordsToDays();
                         calendarAdapter.notifyDataSetChanged();
 
-                        if (i == 2){
+                        if (resultCount == 2){
+                            LogUtils.d("dayRecordsConsumer, save dayRecords");
                             saveDayRecordUseCase.save(dayRecords).execute();
                         }
                     }
 
-                    if (isRefreshing && i == 2){
+                    if (isRefreshing && resultCount == 2){
                         isRefreshing = false;
                         pullRefreshLayout.finishRefresh();
                     }
-
-                    i = i % 2;
                 }
             };
         }

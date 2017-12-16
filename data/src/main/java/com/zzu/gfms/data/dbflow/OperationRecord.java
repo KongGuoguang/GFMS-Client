@@ -42,6 +42,10 @@ public class OperationRecord extends BaseModel {
     @Column
     private String checkReason;
 
+    private String day;
+
+    private int total;
+
     public String getOperationRecordID() {
         return operationRecordID;
     }
@@ -112,5 +116,21 @@ public class OperationRecord extends BaseModel {
 
     public void setCheckReason(String checkReason) {
         this.checkReason = checkReason;
+    }
+
+    public String getDay() {
+        return day;
+    }
+
+    public void setDay(String day) {
+        this.day = day;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
     }
 }

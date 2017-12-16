@@ -14,18 +14,17 @@
 
     <RelativeLayout
         android:id="@+id/layout_select_start_date"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginTop="10dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:background="@color/app_color_blue_2_disabled">
+        style="@style/CommonItem"
+        android:layout_marginTop="10dp">
+
         <TextView
             android:id="@+id/text_start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:text="工作起始日期："/>
+            android:text="工作起始日期："
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"/>
 
         <TextView
             android:id="@+id/text_start_date"
@@ -37,18 +36,9 @@
 
         <TextView
             android:id="@+id/text_select_start_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:text="选择"
-            android:drawableRight="@mipmap/icon_right_arrow_blue"
-            android:drawableEnd="@mipmap/icon_right_arrow_blue"
-            android:textColor="#13227a"
-            android:gravity="center_vertical"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp" />
+            style="@style/CommonSelectTextView"
+            android:layout_marginRight="8dp"
+            android:layout_marginEnd="8dp"/>
     </RelativeLayout>
 
     <View
@@ -56,17 +46,15 @@
 
     <RelativeLayout
         android:id="@+id/layout_select_end_date"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:background="@color/app_color_blue_2_disabled">
+        style="@style/CommonItem">
         <TextView
             android:id="@+id/text_end"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:text="工作结束日期："/>
+            android:text="工作结束日期："
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"/>
 
         <TextView
             android:id="@+id/text_end_date"
@@ -78,18 +66,9 @@
 
         <TextView
             android:id="@+id/text_select_end_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:text="选择"
-            android:drawableRight="@mipmap/icon_right_arrow_blue"
-            android:drawableEnd="@mipmap/icon_right_arrow_blue"
-            android:textColor="#13227a"
-            android:gravity="center_vertical"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp" />
+            style="@style/CommonSelectTextView"
+            android:layout_marginRight="8dp"
+            android:layout_marginEnd="8dp"/>
     </RelativeLayout>
 
     <View
@@ -97,17 +76,15 @@
 
     <RelativeLayout
         android:id="@+id/layout_choose_clothes"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:background="@color/app_color_blue_2_disabled">
+        style="@style/CommonItem">
         <TextView
             android:id="@+id/text_clothes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:text="衣服类型："/>
+            android:text="衣服类型："
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"/>
 
         <TextView
             android:id="@+id/text_clothes_type"
@@ -119,18 +96,9 @@
 
         <TextView
             android:id="@+id/text_select_clothes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:text="选择"
-            android:drawableRight="@mipmap/icon_right_arrow_blue"
-            android:drawableEnd="@mipmap/icon_right_arrow_blue"
-            android:textColor="#13227a"
-            android:gravity="center_vertical"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp" />
+            style="@style/CommonSelectTextView"
+            android:layout_marginRight="8dp"
+            android:layout_marginEnd="8dp"/>
     </RelativeLayout>
 
     <View
@@ -138,17 +106,15 @@
 
     <RelativeLayout
         android:id="@+id/layout_choose_work"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:background="@color/app_color_blue_2_disabled">
+        style="@style/CommonItem">
         <TextView
             android:id="@+id/text_work"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:text="工作类型："/>
+            android:text="工作类型："
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"/>
 
         <TextView
             android:id="@+id/text_work_type"
@@ -160,28 +126,23 @@
 
         <TextView
             android:id="@+id/text_select_work"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:text="选择"
-            android:drawableRight="@mipmap/icon_right_arrow_blue"
-            android:drawableEnd="@mipmap/icon_right_arrow_blue"
-            android:textColor="#13227a"
-            android:gravity="center_vertical"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"/>
+            style="@style/CommonSelectTextView"
+            android:layout_marginRight="8dp"
+            android:layout_marginEnd="8dp"/>
     </RelativeLayout>
 
     <TextView
         android:id="@+id/text_select"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
+        style="@style/CommonButtonBar"
         android:layout_marginTop="10dp"
-        android:gravity="center"
-        android:text="查询"
-        android:textColor="#ffffff"
-        android:background="@drawable/bg_button_bar"/>
+        android:text="查询" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp">
+
+    </android.support.v7.widget.RecyclerView>
 
 </LinearLayout>

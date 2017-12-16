@@ -15,5 +15,5 @@ public class AppDatabase {
     //数据库名称
     static final String NAME = "gfms";
     //数据库版本号
-    static final int VERSION = 3;
+    static final int VERSION = 2;
 }

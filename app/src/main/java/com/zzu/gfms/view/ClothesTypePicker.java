@@ -30,11 +30,7 @@ public class ClothesTypePicker extends FrameLayout {
 
     private List<ClothesType> fatherClothesTypes;
 
-    private String[] fatherClothesNames;
-
     private List<ClothesType> childClothesTypes;
-
-    private String[] childClothesNames;
 
     private OnClothesSelectedListener onClothesSelectedListener;
 
@@ -64,7 +60,7 @@ public class ClothesTypePicker extends FrameLayout {
         fatherClothesTypes = ConstantUtil.getChildClothesType(0);
         int size = fatherClothesTypes.size();
         if (size > 0){
-            fatherClothesNames = new String[size];
+            String[] fatherClothesNames = new String[size];
             for (int i = 0; i < size; i++){
                 fatherClothesNames[i] = fatherClothesTypes.get(i).getName();
             }
@@ -72,6 +68,7 @@ public class ClothesTypePicker extends FrameLayout {
             fatherPicker.setDisplayedValues(fatherClothesNames);
             fatherPicker.setMinValue(0);
             fatherPicker.setMaxValue(size -1);
+            fatherPicker.setWrapSelectorWheel(false);
             fatherPicker.setValue(0);
             initChildPicker(0);
         }
@@ -81,13 +78,14 @@ public class ClothesTypePicker extends FrameLayout {
         childClothesTypes = ConstantUtil.getChildClothesType(fatherClothesTypes.get(position).getClothesID());
         int size = childClothesTypes.size();
         if (size > 0){
-            childClothesNames = new String[size];
+            String[] childClothesNames = new String[size];
             for (int i = 0; i < size; i++){
                 childClothesNames[i] = childClothesTypes.get(i).getName();
             }
             childPicker.setDisplayedValues(childClothesNames);
             childPicker.setMinValue(0);
             childPicker.setMaxValue(size -1);
+            childPicker.setWrapSelectorWheel(false);
             childPicker.setValue(0);
             if (onClothesSelectedListener != null)
                 onClothesSelectedListener.onClothesSelected(childClothesTypes.get(0));

@@ -10,8 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
+import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
 import com.zzu.gfms.R;
 import com.zzu.gfms.activity.LoginActivity;
 import com.zzu.gfms.data.DataRepository;
@@ -51,13 +54,13 @@ public class MeFragment extends Fragment implements View.OnClickListener{
         TextView sex = (TextView) view.findViewById(R.id.text_sex);
         sex.setText(ConstantUtil.worker.getSex());
 
-        ImageView modifyPassword = (ImageView) view.findViewById(R.id.image_modify_password);
+        View modifyPassword = view.findViewById(R.id.view_modify_password);
         modifyPassword.setOnClickListener(this);
 
-        ImageView notificationMessage = (ImageView) view.findViewById(R.id.image_notification_mesage);
+        View notificationMessage = view.findViewById(R.id.view_notification_mesage);
         notificationMessage.setOnClickListener(this);
 
-        ImageView aboutAndHelp = (ImageView) view.findViewById(R.id.image_about_and_help);
+        View aboutAndHelp = view.findViewById(R.id.view_about_and_help);
         aboutAndHelp.setOnClickListener(this);
 
         TextView logout = (TextView) view.findViewById(R.id.text_logout);
@@ -67,12 +70,12 @@ public class MeFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.image_modify_password:
+            case R.id.view_modify_password:
                 modifyPassword();
                 break;
-            case R.id.image_notification_mesage:
+            case R.id.view_notification_mesage:
                 break;
-            case R.id.image_about_and_help:
+            case R.id.view_about_and_help:
                 break;
             case R.id.text_logout:
                 logout();
@@ -91,8 +94,24 @@ public class MeFragment extends Fragment implements View.OnClickListener{
      * 退出登录
      */
     private void logout(){
-        DataRepository.clearPassword();
-        startActivity(new Intent(getActivity(), LoginActivity.class));
-        getActivity().finish();
+        new QMUIDialog.MessageDialogBuilder(getActivity())
+                .setTitle("提示")
+                .setMessage("确定要退出登录吗？")
+                .addAction("取消", new QMUIDialogAction.ActionListener() {
+                    @Override
+                    public void onClick(QMUIDialog dialog, int index) {
+                        dialog.dismiss();
+                    }
+                })
+                .addAction(0, "退出", QMUIDialogAction.ACTION_PROP_NEGATIVE, new QMUIDialogAction.ActionListener() {
+                    @Override
+                    public void onClick(QMUIDialog dialog, int index) {
+                        dialog.dismiss();
+                        DataRepository.clearPassword();
+                        startActivity(new Intent(getActivity(), LoginActivity.class));
+                        getActivity().finish();
+                    }
+                })
+                .show();
     }
 }

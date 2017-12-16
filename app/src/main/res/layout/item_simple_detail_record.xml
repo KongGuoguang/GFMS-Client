@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="40dp">
+
+    <LinearLayout
+        android:id="@+id/layout_all"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="1px"
+        android:background="@color/app_color_blue_2_disabled"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/text_work_date"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:text="2017-09-10"/>
+
+        <TextView
+            android:id="@+id/text_work_count"
+            android:layout_width="0dp"
+            android:layout_weight="1.5"
+            android:layout_height="wrap_content"
+            android:text="200件"/>
+
+        <TextView
+            android:id="@+id/text_clothes_type"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:text="上一一类"/>
+
+        <TextView
+            android:id="@+id/text_work_type"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="wrap_content"
+
+            android:text="锁边"/>
+
+    </LinearLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#FF22CFF4"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>

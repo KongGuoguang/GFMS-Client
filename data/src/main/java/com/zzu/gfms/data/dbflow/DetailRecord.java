@@ -30,6 +30,8 @@ public class DetailRecord extends BaseModel {
     @Column
     private int count;
 
+    private String date;
+
     public String getDetailRecordID() {
         return detailRecordID;
     }
@@ -68,5 +70,13 @@ public class DetailRecord extends BaseModel {
 
     public void setCount(int count) {
         this.count = count;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }

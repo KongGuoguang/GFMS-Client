@@ -195,4 +195,75 @@ public class CalendarUtil {
         return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
     }
 
+    /**
+     * /**
+     * 将年月日转成YYYY-MM-DD格式的字符串
+     * @param year
+     * @param month
+     * @param day
+     * @return
+     */
+
+    public static String formatDate(int year, int month, int day){
+        StringBuilder builder = new StringBuilder();
+        builder.append(year).append("-");
+
+        if (month < 10){
+            builder.append(0);
+        }
+        builder.append(month).append("-");
+
+        if (day < 10){
+            builder.append(0);
+        }
+        builder.append(day);
+
+        return builder.toString();
+    }
+
+    /**
+     * /**
+     * 将年月日转成YYYY-MM格式的字符串
+     * @param year
+     * @param month
+     * @return
+     */
+
+    public static String formatDate(int year, int month){
+        StringBuilder builder = new StringBuilder();
+        builder.append(year).append("-");
+
+        if (month < 10){
+            builder.append(0);
+        }
+        builder.append(month);
+
+        return builder.toString();
+    }
+
+    /**
+     * 将年月日转成YYYYMMDD格式的整形
+     * @param year
+     * @param month
+     * @param day
+     * @return
+     */
+    public static int getDateInt(int year, int month, int day){
+        StringBuilder builder = new StringBuilder();
+        builder.append(year);
+
+        if (month < 10){
+            builder.append(0);
+        }
+        builder.append(month);
+
+        if (day < 10){
+            builder.append(0);
+        }
+        builder.append(day);
+
+        return Integer.parseInt(builder.toString());
+
+    }
+
 }

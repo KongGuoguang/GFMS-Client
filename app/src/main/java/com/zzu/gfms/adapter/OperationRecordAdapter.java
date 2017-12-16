@@ -57,8 +57,9 @@ public class OperationRecordAdapter extends RecyclerView.Adapter<OperationRecord
                 break;
         }
 
-//        holder.applyDateText.setText("申请时间：" + operationRecord.getApplyTime());
-//        holder.workDateText.setText("工作日期：" + operationRecord.get);
+        holder.applyDateText.setText(operationRecord.getApplyTime());
+        holder.workDateText.setText(operationRecord.getDay());
+        holder.workCountText.setText(operationRecord.getTotal() + "件");
 
     }
 
@@ -78,17 +79,15 @@ public class OperationRecordAdapter extends RecyclerView.Adapter<OperationRecord
         private ImageView statusImage;
         private TextView statusText;
         private TextView applyDateText;
-        private ImageView arrowImage;
         private TextView workDateText;
         private TextView workCountText;
 
         ViewHolder(View itemView) {
             super(itemView);
             titleLayout = (RelativeLayout) itemView.findViewById(R.id.layout_title);
-            statusImage = (ImageView) itemView.findViewById(R.id.image_status);
-            statusText = (TextView) itemView.findViewById(R.id.text_status);
+            statusImage = (ImageView) itemView.findViewById(R.id.image_state);
+            statusText = (TextView) itemView.findViewById(R.id.text_state);
             applyDateText = (TextView) itemView.findViewById(R.id.text_apply_date);
-            arrowImage = (ImageView) itemView.findViewById(R.id.image_arrow);
             workDateText = (TextView) itemView.findViewById(R.id.text_work_date);
             workCountText = (TextView) itemView.findViewById(R.id.text_work_count);
         }

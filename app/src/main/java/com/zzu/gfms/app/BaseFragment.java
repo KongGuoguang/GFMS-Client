@@ -1,6 +1,7 @@
 package com.zzu.gfms.app;
 
 import android.support.v4.app.Fragment;
+import android.widget.Toast;
 
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
@@ -25,5 +26,9 @@ public class BaseFragment extends Fragment {
                     }
                 })
                 .create().show();
+    }
+
+    protected void showToast(String message){
+        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
     }
 }

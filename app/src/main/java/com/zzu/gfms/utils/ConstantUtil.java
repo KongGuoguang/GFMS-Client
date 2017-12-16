@@ -1,5 +1,7 @@
 package com.zzu.gfms.utils;
 
+import android.util.SparseArray;
+
 import com.zzu.gfms.data.dbflow.ClothesType;
 import com.zzu.gfms.data.dbflow.WorkType;
 import com.zzu.gfms.data.dbflow.Worker;
@@ -20,22 +22,45 @@ public class ConstantUtil {
 
     public static List<WorkType> workTypes;
 
-    public static List<ClothesType> allClothesTypes;
+    public static SparseArray<String> workNames = new SparseArray<>();
 
-    public static String getWorkName(int workTypeID){
-        String name = "";
-        for (WorkType workType : workTypes){
-            if (workType.getWorkTypeID() == workTypeID){
-                name = workType.getName();
-                break;
+    public static void setWorkTypes(List<WorkType> workTypes) {
+        ConstantUtil.workTypes = workTypes;
+
+        if (workTypes != null && workTypes.size() > 0){
+            for (WorkType workType : workTypes){
+                workNames.put(workType.getWorkTypeID(), workType.getName());
             }
         }
-        return name;
+
+    }
+
+    public static String getWorkName(int workTypeID){
+        return workNames.get(workTypeID);
+    }
+
+
+    public static List<ClothesType> clothesTypes;
+
+    public static SparseArray<String> clothesNames = new SparseArray<>();
+
+    public static void setClothesTypes(List<ClothesType> clothesTypes) {
+        ConstantUtil.clothesTypes = clothesTypes;
+
+        if (clothesTypes != null && clothesTypes.size() > 0){
+            for (ClothesType clothesType : clothesTypes){
+                clothesNames.put(clothesType.getClothesID(), clothesType.getName());
+            }
+        }
+    }
+
+    public static String getClothesName(int clothesID){
+        return clothesNames.get(clothesID);
     }
 
     public static List<ClothesType> getChildClothesType(int parentID){
         List<ClothesType> clothesTypes = new ArrayList<>();
-        for (ClothesType clothesType : allClothesTypes){
+        for (ClothesType clothesType : ConstantUtil.clothesTypes){
             if (clothesType.getParentID() == parentID){
                 clothesTypes.add(clothesType);
             }
@@ -43,14 +68,5 @@ public class ConstantUtil {
         return clothesTypes;
     }
 
-    public static String getClothesName(int clothesID){
-        String name = "";
-        for (ClothesType clothesType : allClothesTypes){
-            if (clothesType.getClothesID() == clothesID){
-                name = clothesType.getName();
-                break;
-            }
-        }
-        return name;
-    }
+
 }

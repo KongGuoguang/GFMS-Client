@@ -95,7 +95,48 @@
     <style name="CommonDividerLine">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1px</item>
-        <item name="android:background">@color/bar_divider</item>
+        <item name="android:background">#ffffff</item>
     </style>
+
+    <style name="CommonItem">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="android:background">@drawable/bg_common_item</item>
+    </style>
+
+    <style name="CommonSelectTextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_alignParentEnd">true</item>
+        <item name="android:background">@drawable/bg_common_select</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:text">选择</item>
+        <item name="android:textColor">#13227a</item>
+        <item name="android:drawableRight">@mipmap/icon_right_arrow_blue</item>
+        <item name="android:drawableEnd">@mipmap/icon_right_arrow_blue</item>
+        <item name="android:padding">8dp</item>
+    </style>
+
+    <style name="CommonButtonBar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="android:background">@drawable/bg_button_bar</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="CommonRightArrow">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_alignParentEnd">true</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:src">@mipmap/icon_right_arrow_blue</item>
+    </style>
+
+    <style name="MyEditText" parent="AppBaseTheme">
+    </style>
+
 
 </resources>

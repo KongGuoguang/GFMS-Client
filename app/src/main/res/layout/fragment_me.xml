@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginTop="10dp"
-        android:background="@color/app_color_blue_2_disabled">
+        android:background="@color/bg_common_item">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -73,10 +73,9 @@
     </LinearLayout>
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginTop="10dp"
-        android:background="@color/app_color_blue_2_disabled">
+        android:id="@+id/view_modify_password"
+        style="@style/CommonItem"
+        android:layout_marginTop="10dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -87,24 +86,16 @@
             android:text="@string/modify_password"/>
 
         <ImageView
-            android:id="@+id/image_modify_password"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:padding="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginEnd="8dp"
-            android:src="@mipmap/icon_right_arrow_blue"/>
+            style="@style/CommonRightArrow"
+            android:layout_marginRight="16dp"
+            android:layout_marginEnd="16dp" />
 
     </RelativeLayout>
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginTop="10dp"
-        android:background="@color/app_color_blue_2_disabled">
+        android:id="@+id/view_notification_mesage"
+        style="@style/CommonItem"
+        android:layout_marginTop="10dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -115,23 +106,16 @@
             android:text="@string/notification_mesage"/>
 
         <ImageView
-            android:id="@+id/image_notification_mesage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
-            android:padding="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginEnd="8dp"
-            android:src="@mipmap/icon_right_arrow_blue" />
+            style="@style/CommonRightArrow"
+            android:layout_marginRight="16dp"
+            android:layout_marginEnd="16dp"/>
 
     </RelativeLayout>
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginTop="10dp"
-        android:background="@color/app_color_blue_2_disabled">
+        android:id="@+id/view_about_and_help"
+        style="@style/CommonItem"
+        android:layout_marginTop="10dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -142,27 +126,16 @@
             android:text="@string/about_and_help"/>
 
         <ImageView
-            android:id="@+id/image_about_and_help"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:padding="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginEnd="8dp"
-            android:src="@mipmap/icon_right_arrow_blue"/>
+            style="@style/CommonRightArrow"
+            android:layout_marginRight="16dp"
+            android:layout_marginEnd="16dp"/>
 
     </RelativeLayout>
 
     <TextView
         android:id="@+id/text_logout"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
+        style="@style/CommonButtonBar"
         android:layout_marginTop="10dp"
-        android:gravity="center"
-        android:text="@string/logout"
-        android:textColor="#ffffff"
-        android:background="@drawable/bg_button_bar"/>
+        android:text="@string/logout" />
 
 </LinearLayout>

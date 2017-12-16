@@ -1,10 +1,11 @@
 package com.zzu.gfms.data;
 
+import android.text.TextUtils;
+
 import com.raizlabs.android.dbflow.config.FlowManager;
-import com.raizlabs.android.dbflow.sql.language.Delete;
-import com.raizlabs.android.dbflow.sql.language.Select;
-import com.raizlabs.android.dbflow.sql.language.Update;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
+import com.raizlabs.android.dbflow.structure.database.FlowCursor;
 import com.raizlabs.android.dbflow.structure.database.transaction.ProcessModelTransaction;
 import com.zzu.gfms.data.dbflow.AppDatabase;
 import com.zzu.gfms.data.dbflow.ClothesType;
@@ -21,9 +22,10 @@ import com.zzu.gfms.data.dbflow.WorkType;
 import com.zzu.gfms.data.dbflow.WorkType_Table;
 import com.zzu.gfms.data.dbflow.Worker;
 import com.zzu.gfms.data.dbflow.Worker_Table;
+import com.zzu.gfms.data.utils.ConvertState;
 import com.zzu.gfms.data.utils.DateUtil;
 
-import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -44,7 +46,8 @@ public class LocalRepository {
         return Observable.create(new ObservableOnSubscribe<Worker>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<Worker> e) throws Exception {
-                Worker worker = new Select().from(Worker.class)
+                Worker worker = SQLite.select()
+                        .from(Worker.class)
                         .where(Worker_Table.userName.eq(userName))
                         .and(Worker_Table.passWord.eq(password))
                         .querySingle();
@@ -69,21 +72,19 @@ public class LocalRepository {
     /**
      * 获取某个月份的工作日报记录
      * @param workerId 员工id
-     * @param year 年份
-     * @param month 月份
+     * @param yearMonth 年份
      * @return 日报记录列表
      */
-    public static Observable<List<DayRecord>> getDayRecords(final long workerId, final int year, final int month){
+    public static Observable<List<DayRecord>> getDayRecords(final long workerId, final String yearMonth){
 
         return Observable.create(new ObservableOnSubscribe<List<DayRecord>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<DayRecord>> e) throws Exception {
-                String y = String.valueOf(year);
-                String m = new DecimalFormat("00").format(month);
-                String ym = y + "-" + m + "-" + "%";
-                List<DayRecord> dayRecords = new Select().from(DayRecord.class)
+
+                List<DayRecord> dayRecords = SQLite.select()
+                        .from(DayRecord.class)
                         .where(DayRecord_Table.workerID.eq(workerId))
-                        .and(DayRecord_Table.day.like(ym))
+                        .and(DayRecord_Table.day.like(yearMonth + "-%"))
                         .queryList();
                 e.onNext(dayRecords);
                 e.onComplete();
@@ -94,29 +95,20 @@ public class LocalRepository {
     /**
      * 获取起止日期内的工作日报记录
      * @param workerId 员工id
-     * @param startYear 起始年份
-     * @param startMonth 起始月份
-     * @param startDay 起始天数
-     * @param endYear 终止年份
-     * @param endMonth 终止月份
-     * @param endDay 终止天数
+     * @param startDate 起始年份
      * @return 日报记录列表
      */
-    public static Observable<List<DayRecord>> getDayRecords(final long workerId, final int startYear,
-                                                            final int startMonth, final int startDay,
-                                                            final int endYear, final int endMonth,
-                                                            final int endDay){
+    public static Observable<List<DayRecord>> getDayRecords(final long workerId, final String startDate,
+                                                            final String endDate){
         return Observable.create(new ObservableOnSubscribe<List<DayRecord>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<DayRecord>> e) throws Exception {
 
-                int start = DateUtil.getDateInt(startYear, startMonth, startDay);
-                int end = DateUtil.getDateInt(endYear, endMonth, endDay);
-
-                List<DayRecord> dayRecords = new Select().from(DayRecord.class)
+                List<DayRecord> dayRecords = SQLite.select()
+                        .from(DayRecord.class)
                         .where(DayRecord_Table.workerID.eq(workerId))
-                        .and(DayRecord_Table.dayInt.greaterThanOrEq(start))
-                        .and(DayRecord_Table.dayInt.lessThanOrEq(end))
+                        .and(DayRecord_Table.day.between(startDate).and(endDate))
+                        .orderBy(DayRecord_Table.day, false)
                         .queryList();
                 e.onNext(dayRecords);
                 e.onComplete();
@@ -148,10 +140,90 @@ public class LocalRepository {
         return Observable.create(new ObservableOnSubscribe<List<DetailRecord>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<DetailRecord>> e) throws Exception {
-                List<DetailRecord> detailRecords = new Select().from(DetailRecord.class)
+                List<DetailRecord> detailRecords = SQLite.select()
+                        .from(DetailRecord.class)
                         .where(DetailRecord_Table.dayRecordID.eq(dayRecordId))
                         .queryList();
                 e.onNext(detailRecords);
+                e.onComplete();
+            }
+        });
+    }
+
+    /**
+     * 获取起止日期内的工作详细记录
+     * @param workerId 员工id
+     * @param startDate 起始日期
+     * @param endDate 结束日期
+     * @param clothesTypeId 衣服类型
+     * @param workTypeId 工作类型
+     * @return 详细记录列表
+     */
+    public static Observable<List<DetailRecord>> getDetailRecords(final long workerId, final String startDate,
+                                                                  final String endDate,
+                                                                  final int clothesTypeId,
+                                                                  final int workTypeId){
+
+        return Observable.create(new ObservableOnSubscribe<List<DetailRecord>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<DetailRecord>> e) throws Exception {
+
+                List<DetailRecord> detailRecordList = new ArrayList<>();
+
+                FlowCursor cursor = SQLite.select(DayRecord_Table.dayRecordID, DayRecord_Table.day)
+                        .from(DayRecord.class)
+                        .where(DayRecord_Table.workerID.eq(workerId))
+                        .and(DayRecord_Table.day.between(startDate).and(endDate))
+                        .orderBy(DayRecord_Table.day, false)
+                        .query();
+
+                if (cursor != null){
+                    while (cursor.moveToNext()){
+                        String dayRecordId = cursor.getStringOrDefault(0);
+
+                        if (TextUtils.isEmpty(dayRecordId)) continue;
+
+                        String date = cursor.getStringOrDefault(1);
+
+                        List<DetailRecord> detailRecords;
+
+                        if (clothesTypeId == 0 && workTypeId == 0){
+                            detailRecords = SQLite.select()
+                                    .from(DetailRecord.class)
+                                    .where(DetailRecord_Table.dayRecordID.eq(dayRecordId))
+                                    .queryList();
+                        }else if (clothesTypeId != 0 && workTypeId != 0){
+                            detailRecords = SQLite.select()
+                                    .from(DetailRecord.class)
+                                    .where(DetailRecord_Table.dayRecordID.eq(dayRecordId))
+                                    .and(DetailRecord_Table.clothesID.eq(clothesTypeId))
+                                    .and(DetailRecord_Table.workTypeID.eq(workTypeId))
+                                    .queryList();
+                        }else if (clothesTypeId != 0){
+                            detailRecords = SQLite.select()
+                                    .from(DetailRecord.class)
+                                    .where(DetailRecord_Table.dayRecordID.eq(dayRecordId))
+                                    .and(DetailRecord_Table.clothesID.eq(clothesTypeId))
+                                    .queryList();
+                        }else {
+                            detailRecords = SQLite.select()
+                                    .from(DetailRecord.class)
+                                    .where(DetailRecord_Table.dayRecordID.eq(dayRecordId))
+                                    .and(DetailRecord_Table.workTypeID.eq(workTypeId))
+                                    .queryList();
+                        }
+
+                        if (detailRecords.size() > 0){
+                            for (DetailRecord detailRecord : detailRecords){
+                                detailRecord.setDate(date);
+                            }
+
+                            detailRecordList.addAll(detailRecords);
+                        }
+                    }
+                }
+
+                e.onNext(detailRecordList);
                 e.onComplete();
             }
         });
@@ -179,7 +251,7 @@ public class LocalRepository {
         return Observable.create(new ObservableOnSubscribe<List<WorkType>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<WorkType>> e) throws Exception {
-                List<WorkType> workTypes = new Select()
+                List<WorkType> workTypes = SQLite.select()
                         .from(WorkType.class)
                         .where(WorkType_Table.enterpriseID.eq(enterpriseID))
                         .queryList();
@@ -211,7 +283,7 @@ public class LocalRepository {
         return Observable.create(new ObservableOnSubscribe<List<ClothesType>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ClothesType>> e) throws Exception {
-                List<ClothesType> clothesTypes = new Select()
+                List<ClothesType> clothesTypes = SQLite.select()
                         .from(ClothesType.class)
                         .where(ClothesType_Table.enterpriseID.eq(enterpriseID))
                         .queryList();
@@ -249,7 +321,7 @@ public class LocalRepository {
         return Observable.create(new ObservableOnSubscribe<List<DetailRecordDraft>>() {
             @Override
             public void subscribe(ObservableEmitter<List<DetailRecordDraft>> e) throws Exception {
-                List<DetailRecordDraft> detailRecordDrafts = new Select()
+                List<DetailRecordDraft> detailRecordDrafts = SQLite.select()
                         .from(DetailRecordDraft.class)
                         .where(DetailRecordDraft_Table.workerId.eq(workerId))
                         .and(DetailRecordDraft_Table.date.eq(date))
@@ -270,7 +342,8 @@ public class LocalRepository {
         return Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
             public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
-                new Delete().from(DetailRecordDraft.class)
+                SQLite.delete()
+                        .from(DetailRecordDraft.class)
                         .where(DetailRecordDraft_Table.workerId.eq(workerId))
                         .and(DetailRecordDraft_Table.date.eq(date))
                         .execute();
@@ -318,7 +391,7 @@ public class LocalRepository {
         return Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
             public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
-                new Update<>(DayRecord.class)
+                SQLite.update(DayRecord.class)
                         .set(DayRecord_Table.convertState.eq(state))
                         .where(DayRecord_Table.dayRecordID.eq(dayRecordId))
                         .execute();
@@ -354,13 +427,48 @@ public class LocalRepository {
         });
     }
 
-    public static Observable<List<OperationRecord>> getOperationRecords(final long workerId){
+    public static Observable<List<OperationRecord>> getOperationRecords(final long workerId, final String startDate, final String endDate, final String convertState){
         return Observable.create(new ObservableOnSubscribe<List<OperationRecord>>() {
             @Override
             public void subscribe(ObservableEmitter<List<OperationRecord>> e) throws Exception {
-                List<OperationRecord> operationRecords = new Select().from(OperationRecord.class)
-                        .where(OperationRecord_Table.workerID.eq(workerId))
-                        .queryList();
+
+                List<OperationRecord> operationRecords = new ArrayList<>();
+
+                FlowCursor cursor = SQLite.select(DayRecord_Table.dayRecordID, DayRecord_Table.day, DayRecord_Table.total)
+                        .from(DayRecord.class)
+                        .where(DayRecord_Table.workerID.eq(workerId))
+                        .and(DayRecord_Table.day.between(startDate).and(endDate))
+                        .orderBy(DayRecord_Table.day, false)
+                        .query();
+
+                if (cursor != null){
+                    while (cursor.moveToNext()){
+                        String dayRecordID = cursor.getStringOrDefault(0);
+                        String day = cursor.getStringOrDefault(1);
+                        int total = cursor.getIntOrDefault(2);
+
+                        OperationRecord operationRecord = null;
+                        if (ConvertState.OPERATION_RECORD_ALL.equals(convertState)){
+                            operationRecord = SQLite.select()
+                                    .from(OperationRecord.class)
+                                    .where(OperationRecord_Table.dayRecordID.eq(dayRecordID))
+                                    .querySingle();
+                        }else {
+                            operationRecord = SQLite.select()
+                                    .from(OperationRecord.class)
+                                    .where(OperationRecord_Table.dayRecordID.eq(dayRecordID))
+                                    .and(OperationRecord_Table.convertState.eq(convertState))
+                                    .querySingle();
+                        }
+
+                        if (operationRecord != null){
+                            operationRecord.setDay(day);
+                            operationRecord.setTotal(total);
+                            operationRecords.add(operationRecord);
+                        }
+                    }
+                }
+
                 e.onNext(operationRecords);
                 e.onComplete();
             }

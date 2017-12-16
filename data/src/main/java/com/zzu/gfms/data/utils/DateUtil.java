@@ -34,7 +34,12 @@ public class DateUtil {
         }
         builder.append(day);
 
-        return Integer.parseInt(builder.toString());
+        try {
+            return Integer.parseInt(builder.toString());
+        }catch (Exception e){
+            return 0;
+        }
+
     }
 
 }

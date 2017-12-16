@@ -18,51 +18,35 @@ public class GetDayRecordsUseCase extends BaseUseCase<List<DayRecord>> {
 
     private long workerId;
 
-    private int year;
+    private String yearMonth;
 
-    private int month;
+    private String startDate;
 
-    private int startYear;
+    private String endDate;
 
-    private int startMonth;
-
-    private int startDay;
-
-    private int endYear;
-
-    private int endMonth;
-
-    private int endDay;
 
     private boolean isGetMonthDayRecords;
 
-    public GetDayRecordsUseCase get(long workerId, int year, int month){
+    public GetDayRecordsUseCase get(long workerId, String yearMonth){
         isGetMonthDayRecords = true;
         this.workerId = workerId;
-        this.year = year;
-        this.month = month;
+        this.yearMonth = yearMonth;
         return this;
     }
 
-    public GetDayRecordsUseCase get(long workerId, int startYear, int startMonth, int startDay,
-                                    int endYear, int endMonth, int endDay){
+    public GetDayRecordsUseCase get(long workerId, String startDate, String endDate){
         isGetMonthDayRecords = false;
         this.workerId = workerId;
-        this.startYear = startYear;
-        this.startMonth = startMonth;
-        this.startDay = startDay;
-        this.endYear = endYear;
-        this.endMonth = endMonth;
-        this.endDay = endDay;
+        this.startDate = startDate;
+        this.endDate = endDate;
         return this;
     }
 
     @Override
     public Observable<List<DayRecord>> buildObservable() {
         if (isGetMonthDayRecords)
-            return DataRepository.getDayRecords(workerId, year, month);
+            return DataRepository.getDayRecords(workerId, yearMonth);
         else
-            return DataRepository.getDayRecords(workerId, startYear, startMonth, startDay,
-        endYear, endMonth, endDay);
+            return DataRepository.getDayRecords(workerId, startDate, endDate);
     }
 }

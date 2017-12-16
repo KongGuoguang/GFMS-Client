@@ -1,10 +1,8 @@
 package com.zzu.gfms.view;
 
 import android.content.Context;
-import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
@@ -15,7 +13,6 @@ import com.zzu.gfms.data.dbflow.WorkType;
 import com.zzu.gfms.utils.ConstantUtil;
 import com.zzu.gfms.utils.ViewUtil;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 /**
@@ -58,9 +55,10 @@ public class WorkTypePicker extends FrameLayout {
                 numberPicker.setDisplayedValues(workNames);
                 numberPicker.setMinValue(0);
                 numberPicker.setMaxValue(size -1);
+                numberPicker.setWrapSelectorWheel(false);
                 numberPicker.setValue(0);
                 if (onWorkSelectedListener != null){
-                    onWorkSelectedListener.onWorkSelected(workTypes.get(0));
+                    onWorkSelectedListener.onWorkSelected(this, workTypes.get(0));
                 }
             }
         }
@@ -72,7 +70,7 @@ public class WorkTypePicker extends FrameLayout {
     public void setOnWorkSelectedListener(OnWorkSelectedListener listener){
         onWorkSelectedListener = listener;
         if (onWorkSelectedListener != null && workTypes != null && workTypes.size() > 0){
-            onWorkSelectedListener.onWorkSelected(workTypes.get(0));
+            onWorkSelectedListener.onWorkSelected(this, workTypes.get(0));
         }
     }
 
@@ -80,12 +78,12 @@ public class WorkTypePicker extends FrameLayout {
         @Override
         public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
             if (onWorkSelectedListener != null){
-                onWorkSelectedListener.onWorkSelected(workTypes.get(newVal));
+                onWorkSelectedListener.onWorkSelected(WorkTypePicker.this, workTypes.get(newVal));
             }
         }
     };
 
     public interface OnWorkSelectedListener{
-        void onWorkSelected(WorkType workType);
+        void onWorkSelected(WorkTypePicker workTypePicker, WorkType workType);
     }
 }

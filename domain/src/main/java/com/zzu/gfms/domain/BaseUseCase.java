@@ -22,6 +22,8 @@ public abstract class BaseUseCase<T> {
 
     private Consumer<Throwable> throwableConsumer;
 
+    private Consumer<T> defaultConsumer;
+
     public void execute(Observer<T> observer){
         buildObservable().subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -30,6 +32,18 @@ public abstract class BaseUseCase<T> {
 
     public Disposable execute(Consumer<T> consumer){
 
+        return buildObservable().subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(consumer, getThrowableConsumer());
+    }
+
+    public void execute(){
+        buildObservable().subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(getDefaultConsumer(), getThrowableConsumer());
+    }
+
+    private Consumer<Throwable> getThrowableConsumer(){
         if (throwableConsumer == null){
             throwableConsumer = new Consumer<Throwable>() {
                 @Override
@@ -39,14 +53,19 @@ public abstract class BaseUseCase<T> {
             };
         }
 
-        return buildObservable().subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(consumer, throwableConsumer);
+        return throwableConsumer;
     }
 
-    public void execute(){
-        buildObservable().subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe();
+    private Consumer<T> getDefaultConsumer(){
+        if (defaultConsumer == null){
+            defaultConsumer = new Consumer<T>() {
+                @Override
+                public void accept(T t) throws Exception {
+
+                }
+            };
+        }
+
+        return defaultConsumer;
     }
 }

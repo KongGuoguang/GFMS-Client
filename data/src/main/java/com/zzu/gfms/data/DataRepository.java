@@ -88,17 +88,18 @@ public class DataRepository {
     /**
      *
      * @param workerId
+     * @param yearMonth
      * @return
      */
-    public static Observable<List<DayRecord>> getDayRecords(long workerId, int year, int month){
-        return Observable.concat(LocalRepository.getDayRecords(workerId, year, month),
-                RemoteRepository.getDayRecordOfMonth(workerId, year, month));
+    public static Observable<List<DayRecord>> getDayRecords(long workerId, String yearMonth){
+        return Observable.concat(LocalRepository.getDayRecords(workerId, yearMonth),
+                RemoteRepository.getDayRecordOfMonth(workerId, yearMonth));
     }
 
-    public static Observable<List<DayRecord>> getDayRecords(long workerId, int startYear, int startMonth, int startDay,
-                                                            int endYear, int endMonth, int endDay){
-        return LocalRepository.getDayRecords(workerId, startYear, startMonth, startDay,
-                endYear, endMonth, endDay);
+    public static Observable<List<DayRecord>> getDayRecords(long workerId, String startDate,
+                                                            String endDate){
+        return LocalRepository.getDayRecords(workerId, startDate,
+                endDate);
     }
 
 
@@ -108,6 +109,12 @@ public class DataRepository {
 
     public static Observable<List<DetailRecord>> getDetailRecords(String dayRecordId){
         return Observable.concat(LocalRepository.getDetailRecords(dayRecordId), RemoteRepository.getDetailRecords(dayRecordId));
+    }
+
+    public static Observable<List<DetailRecord>> getDetailRecords(long workerId, String startDate,
+                                                                  String endDate, int clothesTypeId,
+                                                                  int workTypeId){
+        return LocalRepository.getDetailRecords(workerId, startDate, endDate, clothesTypeId, workTypeId);
     }
 
     public static Observable<List<ClothesType>> getClothesType(long workerId, int enterpriseID){
@@ -150,8 +157,9 @@ public class DataRepository {
         return LocalRepository.saveOperationRecord(operationRecords);
     }
 
-    public static Observable<List<OperationRecord>> getOperationRecords(long workerId){
-        return Observable.concat(LocalRepository.getOperationRecords(workerId), RemoteRepository.getOperationRecords(workerId));
+    public static Observable<List<OperationRecord>> getOperationRecords(long workerId, String startDate, String endDate, String convertState){
+        return Observable.concat(LocalRepository.getOperationRecords(workerId, startDate, endDate, convertState),
+                RemoteRepository.getOperationRecords(workerId));
     }
 
 

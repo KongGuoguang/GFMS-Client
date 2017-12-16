@@ -38,9 +38,6 @@ public class DayRecord extends BaseModel {
     @Column
     private int total;
 
-    @Column
-    private int dayInt;
-
     private List<DetailRecord> detailRecords;
 
     public String getDayRecordID() {
@@ -99,39 +96,6 @@ public class DayRecord extends BaseModel {
         this.detailRecords = detailRecords;
     }
 
-    public int getDayInt() {
-        return dayInt;
-    }
-
-    public void setDayInt(int dayInt) {
-        this.dayInt = dayInt;
-    }
-
-    public void initDayInt(){
-        if (TextUtils.isEmpty(day)) return;
-
-        String[] array = day.split("-");
-
-        StringBuilder builder = new StringBuilder();
-
-        for (String string : array){
-
-            if (TextUtils.isEmpty(string)) continue;
-
-            if (string.length() == 1){
-                string = "0" + string;
-            }
-
-            builder.append(string);
-        }
-
-        try {
-            dayInt = Integer.parseInt(builder.toString());
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-    }
 
     @Override
     public String toString() {
@@ -142,7 +106,6 @@ public class DayRecord extends BaseModel {
                 ", submit='" + submit + '\'' +
                 ", convertState='" + convertState + '\'' +
                 ", total=" + total +
-                ", dayInt=" + dayInt +
                 ", detailRecords=" + detailRecords +
                 '}';
     }

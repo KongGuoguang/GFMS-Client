@@ -11,16 +11,12 @@ import com.zzu.gfms.data.dbflow.Worker;
 import java.util.List;
 
 import io.reactivex.Observable;
-import okhttp3.RequestBody;
-import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
-import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
-import retrofit2.http.Query;
 
 /**
  * Author:kongguoguang
@@ -37,10 +33,9 @@ public interface ServerInterface {
     Observable<HttpReply<Worker>> login(@Field("userName") String userName,
                                         @Field("password") String password);
     //获取一个月的日报记录
-    @GET("dayrecord/getDayRecordByMonth/{workerId}-{year}-{month}")
-    Observable<HttpReply<List<DayRecord>>> getDayRecordOfMonth(@Path("workerId") String workerId,
-                                              @Path("year") String year,
-                                              @Path("month") String month);
+    @GET("dayrecord/getDayRecordByMonth/{workerId}-{year-month}")
+    Observable<HttpReply<List<DayRecord>>> getDayRecord(@Path("workerId") String workerId,
+                                                        @Path("year-month") String yearMonth);
 
     //获取某条日报记录下的详细记录
     @GET("dayrecord/getDayRecordDetail/{dayRecordId}")
