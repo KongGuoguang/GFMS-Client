@@ -2,13 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="5dp">
+    android:layout_marginBottom="5dp"
+    android:background="#ffffff">
 
     <RelativeLayout
         android:id="@+id/layout_title"
         android:layout_width="match_parent"
         android:layout_height="30dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@color/bar_divider">
 
         <ImageView
             android:id="@+id/image_state"
@@ -35,20 +37,15 @@
             android:id="@+id/text_apply_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/image_arrow"
-            android:layout_toStartOf="@+id/image_arrow"
-            android:textColor="#ffffff"
-            android:layout_centerVertical="true"/>
-
-        <ImageView
-            android:id="@+id/image_arrow"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:src="@mipmap/icon_right_arrow_white"/>
+            android:textColor="#ffffff"
+            android:drawableRight="@mipmap/icon_right_arrow_white"
+            android:drawableEnd="@mipmap/icon_right_arrow_white"
+            android:layout_centerVertical="true"/>
+
 
     </RelativeLayout>
 

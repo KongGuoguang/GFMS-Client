@@ -43,7 +43,8 @@
         <activity
             android:name=".activity.ModifyDetailRecordActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.ModifyPwdActivity"></activity>
+        <activity android:name=".activity.ModifyPwdActivity" />
+        <activity android:name=".activity.ModifyAuditActivity"></activity>
     </application>
 
 </manifest>

@@ -53,7 +53,7 @@
 
     <View
         android:id="@+id/line1"
-        style="@style/CommonDividerLine"
+        style="@style/CommonDividerLineWhite"
         android:layout_below="@+id/layout_choose_clothes"/>
 
     <RelativeLayout
@@ -96,7 +96,7 @@
 
     <View
         android:id="@+id/line2"
-        style="@style/CommonDividerLine"
+        style="@style/CommonDividerLineWhite"
         android:layout_below="@+id/layout_choose_work"/>
 
     <RelativeLayout

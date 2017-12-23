@@ -1,6 +1,7 @@
 package com.zzu.gfms.fragment;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,10 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.qmuiteam.qmui.widget.popup.QMUIPopup;
 import com.zzu.gfms.R;
+import com.zzu.gfms.activity.ModifyAuditActivity;
 import com.zzu.gfms.adapter.OperationRecordAdapter;
 import com.zzu.gfms.app.BaseFragment;
 import com.zzu.gfms.data.dbflow.OperationRecord;
@@ -29,6 +32,7 @@ import com.zzu.gfms.view.SpinnerDatePicker;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.Observer;
@@ -94,10 +98,13 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
 
     private int resultCount;
 
+    private Gson gson;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initUseCase();
+        gson = new Gson();
         //EventBus.getDefault().register(this);
     }
 
@@ -139,6 +146,16 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
         operationRecordAdapter = new OperationRecordAdapter(operationRecordList);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(operationRecordAdapter);
+        operationRecordAdapter.setOnItemClickListener(new OperationRecordAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClickListener(int position) {
+                OperationRecord operationRecord = operationRecordList.get(position);
+                String json = gson.toJson(operationRecord);
+                Intent intent = new Intent(getActivity(), ModifyAuditActivity.class);
+                intent.putExtra("operationRecord", json);
+                startActivity(intent);
+            }
+        });
 
         loading = new QMUITipDialog.Builder(getActivity())
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
@@ -295,14 +312,12 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
 
                         loading.dismiss();
 
+                        Collections.sort(operationRecords);
                         operationRecordList.clear();
                         operationRecordList.addAll(operationRecords);
                         operationRecordAdapter.notifyDataSetChanged();
 
                         if (resultCount == 2){
-                            for (OperationRecord operationRecord : operationRecords){
-                                operationRecord.setWorkerID(ConstantUtil.worker.getWorkerID());
-                            }
                             saveOperationRecordUseCase.save(operationRecords).execute();
                         }
                     }

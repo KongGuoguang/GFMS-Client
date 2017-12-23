@@ -1,9 +1,12 @@
 package com.zzu.gfms.data.dbflow;
 
+import android.support.annotation.NonNull;
+
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
+import com.zzu.gfms.data.utils.DateUtil;
 
 /**
  * Author:kongguoguang
@@ -13,7 +16,7 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
  */
 
 @Table(database = AppDatabase.class)
-public class OperationRecord extends BaseModel {
+public class OperationRecord extends BaseModel implements Comparable<OperationRecord>{
 
     @PrimaryKey
     private String operationRecordID;
@@ -42,9 +45,14 @@ public class OperationRecord extends BaseModel {
     @Column
     private String checkReason;
 
+    @Column
     private String day;
 
+    @Column
     private int total;
+
+    @Column
+    private String dayRecordConvertState;
 
     public String getOperationRecordID() {
         return operationRecordID;
@@ -132,5 +140,24 @@ public class OperationRecord extends BaseModel {
 
     public void setTotal(int total) {
         this.total = total;
+    }
+
+    public String getDayRecordConvertState() {
+        return dayRecordConvertState;
+    }
+
+    public void setDayRecordConvertState(String dayRecordConvertState) {
+        this.dayRecordConvertState = dayRecordConvertState;
+    }
+
+
+    @Override
+    public int compareTo(@NonNull OperationRecord o) {
+
+        int date1 = DateUtil.getDateInt(day);
+
+        int date2 = DateUtil.getDateInt(o.getDay());
+
+        return date2 - date1;
     }
 }

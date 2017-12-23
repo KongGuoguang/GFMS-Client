@@ -1,10 +1,12 @@
 package com.zzu.gfms.data.dbflow;
 
+import android.support.annotation.NonNull;
+
 import com.raizlabs.android.dbflow.annotation.Column;
-import com.raizlabs.android.dbflow.annotation.ForeignKey;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
+import com.zzu.gfms.data.utils.DateUtil;
 
 /**
  * Author:kongguoguang
@@ -13,7 +15,7 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
  * Summary:
  */
 @Table(database = AppDatabase.class)
-public class DetailRecord extends BaseModel {
+public class DetailRecord extends BaseModel implements Comparable<DetailRecord>{
 
     @PrimaryKey
     private String detailRecordID = "";
@@ -30,7 +32,7 @@ public class DetailRecord extends BaseModel {
     @Column
     private int count;
 
-    private String date;
+    private String day;
 
     public String getDetailRecordID() {
         return detailRecordID;
@@ -72,11 +74,20 @@ public class DetailRecord extends BaseModel {
         this.count = count;
     }
 
-    public String getDate() {
-        return date;
+    public String getDay() {
+        return day;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setDay(String day) {
+        this.day = day;
+    }
+
+    @Override
+    public int compareTo(@NonNull DetailRecord o) {
+        int date1 = DateUtil.getDateInt(day);
+
+        int date2 = DateUtil.getDateInt(o.getDay());
+
+        return date2 - date1;
     }
 }

@@ -14,32 +14,23 @@ import java.util.List;
 public class DateUtil {
 
     /**
-     * 将年月日转成YYYYMMDD格式的整形
-     * @param year
-     * @param month
-     * @param day
-     * @return
+     * 将YYYY-MM-DD的字符串转成YYYYMMDD格式的整形
      */
-    public static int getDateInt(int year, int month, int day){
+    public static int getDateInt(String date){
+        String[] array = date.split("-");
         StringBuilder builder = new StringBuilder();
-        builder.append(year);
-
-        if (month < 10){
-            builder.append(0);
+        for (String str : array) {
+            builder.append(str);
         }
-        builder.append(month);
 
-        if (day < 10){
-            builder.append(0);
-        }
-        builder.append(day);
-
+        int result = 0;
         try {
-            return Integer.parseInt(builder.toString());
+            result = Integer.parseInt(builder.toString());
         }catch (Exception e){
-            return 0;
+            return result;
         }
 
+        return result;
     }
 
 }

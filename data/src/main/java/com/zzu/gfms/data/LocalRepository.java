@@ -23,7 +23,6 @@ import com.zzu.gfms.data.dbflow.WorkType_Table;
 import com.zzu.gfms.data.dbflow.Worker;
 import com.zzu.gfms.data.dbflow.Worker_Table;
 import com.zzu.gfms.data.utils.ConvertState;
-import com.zzu.gfms.data.utils.DateUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -174,7 +173,6 @@ public class LocalRepository {
                         .from(DayRecord.class)
                         .where(DayRecord_Table.workerID.eq(workerId))
                         .and(DayRecord_Table.day.between(startDate).and(endDate))
-                        .orderBy(DayRecord_Table.day, false)
                         .query();
 
                 if (cursor != null){
@@ -183,7 +181,7 @@ public class LocalRepository {
 
                         if (TextUtils.isEmpty(dayRecordId)) continue;
 
-                        String date = cursor.getStringOrDefault(1);
+                        String day = cursor.getStringOrDefault(1);
 
                         List<DetailRecord> detailRecords;
 
@@ -215,7 +213,7 @@ public class LocalRepository {
 
                         if (detailRecords.size() > 0){
                             for (DetailRecord detailRecord : detailRecords){
-                                detailRecord.setDate(date);
+                                detailRecord.setDay(day);
                             }
 
                             detailRecordList.addAll(detailRecords);
@@ -432,43 +430,11 @@ public class LocalRepository {
             @Override
             public void subscribe(ObservableEmitter<List<OperationRecord>> e) throws Exception {
 
-                List<OperationRecord> operationRecords = new ArrayList<>();
-
-                FlowCursor cursor = SQLite.select(DayRecord_Table.dayRecordID, DayRecord_Table.day, DayRecord_Table.total)
-                        .from(DayRecord.class)
-                        .where(DayRecord_Table.workerID.eq(workerId))
-                        .and(DayRecord_Table.day.between(startDate).and(endDate))
-                        .orderBy(DayRecord_Table.day, false)
-                        .query();
-
-                if (cursor != null){
-                    while (cursor.moveToNext()){
-                        String dayRecordID = cursor.getStringOrDefault(0);
-                        String day = cursor.getStringOrDefault(1);
-                        int total = cursor.getIntOrDefault(2);
-
-                        OperationRecord operationRecord = null;
-                        if (ConvertState.OPERATION_RECORD_ALL.equals(convertState)){
-                            operationRecord = SQLite.select()
-                                    .from(OperationRecord.class)
-                                    .where(OperationRecord_Table.dayRecordID.eq(dayRecordID))
-                                    .querySingle();
-                        }else {
-                            operationRecord = SQLite.select()
-                                    .from(OperationRecord.class)
-                                    .where(OperationRecord_Table.dayRecordID.eq(dayRecordID))
-                                    .and(OperationRecord_Table.convertState.eq(convertState))
-                                    .querySingle();
-                        }
-
-                        if (operationRecord != null){
-                            operationRecord.setDay(day);
-                            operationRecord.setTotal(total);
-                            operationRecords.add(operationRecord);
-                        }
-                    }
-                }
-
+                List<OperationRecord> operationRecords = SQLite.select()
+                        .from(OperationRecord.class)
+                        .where(OperationRecord_Table.workerID.eq(workerId))
+                        .and(OperationRecord_Table.day.between(startDate).and(endDate))
+                        .queryList();
                 e.onNext(operationRecords);
                 e.onComplete();
             }

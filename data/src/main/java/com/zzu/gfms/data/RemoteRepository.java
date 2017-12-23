@@ -101,6 +101,32 @@ public class RemoteRepository {
                 });
     }
 
+    public static Observable<List<DetailRecord>> getDetailRecords(final long workerId, final String startDate,
+                                                                  final String endDate,
+                                                                  final int clothesTypeId,
+                                                                  final int workTypeId){
+        return Retrofit2Util.getServerInterface()
+                .getDetailRecords(workerId, startDate, endDate, clothesTypeId, workTypeId, 1)
+                .flatMap(new Function<HttpReply<List<DetailRecord>>, Observable<List<DetailRecord>>>() {
+                    @Override
+                    public Observable<List<DetailRecord>> apply(@NonNull final HttpReply<List<DetailRecord>> httpReply) throws Exception {
+                        final int status = httpReply.getStatus();
+                        return Observable.create(new ObservableOnSubscribe<List<DetailRecord>>() {
+                            @Override
+                            public void subscribe(@NonNull ObservableEmitter<List<DetailRecord>> e) throws Exception {
+                                if (status == 0){
+                                    List<DetailRecord> detailRecords = httpReply.getData();
+                                    e.onNext(detailRecords);
+                                }else {
+                                    e.onError(new GFMSException(status, httpReply.getMessage()));
+                                }
+                                e.onComplete();
+                            }
+                        });
+                    }
+                });
+    }
+
     public static Observable<List<WorkType>> getWorkType(long workerId){
         return Retrofit2Util.getServerInterface()
                 .getWorkType(workerId)
@@ -194,9 +220,12 @@ public class RemoteRepository {
                 });
     }
 
-    public static Observable<List<OperationRecord>> getOperationRecords(long workerId){
+    public static Observable<List<OperationRecord>> getOperationRecords(long workerId,
+                                                                        String startDate,
+                                                                        String endDate,
+                                                                        String convertState){
         return Retrofit2Util.getServerInterface()
-                .getOperationRecord(workerId)
+                .getOperationRecord(workerId, startDate, endDate, 1, convertState)
                 .flatMap(new Function<HttpReply<List<OperationRecord>>, Observable<List<OperationRecord>>>() {
                     @Override
                     public Observable<List<OperationRecord>> apply(final HttpReply<List<OperationRecord>> httpReply) throws Exception {

@@ -20,7 +20,7 @@ public class ConvertState {
 
 
     /*  审核记录状态 */
-    public static final String OPERATION_RECORD_ALL = "0";
+    public static final String OPERATION_RECORD_ALL = "-1";
 
     public static final String OPERATION_RECORD_MODIFY_NOT_CHECK = "2";//修改申请未审核
 

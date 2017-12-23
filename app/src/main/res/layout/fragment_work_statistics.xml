@@ -42,7 +42,7 @@
     </RelativeLayout>
 
     <View
-        style="@style/CommonDividerLine" />
+        style="@style/CommonDividerLineWhite" />
 
     <RelativeLayout
         android:id="@+id/layout_select_end_date"
@@ -72,7 +72,7 @@
     </RelativeLayout>
 
     <View
-        style="@style/CommonDividerLine" />
+        style="@style/CommonDividerLineWhite" />
 
     <RelativeLayout
         android:id="@+id/layout_choose_clothes"
@@ -102,7 +102,7 @@
     </RelativeLayout>
 
     <View
-        style="@style/CommonDividerLine" />
+        style="@style/CommonDividerLineWhite" />
 
     <RelativeLayout
         android:id="@+id/layout_choose_work"

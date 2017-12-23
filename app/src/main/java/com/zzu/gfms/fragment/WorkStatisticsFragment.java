@@ -32,6 +32,7 @@ import com.zzu.gfms.view.WorkTypePicker;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.Observer;
@@ -300,6 +301,7 @@ public class WorkStatisticsFragment extends BaseFragment implements View.OnClick
         }
 
         loading.show();
+
         if (detailRecordList.size() > 0){
             detailRecordList.clear();
             simpleDetailRecordAdapter.notifyDataSetChanged();
@@ -327,9 +329,10 @@ public class WorkStatisticsFragment extends BaseFragment implements View.OnClick
 
                 @Override
                 public void onNext(List<DetailRecord> detailRecords) {
-                    loading.dismiss();
                     resultCount++;
                     if (detailRecords != null && detailRecords.size() > 0){
+                        loading.dismiss();
+                        Collections.sort(detailRecords);
                         detailRecordList.clear();
                         detailRecordList.addAll(detailRecords);
                         simpleDetailRecordAdapter.notifyDataSetChanged();
@@ -340,6 +343,7 @@ public class WorkStatisticsFragment extends BaseFragment implements View.OnClick
                     }
 
                     if (resultCount == 2 && detailRecordList.size() == 0){
+                        loading.dismiss();
                         showErrorDialog("该段日期内没有数据，请重新选择");
                     }
 
@@ -349,6 +353,7 @@ public class WorkStatisticsFragment extends BaseFragment implements View.OnClick
                 public void onError(Throwable e) {
                     resultCount++;
                     if (resultCount == 2 && detailRecordList.size() == 0){
+                        loading.dismiss();
                         showErrorDialog(ExceptionUtil.parseErrorMessage(e));
                     }
                 }

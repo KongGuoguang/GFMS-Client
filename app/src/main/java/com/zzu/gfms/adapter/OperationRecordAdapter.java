@@ -29,6 +29,11 @@ public class OperationRecordAdapter extends RecyclerView.Adapter<OperationRecord
         this.operationRecords = operationRecords;
     }
 
+    private OnItemClickListener onItemClickListener;
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -37,27 +42,35 @@ public class OperationRecordAdapter extends RecyclerView.Adapter<OperationRecord
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        OperationRecord operationRecord = operationRecords.get(position);
-        switch (operationRecord.getConvertState()){
+    public void onBindViewHolder(final ViewHolder holder, int position) {
+        OperationRecord operationRecord = operationRecords.get(holder.getAdapterPosition());
+        String convertState = operationRecord.getConvertState();
+        switch (convertState){
             case ConvertState.OPERATION_RECORD_MODIFY_NOT_CHECK:
                 holder.titleLayout.setBackgroundResource(R.color.bg_not_check);
                 holder.statusImage.setImageResource(R.mipmap.icon_not_check);
-                holder.statusText.setText("待审核");
                 break;
             case ConvertState.OPERATION_RECORD_MODIFY_NOT_PASSED:
                 holder.titleLayout.setBackgroundResource(R.color.bg_not_pass);
                 holder.statusImage.setImageResource(R.mipmap.icon_not_pass);
-                holder.statusText.setText("未通过");
                 break;
             case ConvertState.OPERATION_RECORD_MODIFY_PASSED:
                 holder.titleLayout.setBackgroundResource(R.color.bg_pass);
                 holder.statusImage.setImageResource(R.mipmap.icon_pass);
-                holder.statusText.setText("已通过");
+
                 break;
         }
 
+        holder.statusText.setText(ConvertState.getConvertStateName(convertState));
         holder.applyDateText.setText(operationRecord.getApplyTime());
+        holder.applyDateText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onItemClickListener != null){
+                    onItemClickListener.onItemClickListener(holder.getAdapterPosition());
+                }
+            }
+        });
         holder.workDateText.setText(operationRecord.getDay());
         holder.workCountText.setText(operationRecord.getTotal() + "件");
 
@@ -91,5 +104,9 @@ public class OperationRecordAdapter extends RecyclerView.Adapter<OperationRecord
             workDateText = (TextView) itemView.findViewById(R.id.text_work_date);
             workCountText = (TextView) itemView.findViewById(R.id.text_work_count);
         }
+    }
+
+    public interface OnItemClickListener{
+        void onItemClickListener(int position);
     }
 }

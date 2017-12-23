@@ -114,7 +114,8 @@ public class DataRepository {
     public static Observable<List<DetailRecord>> getDetailRecords(long workerId, String startDate,
                                                                   String endDate, int clothesTypeId,
                                                                   int workTypeId){
-        return LocalRepository.getDetailRecords(workerId, startDate, endDate, clothesTypeId, workTypeId);
+        return Observable.concat(LocalRepository.getDetailRecords(workerId, startDate, endDate, clothesTypeId, workTypeId),
+                RemoteRepository.getDetailRecords(workerId, startDate, endDate, clothesTypeId, workTypeId));
     }
 
     public static Observable<List<ClothesType>> getClothesType(long workerId, int enterpriseID){
@@ -159,7 +160,7 @@ public class DataRepository {
 
     public static Observable<List<OperationRecord>> getOperationRecords(long workerId, String startDate, String endDate, String convertState){
         return Observable.concat(LocalRepository.getOperationRecords(workerId, startDate, endDate, convertState),
-                RemoteRepository.getOperationRecords(workerId));
+                RemoteRepository.getOperationRecords(workerId, startDate, endDate, convertState));
     }
 
 

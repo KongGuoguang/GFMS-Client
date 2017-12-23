@@ -42,7 +42,7 @@
     </RelativeLayout>
 
     <View
-        style="@style/CommonDividerLine" />
+        style="@style/CommonDividerLineWhite" />
 
     <RelativeLayout
         android:id="@+id/layout_select_end_date"
@@ -72,7 +72,7 @@
     </RelativeLayout>
 
     <View
-        style="@style/CommonDividerLine" />
+        style="@style/CommonDividerLineWhite" />
 
     <RelativeLayout
         android:id="@+id/layout_choose_clothes"
@@ -111,7 +111,8 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="10dp"
+        android:background="@color/bar_divider">
 
     </android.support.v7.widget.RecyclerView>
 

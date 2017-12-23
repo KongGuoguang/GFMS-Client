@@ -1,15 +1,12 @@
 package com.zzu.gfms.adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.zzu.gfms.R;
-import com.zzu.gfms.data.dbflow.DayRecord;
 import com.zzu.gfms.data.dbflow.DetailRecord;
 import com.zzu.gfms.utils.ConstantUtil;
 
@@ -43,7 +40,7 @@ public class SimpleDetailRecordAdapter extends RecyclerView.Adapter<SimpleDetail
 
         DetailRecord detailRecord = detailRecords.get(position);
 
-        holder.workDate.setText(detailRecord.getDate());
+        holder.workDate.setText(detailRecord.getDay());
         holder.workCount.setText(detailRecord.getCount() + "件");
         holder.clothesType.setText(ConstantUtil.getClothesName(detailRecord.getClothesID()));
         holder.workType.setText(ConstantUtil.getWorkName(detailRecord.getWorkTypeID()));
