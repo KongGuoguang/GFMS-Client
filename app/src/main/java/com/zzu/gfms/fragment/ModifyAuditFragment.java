@@ -26,6 +26,7 @@ import com.zzu.gfms.domain.GetOperationRecordUseCase;
 import com.zzu.gfms.domain.SaveOperationRecordUseCase;
 import com.zzu.gfms.utils.CalendarUtil;
 import com.zzu.gfms.utils.ConstantUtil;
+import com.zzu.gfms.utils.Constants;
 import com.zzu.gfms.utils.ExceptionUtil;
 import com.zzu.gfms.view.ConvertStatePicker;
 import com.zzu.gfms.view.SpinnerDatePicker;
@@ -152,7 +153,7 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
                 OperationRecord operationRecord = operationRecordList.get(position);
                 String json = gson.toJson(operationRecord);
                 Intent intent = new Intent(getActivity(), ModifyAuditActivity.class);
-                intent.putExtra("operationRecord", json);
+                intent.putExtra(Constants.JSON_OPERATION_RECORD, json);
                 startActivity(intent);
             }
         });
@@ -286,12 +287,6 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
                 CalendarUtil.formatDate(startYear, startMonth, startDay),
                 CalendarUtil.formatDate(endYear, endMonth, endDay), convertState)
                 .execute(getOperationRecordObserver());
-    }
-
-    private void loadOperationRecords(){
-
-
-
     }
 
     private Observer<List<OperationRecord>> getOperationRecordObserver(){

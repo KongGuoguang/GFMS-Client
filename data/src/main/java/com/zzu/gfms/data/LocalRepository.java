@@ -173,6 +173,7 @@ public class LocalRepository {
                         .from(DayRecord.class)
                         .where(DayRecord_Table.workerID.eq(workerId))
                         .and(DayRecord_Table.day.between(startDate).and(endDate))
+                        .and(DayRecord_Table.convertState.notEq(ConvertState.DAY_RECORD_MODIFY_HISTORY))
                         .query();
 
                 if (cursor != null){

@@ -20,7 +20,6 @@ import com.zzu.gfms.app.BaseFragment;
 import com.zzu.gfms.data.dbflow.ClothesType;
 import com.zzu.gfms.data.dbflow.DetailRecord;
 import com.zzu.gfms.data.dbflow.WorkType;
-import com.zzu.gfms.data.utils.DateUtil;
 import com.zzu.gfms.domain.GetDetailRecordsUseCase;
 import com.zzu.gfms.domain.SaveDetailRecordsUseCase;
 import com.zzu.gfms.utils.CalendarUtil;
@@ -88,6 +87,8 @@ public class WorkStatisticsFragment extends BaseFragment implements View.OnClick
 
     private int workTypeId;
 
+    private TextView workCountText;
+
     private RecyclerView recyclerView;
 
     private SimpleDetailRecordAdapter simpleDetailRecordAdapter;
@@ -100,7 +101,7 @@ public class WorkStatisticsFragment extends BaseFragment implements View.OnClick
 
     private List<DetailRecord> detailRecordList = new ArrayList<>();
 
-    private Observer<List<DetailRecord>> datailRecordsObserver;
+    private Observer<List<DetailRecord>> detailRecordsObserver;
 
     private Disposable disposable;
 
@@ -153,6 +154,8 @@ public class WorkStatisticsFragment extends BaseFragment implements View.OnClick
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         simpleDetailRecordAdapter = new SimpleDetailRecordAdapter(detailRecordList);
         recyclerView.setAdapter(simpleDetailRecordAdapter);
+
+        workCountText = (TextView) view.findViewById(R.id.text_work_count);
 
         loading = new QMUITipDialog.Builder(getActivity())
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
@@ -302,6 +305,8 @@ public class WorkStatisticsFragment extends BaseFragment implements View.OnClick
 
         loading.show();
 
+        workCountText.setText("");
+
         if (detailRecordList.size() > 0){
             detailRecordList.clear();
             simpleDetailRecordAdapter.notifyDataSetChanged();
@@ -319,8 +324,8 @@ public class WorkStatisticsFragment extends BaseFragment implements View.OnClick
 
     private Observer<List<DetailRecord>> getDetailRecordsObserver(){
         resultCount = 0;
-        if (datailRecordsObserver == null){
-            datailRecordsObserver = new Observer<List<DetailRecord>>() {
+        if (detailRecordsObserver == null){
+            detailRecordsObserver = new Observer<List<DetailRecord>>() {
 
                 @Override
                 public void onSubscribe(Disposable d) {
@@ -334,7 +339,15 @@ public class WorkStatisticsFragment extends BaseFragment implements View.OnClick
                         loading.dismiss();
                         Collections.sort(detailRecords);
                         detailRecordList.clear();
-                        detailRecordList.addAll(detailRecords);
+                        int sum = 0;
+                        for (DetailRecord detailRecord : detailRecords){
+                            sum += detailRecord.getCount();
+                            detailRecordList.add(detailRecord);
+                        }
+
+                        String workCount = "总计：" + sum + "件";
+                        workCountText.setText(workCount);
+
                         simpleDetailRecordAdapter.notifyDataSetChanged();
 
                         if (resultCount == 2){
@@ -364,7 +377,7 @@ public class WorkStatisticsFragment extends BaseFragment implements View.OnClick
                 }
             };
         }
-        return datailRecordsObserver;
+        return detailRecordsObserver;
     }
 
     @Override

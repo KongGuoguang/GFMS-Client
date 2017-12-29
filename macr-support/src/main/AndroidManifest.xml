@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.xdja.ms">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <application
+        android:allowBackup="true">
+
+        <receiver android:name=".revive.EasyTriggerReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.intent.action.MEDIA_MOUNTED" />
+                <action android:name="android.intent.action.MEDIA_REMOVED" />
+                <action android:name="android.intent.action.MEDIA_UNMOUNTED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- 统一心跳alarm接收器 -->
+        <receiver
+            android:name=".revive.AlarmReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.rabbit.unify.alarm.action" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".revive.JobSchedulerService"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <service
+            android:name=".revive.ProxyService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <service
+            android:name="com.xdja.ms.keep.MacrobioticService$GrayInnerService"
+            android:enabled="true"
+            android:process=":ms" />
+
+        <activity
+            android:name="com.xdja.ms.keep.KeepAliveActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:finishOnTaskLaunch="false"
+            android:process=":ms"
+            android:theme="@style/KeepLiveTheme" />
+
+    </application>
+
+</manifest>

@@ -15,7 +15,7 @@
     <RelativeLayout
         android:id="@+id/layout_select_start_date"
         style="@style/CommonItem"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="5dp">
 
         <TextView
             android:id="@+id/text_start"
@@ -134,8 +134,21 @@
     <TextView
         android:id="@+id/text_select"
         style="@style/CommonButtonBar"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:text="查询" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/text_work_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"/>
+    </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"

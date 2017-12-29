@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="5dp"
     android:background="#ffffff">
 
     <RelativeLayout
@@ -37,8 +36,8 @@
             android:id="@+id/text_apply_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:textColor="#ffffff"
@@ -49,42 +48,27 @@
 
     </RelativeLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/text_work_date"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp">
+        android:layout_marginBottom="3dp"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:text="工作日期："/>
+    <TextView
+        android:id="@+id/text_work_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="5dp"/>
 
-        <TextView
-            android:id="@+id/text_work_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
-
-    <LinearLayout
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="3dp"
+        android:background="@color/bar_divider"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:text="完成总量："/>
-
-        <TextView
-            android:id="@+id/text_work_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
 
 </LinearLayout>

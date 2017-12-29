@@ -3,13 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.zzu.gfms.activity.InitActivity">
-
-    <TextView
-        android:id="@+id/text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="Hello World!" />
+    tools:context="com.zzu.gfms.activity.InitActivity"
+    android:background="@mipmap/bg_init">
 
 </RelativeLayout>

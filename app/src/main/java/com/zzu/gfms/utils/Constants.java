@@ -18,4 +18,8 @@ public class Constants {
     public static final String MONTH = "month";
 
     public static final String DAY = "day";
+
+    public static final String DAY_RECORD_ID = "dayRecordId";
+
+    public static final String JSON_OPERATION_RECORD = "opearation_record";
 }

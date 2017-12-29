@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:orientation="vertical">
 
         <TextView
@@ -32,18 +32,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            android:layout_marginTop="5dp" />
+            android:layout_marginTop="8dp" />
 
         <TextView
             android:id="@+id/text_modify_check_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            android:layout_marginTop="5dp"/>
+            android:layout_marginTop="8dp"/>
         <View
             style="@style/CommonDividerLine"
-            android:layout_marginTop="2.5dp"
-            android:layout_marginBottom="2.5dp"/>
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"/>
 
         <TextView
             android:id="@+id/text_apply_date"
@@ -54,14 +54,14 @@
             android:id="@+id/text_apply_reason"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"/>
+            android:layout_marginTop="8dp"/>
 
         <View
             style="@style/CommonDividerLine"
-            android:layout_marginTop="2.5dp"
-            android:layout_marginBottom="2.5dp"/>
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"/>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -75,18 +75,37 @@
                 android:id="@+id/text_work_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="50dp"
-                android:layout_marginStart="50dp"/>
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"/>
 
-        </LinearLayout>
+        </RelativeLayout>
 
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp">
 
-    </android.support.v7.widget.RecyclerView>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/text_modify_day_record">
+
+        </android.support.v7.widget.RecyclerView>
+
+        <TextView
+            android:id="@+id/text_modify_day_record"
+            style="@style/CommonButtonBar"
+            android:text="修改日报"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone"
+            android:layout_marginTop="1dp"/>
+    </RelativeLayout>
+
+
 
 </LinearLayout>

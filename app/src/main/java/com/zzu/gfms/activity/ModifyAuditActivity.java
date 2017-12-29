@@ -1,43 +1,58 @@
 package com.zzu.gfms.activity;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.google.gson.Gson;
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.zzu.gfms.R;
+import com.zzu.gfms.adapter.DetailRecordAdapter;
+import com.zzu.gfms.app.BaseActivity;
+import com.zzu.gfms.data.dbflow.DetailRecord;
 import com.zzu.gfms.data.dbflow.OperationRecord;
+import com.zzu.gfms.data.utils.ConvertState;
+import com.zzu.gfms.domain.GetDetailRecordsUseCase;
+import com.zzu.gfms.domain.SaveDetailRecordsUseCase;
+import com.zzu.gfms.utils.Constants;
+import com.zzu.gfms.utils.ExceptionUtil;
 
-public class ModifyAuditActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.List;
 
-    private Gson gson;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+
+public class ModifyAuditActivity extends BaseActivity {
 
     private OperationRecord operationRecord;
 
-    private TextView modifyCheckState;
+    private List<DetailRecord> detailRecordList = new ArrayList<>();
+    private DetailRecordAdapter adapter;
 
-    private TextView modifyNotPassedReason;
+    private QMUITipDialog loading;
 
-    private TextView modifyCheckDate;
+    private Disposable disposable;
 
-    private TextView applyDate;
-
-    private TextView applyReason;
-
-    private TextView workDate;
-
-    private TextView workCount;
+    private GetDetailRecordsUseCase getDetailRecordsUseCase;
+    private SaveDetailRecordsUseCase saveDetailRecordsUseCase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_modify_audit);
 
-        gson = new Gson();
-        String json = getIntent().getStringExtra("operationRecord");
+        Gson gson = new Gson();
+        String json = getIntent().getStringExtra(Constants.JSON_OPERATION_RECORD);
         try {
             operationRecord = gson.fromJson(json, OperationRecord.class);
         }catch (Exception e){
@@ -45,6 +60,8 @@ public class ModifyAuditActivity extends AppCompatActivity {
             return;
         }
         initView();
+        initUseCase();
+        loadDetailRecords();
     }
 
     private void initView(){
@@ -60,12 +77,139 @@ public class ModifyAuditActivity extends AppCompatActivity {
 
         if (operationRecord == null) return;
 
-        modifyCheckState = (TextView) findViewById(R.id.text_modify_check_state);
-        modifyNotPassedReason = (TextView) findViewById(R.id.text_modify_not_passed_reason);
-        modifyCheckDate = (TextView) findViewById(R.id.text_modify_check_date);
-        applyDate = (TextView) findViewById(R.id.text_apply_date);
-        applyReason = (TextView) findViewById(R.id.text_apply_reason);
-        workDate = (TextView) findViewById(R.id.text_work_date);
-        workCount = (TextView) findViewById(R.id.text_work_count);
+        String convertState = operationRecord.getConvertState();
+        TextView modifyCheckState = (TextView) findViewById(R.id.text_modify_check_state);
+        String convertStateName = "审核状态：" + ConvertState.getConvertStateName(convertState);
+        modifyCheckState.setText(convertStateName);
+
+        TextView modifyNotPassedReason = (TextView) findViewById(R.id.text_modify_not_passed_reason);
+        TextView modifyCheckDate = (TextView) findViewById(R.id.text_modify_check_date);
+
+        switch (convertState){
+            case ConvertState.OPERATION_RECORD_MODIFY_NOT_PASSED:
+                modifyNotPassedReason.setVisibility(View.VISIBLE);
+                String notPassedReason = "未通过原因：" + operationRecord.getCheckReason();
+                modifyNotPassedReason.setText(notPassedReason);
+            case ConvertState.OPERATION_RECORD_MODIFY_PASSED:
+                modifyCheckDate.setVisibility(View.VISIBLE);
+                String checkTime = operationRecord.getCheckTime();
+                if (!TextUtils.isEmpty(checkTime) && checkTime.length() > 10){
+                    checkTime = checkTime.substring(0, 10);
+                }
+                String checkDate = "审核日期：" + checkTime;
+                modifyCheckDate.setText(checkDate);
+                break;
+        }
+
+        TextView applyDateText = (TextView) findViewById(R.id.text_apply_date);
+        String applyTime = operationRecord.getApplyTime();
+        if (!TextUtils.isEmpty(applyTime) && applyTime.length() > 10){
+            applyTime = applyTime.substring(0, 10);
+        }
+        String applyDate = "申请日期：" + applyTime;
+        applyDateText.setText(applyDate);
+
+        TextView applyReason = (TextView) findViewById(R.id.text_apply_reason);
+        String reason = "修改原因：" + operationRecord.getModifyReason();
+        applyReason.setText(reason);
+
+        TextView workDateText = (TextView) findViewById(R.id.text_work_date);
+        String workDate = "工作日期:" + operationRecord.getDay();
+        workDateText.setText(workDate);
+
+        TextView workCountText = (TextView) findViewById(R.id.text_work_count);
+        String workCount = "完成总量:" + operationRecord.getTotal() + "件";
+        workCountText.setText(workCount);
+
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        adapter = new DetailRecordAdapter(detailRecordList, false);
+        recyclerView.setAdapter(adapter);
+
+        TextView modifyDayRecord = (TextView) findViewById(R.id.text_modify_day_record);
+        if (ConvertState.DAY_RECORD_MODIFY_PASSED.equals(operationRecord.getDayRecordConvertState())){
+            modifyDayRecord.setVisibility(View.VISIBLE);
+            modifyDayRecord.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    String date = operationRecord.getDay();
+                    Intent intent = new Intent(ModifyAuditActivity.this, ModifyDayRecordActivity.class);
+                    if (date != null && date.length() == 10){
+                        int year = Integer.parseInt(date.substring(0, 4));
+                        int month = Integer.parseInt(date.substring(5, 7));
+                        int day = Integer.parseInt(date.substring(8, 10));
+
+                        intent.putExtra("year", year);
+                        intent.putExtra("month", month);
+                        intent.putExtra("day", day);
+                    }
+
+                    intent.putExtra("dayRecordId", operationRecord.getDayRecordID());
+
+                    startActivity(intent);
+                }
+            });
+        }
+
+        loading = new QMUITipDialog.Builder(this)
+                .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
+                .setTipWord("加载中...")
+                .create();
+    }
+
+    private void initUseCase(){
+        getDetailRecordsUseCase = new GetDetailRecordsUseCase();
+        saveDetailRecordsUseCase = new SaveDetailRecordsUseCase();
+    }
+
+    private void loadDetailRecords(){
+        loading.show();
+        getDetailRecordsUseCase.get(operationRecord.getDayRecordID())
+                .execute(new Observer<List<DetailRecord>>() {
+                    int i = 0;
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        disposable = d;
+                    }
+
+                    @Override
+                    public void onNext(List<DetailRecord> detailRecords) {
+                        i++;
+                        if (detailRecords != null && detailRecords.size() > 0){
+                            loading.dismiss();
+                            detailRecordList.clear();
+                            detailRecordList.addAll(detailRecords);
+                            adapter.notifyDataSetChanged();
+                            if (i == 2){
+                                saveDetailRecordsUseCase.save(detailRecords).execute();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        i++;
+                        if (i == 2 && detailRecordList.size() == 0){
+                            loading.dismiss();
+                            showErrorDialog(ExceptionUtil.parseErrorMessage(e));
+                        }
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (disposable != null && !disposable.isDisposed()){
+            disposable.dispose();
+        }
     }
 }

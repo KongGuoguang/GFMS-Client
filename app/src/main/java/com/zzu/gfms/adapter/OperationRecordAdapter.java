@@ -1,6 +1,7 @@
 package com.zzu.gfms.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +63,14 @@ public class OperationRecordAdapter extends RecyclerView.Adapter<OperationRecord
         }
 
         holder.statusText.setText(ConvertState.getConvertStateName(convertState));
-        holder.applyDateText.setText(operationRecord.getApplyTime());
+
+        String applyDate = operationRecord.getApplyTime();
+        if (!TextUtils.isEmpty(applyDate) && applyDate.length() >= 10){
+            applyDate = applyDate.substring(0, 10);
+        }
+        applyDate = "申请日期：" +  applyDate;
+        holder.applyDateText.setText(applyDate);
+
         holder.applyDateText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,8 +79,12 @@ public class OperationRecordAdapter extends RecyclerView.Adapter<OperationRecord
                 }
             }
         });
-        holder.workDateText.setText(operationRecord.getDay());
-        holder.workCountText.setText(operationRecord.getTotal() + "件");
+
+        String workDate = "工作日期：" + operationRecord.getDay();
+        holder.workDateText.setText(workDate);
+
+        String workCount = "完成总量：" + operationRecord.getTotal() + "件";
+        holder.workCountText.setText(workCount);
 
     }
 

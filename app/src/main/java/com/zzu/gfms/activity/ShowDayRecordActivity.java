@@ -7,7 +7,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
@@ -24,7 +23,6 @@ import com.zzu.gfms.domain.SaveDetailRecordsUseCase;
 import com.zzu.gfms.domain.SubmitModifyApplicationUseCase;
 import com.zzu.gfms.event.SubmitModifyApplicationSuccess;
 import com.zzu.gfms.utils.ExceptionUtil;
-import com.zzu.gfms.utils.ViewUtil;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -51,13 +49,13 @@ public class ShowDayRecordActivity extends BaseActivity {
     private SaveDetailRecordsUseCase saveDetailRecordsUseCase;
     private SubmitModifyApplicationUseCase submitModifyApplicationUseCase;
 
+    private QMUITipDialog submitLoading;
+
     private QMUITipDialog loading;
 
     private Disposable getDetailRecordsDisposable;
 
     private Disposable submitModifyApplicationDisposable;
-
-    private QMUIDialog.EditTextDialogBuilder editTextDialogBuilder;
 
     private QMUIDialog applyModifyDialog;
 
@@ -116,9 +114,14 @@ public class ShowDayRecordActivity extends BaseActivity {
         adapter = new DetailRecordAdapter(detailRecordList, false);
         recyclerView.setAdapter(adapter);
 
+        submitLoading = new QMUITipDialog.Builder(this)
+                .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
+                .setTipWord("正在提交申请...")
+                .create();
+
         loading = new QMUITipDialog.Builder(this)
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
-                .setTipWord("正在提交申请")
+                .setTipWord("加载中...")
                 .create();
     }
 
@@ -129,6 +132,7 @@ public class ShowDayRecordActivity extends BaseActivity {
     }
 
     private void loadDetailRecords(){
+        loading.show();
         getDetailRecordsUseCase.get(dayRecordId)
                 .execute(new Observer<List<DetailRecord>>() {
                     int i = 0;
@@ -141,6 +145,7 @@ public class ShowDayRecordActivity extends BaseActivity {
                     public void onNext(List<DetailRecord> detailRecords) {
                         i++;
                         if (detailRecords != null && detailRecords.size() > 0){
+                            loading.dismiss();
                             detailRecordList.clear();
                             totalCount = 0;
                             for (DetailRecord detailRecord : detailRecords){
@@ -157,7 +162,11 @@ public class ShowDayRecordActivity extends BaseActivity {
 
                     @Override
                     public void onError(Throwable e) {
-
+                        i++;
+                        if (i == 2 && detailRecordList.size() == 0){
+                            loading.dismiss();
+                            showErrorDialog(ExceptionUtil.parseErrorMessage(e));
+                        }
                     }
 
                     @Override
@@ -205,76 +214,13 @@ public class ShowDayRecordActivity extends BaseActivity {
         applyModifyDialog.show();
     }
 
-
-    private void showModifyReasonDialog(){
-        if (editTextDialogBuilder == null){
-            editTextDialogBuilder = new QMUIDialog.EditTextDialogBuilder(this);
-            editTextDialogBuilder.setTitle("申请修改")
-                    .setPlaceholder("请输入修改原因")
-                    .addAction("取消", new QMUIDialogAction.ActionListener() {
-                        @Override
-                        public void onClick(QMUIDialog dialog, int index) {
-                            dialog.dismiss();
-                        }
-                    })
-                    .addAction("确认申请", new QMUIDialogAction.ActionListener() {
-                        @Override
-                        public void onClick(QMUIDialog dialog, int index) {
-                            dialog.dismiss();
-                            submitModifyApplication();
-                        }
-                    });
-
-        }
-
-        editTextDialogBuilder.show();
-
-    }
-
-    private void submitModifyApplication(){
-
-        String modifyReason = editTextDialogBuilder.getEditText().getText().toString();
-
-        if (TextUtils.isEmpty(modifyReason)){
-            showErrorDialog("修改原因不能为空");
-            return;
-        }
-        loading.show();
-        submitModifyApplicationUseCase.submit(dayRecordId, modifyReason)
-                .execute(new Observer<Boolean>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        submitModifyApplicationDisposable = d;
-                    }
-
-                    @Override
-                    public void onNext(Boolean aBoolean) {
-                        loading.dismiss();
-                        showToast("已发送申请，等待审核");
-                        EventBus.getDefault().post(new SubmitModifyApplicationSuccess());
-                        finish();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        loading.dismiss();
-                        showToast(ExceptionUtil.parseErrorMessage(e));
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
     private void submitModifyApplication(String modifyReason){
 
         if (TextUtils.isEmpty(modifyReason)){
             showErrorDialog("修改原因不能为空");
             return;
         }
-        loading.show();
+        submitLoading.show();
         submitModifyApplicationUseCase.submit(dayRecordId, modifyReason)
                 .execute(new Observer<Boolean>() {
                     @Override
@@ -284,7 +230,7 @@ public class ShowDayRecordActivity extends BaseActivity {
 
                     @Override
                     public void onNext(Boolean aBoolean) {
-                        loading.dismiss();
+                        submitLoading.dismiss();
                         showToast("已发送申请，等待审核");
                         EventBus.getDefault().post(new SubmitModifyApplicationSuccess());
                         finish();
@@ -292,7 +238,7 @@ public class ShowDayRecordActivity extends BaseActivity {
 
                     @Override
                     public void onError(Throwable e) {
-                        loading.dismiss();
+                        submitLoading.dismiss();
                         showToast(ExceptionUtil.parseErrorMessage(e));
                     }
 

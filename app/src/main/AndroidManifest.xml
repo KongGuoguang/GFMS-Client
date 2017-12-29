@@ -44,7 +44,12 @@
             android:name=".activity.ModifyDetailRecordActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".activity.ModifyPwdActivity" />
-        <activity android:name=".activity.ModifyAuditActivity"></activity>
+        <activity android:name=".activity.ModifyAuditActivity" />
+
+        <service
+            android:name=".service.HeartbeatService"
+            android:enabled="true"
+            android:exported="false"></service>
     </application>
 
 </manifest>
