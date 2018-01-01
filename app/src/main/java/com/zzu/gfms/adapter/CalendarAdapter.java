@@ -61,8 +61,9 @@ public class CalendarAdapter extends BaseAdapter {
 
         Day day = allDays.get(position);
 
-        if (!day.isCurrentMonth()) {//非本月的几天设置为灰色
+        if (!day.isCurrentMonth()) {//非本月的几天字体设置为灰色，背景为白色
             viewHolder.day.setTextColor(Color.rgb(204, 204, 204));
+            viewHolder.day.setBackgroundColor(Color.WHITE);
         } else {//本月的判断是否为周末
             if ((position+1)%7 == 0 || (position+2)%7 == 0){//周六周日为红色
                 viewHolder.day.setTextColor(Color.RED);

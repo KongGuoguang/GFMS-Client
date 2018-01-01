@@ -48,6 +48,7 @@ public class SpinnerDatePicker extends FrameLayout{
 
         LayoutInflater.from(context).inflate(R.layout.view_date_picker, this, true);
         DatePicker datePicker = (DatePicker) findViewById(R.id.date_picker);
+        datePicker.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
         ViewUtil.setDatePickerDividerColor(context, datePicker);
         datePicker.init(year, monthOfYear -1, dayOfMonth, new DatePicker.OnDateChangedListener() {
                             @Override

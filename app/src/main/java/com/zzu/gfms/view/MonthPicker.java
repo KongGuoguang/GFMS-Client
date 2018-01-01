@@ -40,6 +40,7 @@ public class MonthPicker extends FrameLayout {
         LayoutInflater.from(context).inflate(R.layout.view_date_picker, this, true);
         DatePicker datePicker = (DatePicker) findViewById(R.id.date_picker);
         hideDay(datePicker);
+        datePicker.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
         ViewUtil.setDatePickerDividerColor(context, datePicker);
         datePicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH), new DatePicker.OnDateChangedListener() {

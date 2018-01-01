@@ -20,7 +20,7 @@ public class ExceptionUtil {
 
     public static String parseErrorMessage(Throwable e){
         if (e instanceof HttpException){
-            return "服务器异常，请稍候重试（错误码：" + ((HttpException) e).code() + "）";
+            return "服务器异常，请稍后重试（错误码：" + ((HttpException) e).code() + "）";
         }
 
         if (e instanceof SocketException){
@@ -28,7 +28,7 @@ public class ExceptionUtil {
         }
 
         if (e instanceof SocketTimeoutException){
-            return "网络超时，请稍候重试";
+            return "网络超时，请稍后重试";
         }
 
         if (e instanceof GFMSException){

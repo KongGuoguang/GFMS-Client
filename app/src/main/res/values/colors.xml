@@ -48,4 +48,6 @@
     <color name="bg_common_item">#7F31BDF3</color>
     <color name="bg_common_item_pressed">#5F31BDF3</color>
 
+    <color name="scrollbar_color">#80000000</color>
+
 </resources>

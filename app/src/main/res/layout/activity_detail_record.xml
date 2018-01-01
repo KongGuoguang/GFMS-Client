@@ -41,7 +41,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/layout_date_count"
-        android:layout_marginBottom="10dp">
+        android:layout_marginBottom="10dp"
+        android:scrollbars="vertical"
+        android:fadeScrollbars="false"
+        android:scrollbarThumbVertical="@drawable/bg_scrollbar"
+        android:scrollbarSize="4dp">
 
     </android.support.v7.widget.RecyclerView>
 

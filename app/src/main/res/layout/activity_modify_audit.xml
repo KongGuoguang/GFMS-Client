@@ -93,7 +93,11 @@
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/text_modify_day_record">
+            android:layout_above="@+id/text_modify_day_record"
+            android:scrollbars="vertical"
+            android:fadeScrollbars="false"
+            android:scrollbarThumbVertical="@drawable/bg_scrollbar"
+            android:scrollbarSize="4dp">
 
         </android.support.v7.widget.RecyclerView>
 

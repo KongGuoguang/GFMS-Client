@@ -114,7 +114,7 @@ public class ModifyAuditActivity extends BaseActivity {
         applyReason.setText(reason);
 
         TextView workDateText = (TextView) findViewById(R.id.text_work_date);
-        String workDate = "工作日期:" + operationRecord.getDay();
+        String workDate = "工作日期：" + operationRecord.getDay();
         workDateText.setText(workDate);
 
         TextView workCountText = (TextView) findViewById(R.id.text_work_count);
