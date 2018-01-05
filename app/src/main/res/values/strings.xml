@@ -16,4 +16,7 @@
     <string name="about_and_help">关于软件和帮助</string>
     <string name="logout">退出登录</string>
     <string name="digits">0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
+    <string name="old_pwd">原  密  码：</string>
+    <string name="new_pwd">新  密  码：</string>
+    <string name="confirm_pwd">确认密码：</string>
 </resources>

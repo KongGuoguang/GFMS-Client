@@ -17,6 +17,7 @@ import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
 import com.zzu.gfms.R;
 import com.zzu.gfms.activity.LoginActivity;
+import com.zzu.gfms.activity.ModifyPwdActivity;
 import com.zzu.gfms.data.DataRepository;
 import com.zzu.gfms.utils.ConstantUtil;
 
@@ -87,7 +88,7 @@ public class MeFragment extends Fragment implements View.OnClickListener{
      * 修改密码
      */
     private void modifyPassword(){
-
+        startActivity(new Intent(getActivity(), ModifyPwdActivity.class));
     }
 
     /**
