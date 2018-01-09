@@ -163,5 +163,21 @@ public class DataRepository {
                 RemoteRepository.getOperationRecords(workerId, startDate, endDate, convertState));
     }
 
+    /**
+     * 注销
+     * @param workerId workerId
+     * @return boolean
+     */
+    public static Observable<Boolean> logout(long workerId){
+        return RemoteRepository.logout(workerId);
+    }
 
+    /**
+     * 修改密码
+     * @param workerId workerId
+     * @return boolean
+     */
+    public static Observable<Boolean> modifyPwd(long workerId, String oldPwd, String newPwd){
+        return RemoteRepository.modifyPwd(workerId, oldPwd, newPwd);
+    }
 }

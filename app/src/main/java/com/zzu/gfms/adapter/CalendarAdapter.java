@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.zzu.gfms.R;
-import com.zzu.gfms.bean.Day;
+import com.zzu.gfms.bean.CalendarDay;
 
 import java.util.List;
 
@@ -23,21 +23,21 @@ import java.util.List;
 public class CalendarAdapter extends BaseAdapter {
 
 
-    private List<Day> allDays;
+    private List<CalendarDay> allCalendarDays;
 
-    public CalendarAdapter(List<Day> allDays){
-        this.allDays = allDays;
+    public CalendarAdapter(List<CalendarDay> allCalendarDays){
+        this.allCalendarDays = allCalendarDays;
     }
 
 
     @Override
     public int getCount() {
-        return allDays.size();
+        return allCalendarDays.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return allDays.get(position);
+        return allCalendarDays.get(position);
     }
 
     @Override
@@ -57,11 +57,11 @@ public class CalendarAdapter extends BaseAdapter {
         }else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        viewHolder.day.setText(String.valueOf(allDays.get(position).getDay()));
+        viewHolder.day.setText(String.valueOf(allCalendarDays.get(position).getDay()));
 
-        Day day = allDays.get(position);
+        CalendarDay calendarDay = allCalendarDays.get(position);
 
-        if (!day.isCurrentMonth()) {//非本月的几天字体设置为灰色，背景为白色
+        if (!calendarDay.isCurrentMonth()) {//非本月的几天字体设置为灰色，背景为白色
             viewHolder.day.setTextColor(Color.rgb(204, 204, 204));
             viewHolder.day.setBackgroundColor(Color.WHITE);
         } else {//本月的判断是否为周末
@@ -71,14 +71,14 @@ public class CalendarAdapter extends BaseAdapter {
                 viewHolder.day.setTextColor(Color.BLACK);
             }
 
-            if (day.isToday()){//给今天设置背景
+            if (calendarDay.isToday()){//给今天设置背景
                 viewHolder.day.setBackgroundResource(R.drawable.round_bg_blue);
             }else {
                 viewHolder.day.setBackgroundColor(Color.WHITE);
             }
         }
 
-        if (day.isHasWorkRecord()){
+        if (calendarDay.isHasWorkRecord()){
             viewHolder.right.setVisibility(View.VISIBLE);
         }else {
             viewHolder.right.setVisibility(View.GONE);

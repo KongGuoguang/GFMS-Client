@@ -6,10 +6,10 @@ import com.zzu.gfms.data.dbflow.DayRecord;
  * Author:kongguoguang
  * Date:2017-10-24
  * Time:10:49
- * Summary:
+ * Summary:工作日历中的天
  */
 
-public class Day {
+public class CalendarDay {
 
     private int year;
 
@@ -25,7 +25,7 @@ public class Day {
 
     private DayRecord dayRecord;
 
-    public Day(int day, boolean currentMonth){
+    public CalendarDay(int day, boolean currentMonth){
         this.day = day;
         this.currentMonth = currentMonth;
     }
@@ -88,7 +88,7 @@ public class Day {
 
     @Override
     public String toString() {
-        return "Day{" +
+        return "CalendarDay{" +
                 "year=" + year +
                 ", month=" + month +
                 ", day=" + day +

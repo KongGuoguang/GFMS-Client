@@ -141,7 +141,7 @@ public class AddDayRecordActivity extends BaseActivity {
 
         loading = new QMUITipDialog.Builder(this)
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
-                .setTipWord("正在提交")
+                .setTipWord("正在提交...")
                 .create();
     }
 

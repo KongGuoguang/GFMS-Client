@@ -20,12 +20,13 @@ import com.zzu.gfms.activity.ShowDayRecordActivity;
 import com.zzu.gfms.activity.ModifyDayRecordActivity;
 import com.zzu.gfms.R;
 import com.zzu.gfms.adapter.CalendarAdapter;
-import com.zzu.gfms.bean.Day;
+import com.zzu.gfms.bean.CalendarDay;
 import com.zzu.gfms.data.dbflow.DayRecord;
 import com.zzu.gfms.data.utils.ConvertState;
 import com.zzu.gfms.domain.GetDayRecordsUseCase;
 import com.zzu.gfms.domain.SaveDayRecordUseCase;
 import com.zzu.gfms.event.AddDayRecordSuccess;
+import com.zzu.gfms.event.HeartbeatSuccess;
 import com.zzu.gfms.event.SubmitModifyApplicationSuccess;
 import com.zzu.gfms.utils.ConstantUtil;
 import com.zzu.gfms.utils.CalendarUtil;
@@ -61,7 +62,7 @@ public class WorkRecordFragment extends Fragment {
 
     private QMUIPullRefreshLayout pullRefreshLayout;
 
-    private List<Day> days = new ArrayList<>();
+    private List<CalendarDay> calendarDays = new ArrayList<>();
 
     private List<DayRecord> dayRecords;
 
@@ -144,26 +145,26 @@ public class WorkRecordFragment extends Fragment {
         });
 
         CalendarView calendarView = (CalendarView) view.findViewById(R.id.calendar_view);
-        days.addAll(CalendarUtil.getAllDays(calendar));
-        calendarAdapter = new CalendarAdapter(days);
+        calendarDays.addAll(CalendarUtil.getAllDays(calendar));
+        calendarAdapter = new CalendarAdapter(calendarDays);
         calendarView.setAdapter(calendarAdapter);
         calendarView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Day day = days.get(position);
-                if (!day.isCurrentMonth()){
+                CalendarDay calendarDay = calendarDays.get(position);
+                if (!calendarDay.isCurrentMonth()){
                     return;
                 }
 
                 Intent intent = new Intent();
-                intent.putExtra("year", day.getYear());
-                intent.putExtra("month", day.getMonth());
-                intent.putExtra("day", day.getDay());
+                intent.putExtra("year", calendarDay.getYear());
+                intent.putExtra("month", calendarDay.getMonth());
+                intent.putExtra("calendarDay", calendarDay.getDay());
 
-                if (!day.isHasWorkRecord()){
+                if (!calendarDay.isHasWorkRecord()){
                     intent.setClass(getActivity(), AddDayRecordActivity.class);
                 }else {
-                    DayRecord dayRecord = day.getDayRecord();
+                    DayRecord dayRecord = calendarDay.getDayRecord();
                     if (dayRecord != null){
                         intent.putExtra("dayRecordId", dayRecord.getDayRecordID());
                         switch (dayRecord.getConvertState()){
@@ -204,8 +205,6 @@ public class WorkRecordFragment extends Fragment {
                 @Override
                 public void accept(List<DayRecord> dayRecords) throws Exception {
 
-                    LogUtils.d("dayRecordsConsumer, accept");
-
                     resultCount++;
 
                     if (dayRecords != null && dayRecords.size() > 0){
@@ -218,11 +217,10 @@ public class WorkRecordFragment extends Fragment {
                         }
                         dayCount.setText(getString(R.string.day_count, dayRecords.size()));
                         WorkRecordFragment.this.dayRecords = dayRecords;
-                        addDayRecordsToDays();
+                        addDayRecordToCalendarDay();
                         calendarAdapter.notifyDataSetChanged();
 
                         if (resultCount == 2){
-                            LogUtils.d("dayRecordsConsumer, save dayRecords");
                             saveDayRecordUseCase.save(dayRecords).execute();
                         }
                     }
@@ -237,8 +235,11 @@ public class WorkRecordFragment extends Fragment {
         return dayRecordsConsumer;
     }
 
-    private void addDayRecordsToDays(){
-        if (days == null || days.size() == 0 ||
+    /**
+     * 将DayRecord添加到对应的CalendarDay
+     */
+    private void addDayRecordToCalendarDay(){
+        if (calendarDays == null || calendarDays.size() == 0 ||
                 dayRecords == null || dayRecords.size() == 0) return;
 
         int totalCount = 0;
@@ -251,10 +252,10 @@ public class WorkRecordFragment extends Fragment {
             int length = date.length();
             if (length < 10) break;
             int dayOfMonth = Integer.parseInt(dayRecord.getDay().substring(length-2));
-            for (Day day: days){
-                if (day.isCurrentMonth() && day.getDay() == dayOfMonth){
-                    day.setHasWorkRecord(true);
-                    day.setDayRecord(dayRecord);
+            for (CalendarDay calendarDay : calendarDays){
+                if (calendarDay.isCurrentMonth() && calendarDay.getDay() == dayOfMonth){
+                    calendarDay.setHasWorkRecord(true);
+                    calendarDay.setDayRecord(dayRecord);
                     break;
                 }
             }
@@ -262,13 +263,30 @@ public class WorkRecordFragment extends Fragment {
         workCount.setText(getString(R.string.work_count, totalCount));
     }
 
+    /**
+     * 监听添加日报
+     * @param event
+     */
     @Subscribe
     public void onAddDayRecordSuccess(AddDayRecordSuccess event){
         loadDayRecordsOfMonth();
     }
 
+    /**
+     * 监听申请修改日报
+     * @param event
+     */
     @Subscribe
     public void onSubmitModifyApplicationSuccess(SubmitModifyApplicationSuccess event){
+        loadDayRecordsOfMonth();
+    }
+
+    /**
+     * 监听心跳
+     * @param event
+     */
+    @Subscribe
+    public void onHeartbeatSuccess(HeartbeatSuccess event){
         loadDayRecordsOfMonth();
     }
 
@@ -281,6 +299,9 @@ public class WorkRecordFragment extends Fragment {
         EventBus.getDefault().unregister(this);
     }
 
+    /**
+     * 选择月份
+     */
     private void selectMonth(){
 
         if (selectMonthPopup == null){
@@ -292,8 +313,8 @@ public class WorkRecordFragment extends Fragment {
                     currentYear = year;
                     currenMonth = month;
                     calendar.set(currentYear, currenMonth -1, currentDay);
-                    days.clear();
-                    days.addAll(CalendarUtil.getAllDays(calendar));
+                    calendarDays.clear();
+                    calendarDays.addAll(CalendarUtil.getAllDays(calendar));
                     calendarAdapter.notifyDataSetChanged();
 
                     final String dateStr = currentYear + "年" + currenMonth + "月";

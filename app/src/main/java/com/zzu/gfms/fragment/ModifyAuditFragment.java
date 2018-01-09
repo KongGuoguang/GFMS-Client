@@ -24,12 +24,16 @@ import com.zzu.gfms.data.dbflow.OperationRecord;
 import com.zzu.gfms.data.utils.ConvertState;
 import com.zzu.gfms.domain.GetOperationRecordUseCase;
 import com.zzu.gfms.domain.SaveOperationRecordUseCase;
+import com.zzu.gfms.event.SubmitModifyApplicationSuccess;
 import com.zzu.gfms.utils.CalendarUtil;
 import com.zzu.gfms.utils.ConstantUtil;
 import com.zzu.gfms.utils.Constants;
 import com.zzu.gfms.utils.ExceptionUtil;
 import com.zzu.gfms.view.ConvertStatePicker;
 import com.zzu.gfms.view.SpinnerDatePicker;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -106,7 +110,7 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
         super.onCreate(savedInstanceState);
         initUseCase();
         gson = new Gson();
-        //EventBus.getDefault().register(this);
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -349,15 +353,15 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
     }
 
 
-//    @Subscribe
-//    public void onSubmitModifyApplicationSuccess(SubmitModifyApplicationSuccess event){
-//        loadOperationRecords();
-//    }
+    @Subscribe
+    public void onSubmitModifyApplicationSuccess(SubmitModifyApplicationSuccess event){
+        startSelect();
+    }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        //EventBus.getDefault().unregister(this);
+        EventBus.getDefault().unregister(this);
     }
 
 

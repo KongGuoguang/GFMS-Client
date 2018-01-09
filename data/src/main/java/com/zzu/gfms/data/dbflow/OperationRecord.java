@@ -54,6 +54,9 @@ public class OperationRecord extends BaseModel implements Comparable<OperationRe
     @Column
     private String dayRecordConvertState;
 
+    @Column
+    private String copyNewDayRecordID;
+
     public String getOperationRecordID() {
         return operationRecordID;
     }
@@ -150,6 +153,13 @@ public class OperationRecord extends BaseModel implements Comparable<OperationRe
         this.dayRecordConvertState = dayRecordConvertState;
     }
 
+    public String getCopyNewDayRecordID() {
+        return copyNewDayRecordID;
+    }
+
+    public void setCopyNewDayRecordID(String copyNewDayRecordID) {
+        this.copyNewDayRecordID = copyNewDayRecordID;
+    }
 
     @Override
     public int compareTo(@NonNull OperationRecord o) {

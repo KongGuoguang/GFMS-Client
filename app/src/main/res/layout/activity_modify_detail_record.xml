@@ -109,32 +109,33 @@
     </RelativeLayout>
 
     <LinearLayout
+        android:id="@+id/layout_button"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="5dp"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp">
+        android:layout_height="42dp"
+        android:layout_alignParentBottom="true">
         <TextView
             android:id="@+id/button_confirm"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/s_radius_button_bg"
+            android:background="@drawable/bg_button_bar"
             android:gravity="center"
+            android:textColor="#ffffff"
             android:text="确认"
             android:onClick="onClick"/>
         <View
-            android:layout_width="10dp"
-            android:layout_height="match_parent"/>
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#ffffff"/>
 
         <TextView
             android:id="@+id/button_cancel"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/s_radius_button_bg"
+            android:background="@drawable/bg_button_bar"
             android:gravity="center"
+            android:textColor="#ffffff"
             android:text="取消"
             android:onClick="onClick"/>
 

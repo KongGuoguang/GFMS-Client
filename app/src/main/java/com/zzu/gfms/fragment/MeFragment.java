@@ -19,6 +19,7 @@ import com.zzu.gfms.R;
 import com.zzu.gfms.activity.LoginActivity;
 import com.zzu.gfms.activity.ModifyPwdActivity;
 import com.zzu.gfms.data.DataRepository;
+import com.zzu.gfms.domain.LogoutUseCase;
 import com.zzu.gfms.utils.ConstantUtil;
 
 /**
@@ -107,8 +108,10 @@ public class MeFragment extends Fragment implements View.OnClickListener{
                 .addAction(0, "退出", QMUIDialogAction.ACTION_PROP_NEGATIVE, new QMUIDialogAction.ActionListener() {
                     @Override
                     public void onClick(QMUIDialog dialog, int index) {
+                        new LogoutUseCase().logout(ConstantUtil.worker.getWorkerID()).execute();
                         dialog.dismiss();
                         DataRepository.clearPassword();
+                        ConstantUtil.worker = null;
                         startActivity(new Intent(getActivity(), LoginActivity.class));
                         getActivity().finish();
                     }

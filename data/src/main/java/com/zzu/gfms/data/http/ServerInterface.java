@@ -76,4 +76,17 @@ public interface ServerInterface {
                                                                     @Field("endtime") String endDate,
                                                                     @Field("version") int version,
                                                                     @Field("applyType") String convertState);
+    //退出
+    @FormUrlEncoded
+    @POST("api/logout")
+    Observable<HttpReply> logout(@Field("userWorkerID") long workerId,@Field("version") int version);
+
+    //退出
+    @FormUrlEncoded
+    @POST("api/modifyPassword")
+    Observable<HttpReply> modifyPassword(@Field("userName") long workerId,
+                                         @Field("oldPassword") String oldPassword,
+                                         @Field("newPassword") String newPassword,
+                                         @Field("version") int version);
+
 }

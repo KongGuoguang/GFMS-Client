@@ -1,5 +1,6 @@
 package com.zzu.gfms.activity;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
@@ -15,6 +16,7 @@ import com.zzu.gfms.domain.GetClothesTypeUseCase;
 import com.zzu.gfms.domain.GetWorkTypeUseCase;
 import com.zzu.gfms.domain.SaveClothesTypeUseCase;
 import com.zzu.gfms.domain.SaveWorkTypeUseCase;
+import com.zzu.gfms.event.ModifyPwdSuccess;
 import com.zzu.gfms.event.SubmitModifyApplicationSuccess;
 import com.zzu.gfms.fragment.MeFragment;
 import com.zzu.gfms.fragment.ModifyAuditFragment;
@@ -140,8 +142,14 @@ public class MainActivity extends AppCompatActivity {
      * 接收到修改日志申请发送成功事件
      * @param event
      */
-    @Subscribe
+    @Subscribe(priority = 1)
     public void onSubmitModifyApplicationSuccess(SubmitModifyApplicationSuccess event){
         viewPager.setCurrentItem(1, true);
+    }
+
+    @Subscribe
+    public void onModifyPwdSuccess(ModifyPwdSuccess event){
+        finish();
+        startActivity(new Intent(this, LoginActivity.class));
     }
 }

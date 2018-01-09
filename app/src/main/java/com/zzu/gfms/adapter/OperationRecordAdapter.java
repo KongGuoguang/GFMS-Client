@@ -48,17 +48,16 @@ public class OperationRecordAdapter extends RecyclerView.Adapter<OperationRecord
         String convertState = operationRecord.getConvertState();
         switch (convertState){
             case ConvertState.OPERATION_RECORD_MODIFY_NOT_CHECK:
-                holder.titleLayout.setBackgroundResource(R.color.bg_not_check);
+                holder.titleLayout.setBackgroundResource(R.color.bg_not_checked);
                 holder.statusImage.setImageResource(R.mipmap.icon_not_check);
                 break;
             case ConvertState.OPERATION_RECORD_MODIFY_NOT_PASSED:
-                holder.titleLayout.setBackgroundResource(R.color.bg_not_pass);
+                holder.titleLayout.setBackgroundResource(R.color.bg_not_passed);
                 holder.statusImage.setImageResource(R.mipmap.icon_not_pass);
                 break;
             case ConvertState.OPERATION_RECORD_MODIFY_PASSED:
-                holder.titleLayout.setBackgroundResource(R.color.bg_pass);
+                holder.titleLayout.setBackgroundResource(R.color.bg_passed);
                 holder.statusImage.setImageResource(R.mipmap.icon_pass);
-
                 break;
         }
 

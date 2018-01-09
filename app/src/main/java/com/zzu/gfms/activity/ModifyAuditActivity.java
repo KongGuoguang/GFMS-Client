@@ -46,6 +46,8 @@ public class ModifyAuditActivity extends BaseActivity {
     private GetDetailRecordsUseCase getDetailRecordsUseCase;
     private SaveDetailRecordsUseCase saveDetailRecordsUseCase;
 
+    private String dayRecordId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +80,8 @@ public class ModifyAuditActivity extends BaseActivity {
         if (operationRecord == null) return;
 
         String convertState = operationRecord.getConvertState();
+        dayRecordId = operationRecord.getDayRecordID();
+
         TextView modifyCheckState = (TextView) findViewById(R.id.text_modify_check_state);
         String convertStateName = "审核状态：" + ConvertState.getConvertStateName(convertState);
         modifyCheckState.setText(convertStateName);
@@ -118,7 +122,7 @@ public class ModifyAuditActivity extends BaseActivity {
         workDateText.setText(workDate);
 
         TextView workCountText = (TextView) findViewById(R.id.text_work_count);
-        String workCount = "完成总量:" + operationRecord.getTotal() + "件";
+        String workCount = "完成总量：" + operationRecord.getTotal() + "件";
         workCountText.setText(workCount);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
@@ -130,6 +134,7 @@ public class ModifyAuditActivity extends BaseActivity {
 
         TextView modifyDayRecord = (TextView) findViewById(R.id.text_modify_day_record);
         if (ConvertState.DAY_RECORD_MODIFY_PASSED.equals(operationRecord.getDayRecordConvertState())){
+            dayRecordId = operationRecord.getCopyNewDayRecordID();
             modifyDayRecord.setVisibility(View.VISIBLE);
             modifyDayRecord.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -167,7 +172,7 @@ public class ModifyAuditActivity extends BaseActivity {
 
     private void loadDetailRecords(){
         loading.show();
-        getDetailRecordsUseCase.get(operationRecord.getDayRecordID())
+        getDetailRecordsUseCase.get(dayRecordId)
                 .execute(new Observer<List<DetailRecord>>() {
                     int i = 0;
                     @Override

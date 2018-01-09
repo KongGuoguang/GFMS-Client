@@ -48,7 +48,7 @@ public abstract class BaseUseCase<T> {
             throwableConsumer = new Consumer<Throwable>() {
                 @Override
                 public void accept(Throwable throwable) throws Exception {
-                    LogUtils.d(throwable.toString());
+                    LogUtils.e(throwable.toString());
                 }
             };
         }

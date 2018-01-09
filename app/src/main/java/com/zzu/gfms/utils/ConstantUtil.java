@@ -13,7 +13,7 @@ import java.util.List;
  * Author:kongguoguang
  * Date:2017-10-25
  * Time:10:28
- * Summary:
+ * Summary:保存用户、工作及衣服类型
  */
 
 public class ConstantUtil {
@@ -22,7 +22,7 @@ public class ConstantUtil {
 
     public static List<WorkType> workTypes;
 
-    public static SparseArray<String> workNames = new SparseArray<>();
+    private static SparseArray<String> workNames = new SparseArray<>();
 
     public static void setWorkTypes(List<WorkType> workTypes) {
         ConstantUtil.workTypes = workTypes;
@@ -42,7 +42,7 @@ public class ConstantUtil {
 
     public static List<ClothesType> clothesTypes;
 
-    public static SparseArray<String> clothesNames = new SparseArray<>();
+    private static SparseArray<String> clothesNames = new SparseArray<>();
 
     public static void setClothesTypes(List<ClothesType> clothesTypes) {
         ConstantUtil.clothesTypes = clothesTypes;

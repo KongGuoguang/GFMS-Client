@@ -41,9 +41,9 @@
     <color name="colorHelper_square_from_ratio_background">@color/app_color_blue</color>
     <color name="colorHelper_square_to_ratio_background">@color/app_color_theme_3</color>
 
-    <color name="bg_not_check">#eba470</color>
-    <color name="bg_not_pass">#a8e067</color>
-    <color name="bg_pass">#ff6b6b</color>
+    <color name="bg_not_checked">#eba470</color>
+    <color name="bg_passed">#a8e067</color>
+    <color name="bg_not_passed">#ff6b6b</color>
 
     <color name="bg_common_item">#7F31BDF3</color>
     <color name="bg_common_item_pressed">#5F31BDF3</color>

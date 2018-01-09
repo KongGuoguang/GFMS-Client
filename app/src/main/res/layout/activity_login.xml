@@ -80,15 +80,12 @@
 
     </android.support.design.widget.TextInputLayout>
 
-
-
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:text="登录"
-        android:background="@drawable/s_radius_button_bg"
-        android:onClick="onClick"/>
+    <TextView
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        style="@style/CommonButtonBar"
+        android:onClick="onClick"
+        android:text="登录"/>
 
 </LinearLayout>

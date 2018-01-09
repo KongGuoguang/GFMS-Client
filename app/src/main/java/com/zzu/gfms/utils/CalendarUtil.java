@@ -1,6 +1,6 @@
 package com.zzu.gfms.utils;
 
-import com.zzu.gfms.bean.Day;
+import com.zzu.gfms.bean.CalendarDay;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -146,11 +146,11 @@ public class CalendarUtil {
         return lastFewDaysOfLastMonth;
     }
 
-    public static List<Day> getAllDays(Calendar calendar){
+    public static List<CalendarDay> getAllDays(Calendar calendar){
 
         boolean isCurrentMonth = getMonth(Calendar.getInstance()) == getMonth(calendar);
 
-        List<Day> allDays = new ArrayList<>();
+        List<CalendarDay> allCalendarDays = new ArrayList<>();
         int year = getYear(calendar);
         int month = getMonth(calendar);
         int dayOfMonth = getDayOfMonth(calendar);
@@ -162,28 +162,28 @@ public class CalendarUtil {
         //添加上个月最后几天
         List<Integer> lastFewDaysOfLastMonth = getLastFewDaysOfLastMonth(daysOfLastMonth, dayOfWeek);
         for (Integer integer : lastFewDaysOfLastMonth){
-            allDays.add(new Day(integer, false));
+            allCalendarDays.add(new CalendarDay(integer, false));
         }
 
         //添加本月
         for (int i = 1; i <= daysOfMonth; i++){
-            Day day = new Day(i, true);
-            day.setYear(year);
-            day.setMonth(month);
+            CalendarDay calendarDay = new CalendarDay(i, true);
+            calendarDay.setYear(year);
+            calendarDay.setMonth(month);
             if (isCurrentMonth && i == dayOfMonth){
-                day.setToday(true);
+                calendarDay.setToday(true);
             }
-            allDays.add(day);
+            allCalendarDays.add(calendarDay);
         }
 
-        int size = allDays.size();
+        int size = allCalendarDays.size();
 
         //用下个月开始几天补全42天
         for (int i = 1; i <= 42 - size; i++){
-            allDays.add(new Day(i, false));
+            allCalendarDays.add(new CalendarDay(i, false));
         }
 
-        return allDays;
+        return allCalendarDays;
 
     }
 

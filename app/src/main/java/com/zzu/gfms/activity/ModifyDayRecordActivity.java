@@ -76,6 +76,7 @@ public class ModifyDayRecordActivity extends BaseActivity {
     private Disposable loadDetailRecordDraftDisposable;
     private Disposable submitDayRecordDisposable;
     private Disposable getDetailRecordsDisposable;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,7 +94,7 @@ public class ModifyDayRecordActivity extends BaseActivity {
         EventBus.getDefault().register(this);
     }
 
-    private void initView(){
+    private void initView() {
         TextView dateText = (TextView) findViewById(R.id.text_month);
         String dateStr = "工作日期：" + year + "年" + month + "月" + day + "日";
         dateText.setText(dateStr);
@@ -156,7 +157,7 @@ public class ModifyDayRecordActivity extends BaseActivity {
                 .create();
     }
 
-    private void initUseCase(){
+    private void initUseCase() {
         saveSingleDetailRecordDraftUseCase = new SaveSingleDetailRecordDraftUseCase();
         deleteAllDetailRecordDraftUseCase = new DeleteAllDetailRecordDraftUseCase();
         deleteSingleDetailRecordDraftUseCase = new DeleteSingleDetailRecordDraftUseCase();
@@ -166,16 +167,16 @@ public class ModifyDayRecordActivity extends BaseActivity {
         modifyDetailRecordDraftUseCase = new ModifyDetailRecordDraftUseCase();
     }
 
-    private void loadDetailRecordDrafts(){
+    private void loadDetailRecordDrafts() {
         loading.show();
         loadDetailRecordDraftDisposable = getAllDetailRecordDraftsUseCase
                 .get(ConstantUtil.worker.getWorkerID(), date)
                 .execute(new Consumer<List<DetailRecordDraft>>() {
                     @Override
                     public void accept(List<DetailRecordDraft> detailRecordDrafts) throws Exception {
-                        if (detailRecordDrafts != null && detailRecordDrafts.size() > 0){
+                        if (detailRecordDrafts != null && detailRecordDrafts.size() > 0) {
                             loading.dismiss();
-                            for (DetailRecordDraft detailRecordDraft : detailRecordDrafts){
+                            for (DetailRecordDraft detailRecordDraft : detailRecordDrafts) {
                                 totalCount = totalCount + detailRecordDraft.getCount();
                                 detailRecordDraftList.add(detailRecordDraft);
                                 DetailRecord detailRecord = new DetailRecord();
@@ -188,64 +189,71 @@ public class ModifyDayRecordActivity extends BaseActivity {
                             }
                             adapter.notifyDataSetChanged();
                             totalWorkCount.setText(getString(R.string.work_count, totalCount));
-                        }else {
+                        } else {
                             loadDetailRecords();
                         }
                     }
                 });
     }
 
-    private void loadDetailRecords(){
+    private void loadDetailRecords() {
         getDetailRecordsUseCase
                 .get(dayRecordId)
                 .execute(new Observer<List<DetailRecord>>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-                getDetailRecordsDisposable = d;
-            }
 
-            @Override
-            public void onNext(List<DetailRecord> detailRecords) {
-                if (detailRecords != null && detailRecords.size() > 0){
-                    for (DetailRecord detailRecord : detailRecords){
-                        totalCount = totalCount + detailRecord.getCount();
-                        detailRecordList.add(detailRecord);
-                        saveDetailRecordDraft(detailRecord);
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        getDetailRecordsDisposable = d;
                     }
-                    adapter.notifyDataSetChanged();
-                    totalWorkCount.setText(getString(R.string.work_count, totalCount));
-                    loading.dismiss();
-                }
-            }
 
-            @Override
-            public void onError(Throwable e) {
-                loading.dismiss();
-                showErrorDialog(ExceptionUtil.parseErrorMessage(e));
-            }
+                    @Override
+                    public void onNext(List<DetailRecord> detailRecords) {
 
-            @Override
-            public void onComplete() {
+                        if (detailRecords != null && detailRecords.size() > 0) {
+                            deleteAllDetailRecordDraftUseCase.delete(ConstantUtil.worker.getWorkerID(),
+                                    date).execute();
+                            totalCount = 0;
+                            detailRecordList.clear();
 
-            }
-        });
+                            for (DetailRecord detailRecord : detailRecords) {
+                                totalCount = totalCount + detailRecord.getCount();
+                                detailRecordList.add(detailRecord);
+                                saveDetailRecordDraft(detailRecord);
+                            }
+                            adapter.notifyDataSetChanged();
+                            totalWorkCount.setText(getString(R.string.work_count, totalCount));
+                            loading.dismiss();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        loading.dismiss();
+                        showErrorDialog(ExceptionUtil.parseErrorMessage(e));
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onAddDetailRecord(DetailRecord record){
+    public void onAddDetailRecord(DetailRecord record) {
         addDetailRecord(record);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onModifyDetailRecord(ModifyDetailRecord record){
+    public void onModifyDetailRecord(ModifyDetailRecord record) {
         modifyDetailRecord(record);
         modifyDetailRecordDraft(record);
     }
 
-    private void addDetailRecord(DetailRecord detailRecord){
-        for (DetailRecord record : detailRecordList){
+    private void addDetailRecord(DetailRecord detailRecord) {
+        for (DetailRecord record : detailRecordList) {
             if (record.getWorkTypeID() == detailRecord.getWorkTypeID() &&
-                    record.getClothesID() == detailRecord.getClothesID()){
+                    record.getClothesID() == detailRecord.getClothesID()) {
                 EventBus.getDefault().post(new AddDetailRecordFailed());
                 return;
             }
@@ -256,12 +264,12 @@ public class ModifyDayRecordActivity extends BaseActivity {
         totalCount = totalCount + detailRecord.getCount();
         totalWorkCount.setText(getString(R.string.work_count, totalCount));
 
-        adapter.notifyItemInserted(detailRecordList.size()-1);
-        recyclerView.smoothScrollToPosition(detailRecordList.size()-1);
+        adapter.notifyItemInserted(detailRecordList.size() - 1);
+        recyclerView.smoothScrollToPosition(detailRecordList.size() - 1);
         saveDetailRecordDraft(detailRecord);
     }
 
-    private void saveDetailRecordDraft(DetailRecord detailRecord){
+    private void saveDetailRecordDraft(DetailRecord detailRecord) {
         DetailRecordDraft detailRecordDraft = new DetailRecordDraft();
         detailRecordDraft.setDetailRecordID(detailRecord.getDetailRecordID());
         detailRecordDraft.setWorkerId(ConstantUtil.worker.getWorkerID());
@@ -273,26 +281,26 @@ public class ModifyDayRecordActivity extends BaseActivity {
         saveSingleDetailRecordDraftUseCase.save(detailRecordDraft).execute();
     }
 
-    private void deleteDetailRecord(int position){
+    private void deleteDetailRecord(int position) {
         DetailRecord detailRecord = detailRecordList.get(position);
         detailRecordList.remove(position);
         adapter.notifyItemRemoved(position);
         totalCount = totalCount - detailRecord.getCount();
-        if (totalCount == 0){
+        if (totalCount == 0) {
             totalWorkCount.setText("");
-        }else {
+        } else {
             totalWorkCount.setText(getString(R.string.work_count, totalCount));
         }
         adapter.notifyItemRangeChanged(position, detailRecordList.size() - position);
     }
 
-    private void deleteDetailRecordDraft(int position){
+    private void deleteDetailRecordDraft(int position) {
         DetailRecordDraft detailRecordDraft = detailRecordDraftList.get(position);
         deleteSingleDetailRecordDraftUseCase.delete(detailRecordDraft).execute();
         detailRecordDraftList.remove(position);
     }
 
-    private void modifyDetailRecord(ModifyDetailRecord modifyDetailRecord){
+    private void modifyDetailRecord(ModifyDetailRecord modifyDetailRecord) {
 
         DetailRecord detailRecord = detailRecordList.get(modifyDetailRecord.getPosition());
 
@@ -303,14 +311,14 @@ public class ModifyDayRecordActivity extends BaseActivity {
         adapter.notifyItemChanged(modifyDetailRecord.getPosition());
     }
 
-    private void modifyDetailRecordDraft(ModifyDetailRecord modifyDetailRecord){
+    private void modifyDetailRecordDraft(ModifyDetailRecord modifyDetailRecord) {
         DetailRecordDraft detailRecordDraft = detailRecordDraftList.get(modifyDetailRecord.getPosition());
         detailRecordDraft.setCount(modifyDetailRecord.getCount());
         modifyDetailRecordDraftUseCase.modify(detailRecordDraft).execute();
     }
 
-    private void submitDayRecord(){
-        if (detailRecordList.size() <= 0){
+    private void submitDayRecord() {
+        if (detailRecordList.size() <= 0) {
             showErrorDialog("请至少添加一条记录！");
             return;
         }
@@ -362,23 +370,23 @@ public class ModifyDayRecordActivity extends BaseActivity {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
         if (loadDetailRecordDraftDisposable != null &&
-                !loadDetailRecordDraftDisposable.isDisposed()){
+                !loadDetailRecordDraftDisposable.isDisposed()) {
             loadDetailRecordDraftDisposable.dispose();
         }
 
         if (submitDayRecordDisposable != null &&
-                !submitDayRecordDisposable.isDisposed()){
+                !submitDayRecordDisposable.isDisposed()) {
             submitDayRecordDisposable.dispose();
         }
 
         if (getDetailRecordsDisposable != null &&
-                !getDetailRecordsDisposable.isDisposed()){
+                !getDetailRecordsDisposable.isDisposed()) {
             getDetailRecordsDisposable.dispose();
         }
     }
 
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.button_submit:
                 submitDayRecord();
                 break;
