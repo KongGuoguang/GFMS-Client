@@ -32,7 +32,7 @@ public class DetailRecord extends BaseModel implements Comparable<DetailRecord>{
     @Column
     private int count;
 
-    private String day;
+    private String day = "";
 
     public String getDetailRecordID() {
         return detailRecordID;

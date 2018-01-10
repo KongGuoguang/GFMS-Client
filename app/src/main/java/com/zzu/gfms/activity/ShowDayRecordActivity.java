@@ -22,6 +22,8 @@ import com.zzu.gfms.domain.GetDetailRecordsUseCase;
 import com.zzu.gfms.domain.SaveDetailRecordsUseCase;
 import com.zzu.gfms.domain.SubmitModifyApplicationUseCase;
 import com.zzu.gfms.event.SubmitModifyApplicationSuccess;
+import com.zzu.gfms.utils.CalendarUtil;
+import com.zzu.gfms.utils.Constants;
 import com.zzu.gfms.utils.ExceptionUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -72,11 +74,11 @@ public class ShowDayRecordActivity extends BaseActivity {
 
     private void initIntentExtra(){
         Intent intent = getIntent();
-        year = intent.getIntExtra("year", 0);
-        month = intent.getIntExtra("month", 0);
-        day = intent.getIntExtra("day", 0);
-        dayRecordId = intent.getStringExtra("dayRecordId");
-        convertState = intent.getStringExtra("convertState");
+        year = intent.getIntExtra(Constants.YEAR, 0);
+        month = intent.getIntExtra(Constants.MONTH, 0);
+        day = intent.getIntExtra(Constants.DAY, 0);
+        dayRecordId = intent.getStringExtra(Constants.DAY_RECORD_ID);
+        convertState = intent.getStringExtra(Constants.CONVERT_STATE);
     }
 
     private void initView(){
@@ -162,9 +164,8 @@ public class ShowDayRecordActivity extends BaseActivity {
 
                     @Override
                     public void onError(Throwable e) {
-                        i++;
-                        if (i == 2 && detailRecordList.size() == 0){
-                            loading.dismiss();
+                        loading.dismiss();
+                        if (detailRecordList.size() == 0){
                             showErrorDialog(ExceptionUtil.parseErrorMessage(e));
                         }
                     }

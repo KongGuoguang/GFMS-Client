@@ -29,6 +29,7 @@ import com.zzu.gfms.event.AddDetailRecordFailed;
 import com.zzu.gfms.event.AddDetailRecordSuccess;
 import com.zzu.gfms.event.ModifyDetailRecord;
 import com.zzu.gfms.utils.ConstantUtil;
+import com.zzu.gfms.utils.Constants;
 import com.zzu.gfms.utils.ExceptionUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -76,9 +77,9 @@ public class AddDayRecordActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_day_record);
         Intent intent = getIntent();
-        year = intent.getIntExtra("year", 0);
-        month = intent.getIntExtra("month", 0);
-        day = intent.getIntExtra("day", 0);
+        year = intent.getIntExtra(Constants.YEAR, 0);
+        month = intent.getIntExtra(Constants.MONTH, 0);
+        day = intent.getIntExtra(Constants.DAY, 0);
         DecimalFormat decimalFormat = new DecimalFormat("00");
         date = String.valueOf(year) + "-" + decimalFormat.format(month) + "-" + decimalFormat.format(day);
         initView();
@@ -154,6 +155,9 @@ public class AddDayRecordActivity extends BaseActivity {
         modifyDetailRecordDraftUseCase = new ModifyDetailRecordDraftUseCase();
     }
 
+    /**
+     * 加载本地详细记录草稿
+     */
     private void loadDetailRecordDrafts(){
         loadDetailRecordDraftDisposable = getAllDetailRecordDraftsUseCase
                 .get(ConstantUtil.worker.getWorkerID(), date)
@@ -188,6 +192,10 @@ public class AddDayRecordActivity extends BaseActivity {
         modifyDetailRecordDraft(record);
     }
 
+    /**
+     * 增加一条详细记录
+     * @param detailRecord
+     */
     private void addDetailRecord(DetailRecord detailRecord){
         for (DetailRecord record : detailRecordList){
             if (record.getWorkTypeID() == detailRecord.getWorkTypeID() &&
@@ -207,6 +215,10 @@ public class AddDayRecordActivity extends BaseActivity {
         saveDetailRecordDraft(detailRecord);
     }
 
+    /**
+     * 保存详细记录草稿
+     * @param detailRecord
+     */
     private void saveDetailRecordDraft(DetailRecord detailRecord){
         DetailRecordDraft detailRecordDraft = new DetailRecordDraft();
         detailRecordDraft.setWorkerId(ConstantUtil.worker.getWorkerID());

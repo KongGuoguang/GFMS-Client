@@ -84,7 +84,7 @@ public interface ServerInterface {
     //退出
     @FormUrlEncoded
     @POST("api/modifyPassword")
-    Observable<HttpReply> modifyPassword(@Field("userName") long workerId,
+    Observable<HttpReply> modifyPassword(@Field("workerID") long workerId,
                                          @Field("oldPassword") String oldPassword,
                                          @Field("newPassword") String newPassword,
                                          @Field("version") int version);

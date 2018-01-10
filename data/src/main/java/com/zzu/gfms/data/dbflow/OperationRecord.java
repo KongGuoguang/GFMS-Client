@@ -37,7 +37,7 @@ public class OperationRecord extends BaseModel implements Comparable<OperationRe
     private String checkTime;
 
     @Column
-    private String convertState;
+    private String convertState = "";
 
     @Column
     private String modifyReason;
@@ -52,7 +52,7 @@ public class OperationRecord extends BaseModel implements Comparable<OperationRe
     private int total;
 
     @Column
-    private String dayRecordConvertState;
+    private String dayRecordConvertState = "";
 
     @Column
     private String copyNewDayRecordID;

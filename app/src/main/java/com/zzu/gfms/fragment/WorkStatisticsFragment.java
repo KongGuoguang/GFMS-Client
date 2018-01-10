@@ -4,6 +4,7 @@ package com.zzu.gfms.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.qmuiteam.qmui.widget.popup.QMUIPopup;
 import com.zzu.gfms.R;
+import com.zzu.gfms.adapter.DetailRecordDiffCallBack;
 import com.zzu.gfms.adapter.SimpleDetailRecordAdapter;
 import com.zzu.gfms.app.BaseFragment;
 import com.zzu.gfms.data.dbflow.ClothesType;
@@ -305,6 +307,8 @@ public class WorkStatisticsFragment extends BaseFragment implements View.OnClick
 
         loading.show();
 
+        detailRecordList.clear();
+        simpleDetailRecordAdapter.notifyDataSetChanged();
         workCountText.setText("");
 
         if (detailRecordList.size() > 0){
@@ -338,6 +342,10 @@ public class WorkStatisticsFragment extends BaseFragment implements View.OnClick
                     if (detailRecords != null && detailRecords.size() > 0){
                         loading.dismiss();
                         Collections.sort(detailRecords);
+
+                        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DetailRecordDiffCallBack(detailRecordList, detailRecords));
+                        diffResult.dispatchUpdatesTo(simpleDetailRecordAdapter);
+
                         detailRecordList.clear();
                         int sum = 0;
                         for (DetailRecord detailRecord : detailRecords){
@@ -348,7 +356,8 @@ public class WorkStatisticsFragment extends BaseFragment implements View.OnClick
                         String workCount = "总计：" + sum + "件";
                         workCountText.setText(workCount);
 
-                        simpleDetailRecordAdapter.notifyDataSetChanged();
+
+                        //simpleDetailRecordAdapter.notifyDataSetChanged();
 
                         if (resultCount == 2){
                             saveDetailRecordsUseCase.save(detailRecords).execute();
@@ -360,13 +369,14 @@ public class WorkStatisticsFragment extends BaseFragment implements View.OnClick
                         showErrorDialog("该段日期内没有数据，请重新选择");
                     }
 
+                    recyclerView.smoothScrollToPosition(0);
+
                 }
 
                 @Override
                 public void onError(Throwable e) {
-                    resultCount++;
-                    if (resultCount == 2 && detailRecordList.size() == 0){
-                        loading.dismiss();
+                    loading.dismiss();
+                    if (detailRecordList.size() == 0){
                         showErrorDialog(ExceptionUtil.parseErrorMessage(e));
                     }
                 }

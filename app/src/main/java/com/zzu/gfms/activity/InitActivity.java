@@ -58,7 +58,7 @@ public class InitActivity extends AppCompatActivity {
                     public void onError(Throwable e) {
                         if (hasTryLogin) return;
                         hasTryLogin = true;
-                        startActivity(new Intent(InitActivity.this, MainActivity.class));
+                        startActivity(new Intent(InitActivity.this, LoginActivity.class));
                         finish();
                     }
 
@@ -77,7 +77,7 @@ public class InitActivity extends AppCompatActivity {
                 startActivity(new Intent(InitActivity.this, LoginActivity.class));
                 finish();
             }
-        }, 3000);
+        }, 5000);
     }
 
     private void setSystemUIVisible(boolean show) {

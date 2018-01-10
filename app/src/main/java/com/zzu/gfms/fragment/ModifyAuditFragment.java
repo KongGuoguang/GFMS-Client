@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,11 +20,14 @@ import com.qmuiteam.qmui.widget.popup.QMUIPopup;
 import com.zzu.gfms.R;
 import com.zzu.gfms.activity.ModifyAuditActivity;
 import com.zzu.gfms.adapter.OperationRecordAdapter;
+import com.zzu.gfms.adapter.OperationRecordDiffCallBack;
 import com.zzu.gfms.app.BaseFragment;
 import com.zzu.gfms.data.dbflow.OperationRecord;
 import com.zzu.gfms.data.utils.ConvertState;
 import com.zzu.gfms.domain.GetOperationRecordUseCase;
 import com.zzu.gfms.domain.SaveOperationRecordUseCase;
+import com.zzu.gfms.event.AddDayRecordSuccess;
+import com.zzu.gfms.event.HeartbeatSuccess;
 import com.zzu.gfms.event.SubmitModifyApplicationSuccess;
 import com.zzu.gfms.utils.CalendarUtil;
 import com.zzu.gfms.utils.ConstantUtil;
@@ -42,6 +46,7 @@ import java.util.List;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -96,6 +101,8 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
     private SaveOperationRecordUseCase saveOperationRecordUseCase;
 
     private Observer<List<OperationRecord>> operationRecordObserver;
+
+    private Consumer<List<OperationRecord>> operationRecordConsumer;
 
     private Disposable disposable;
 
@@ -287,6 +294,13 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
 
         loading.show();
 
+        operationRecordList.clear();
+        operationRecordAdapter.notifyDataSetChanged();
+
+        if (disposable != null && !disposable.isDisposed()){
+            disposable.dispose();
+        }
+
         getOperationRecordUseCase.get(ConstantUtil.worker.getWorkerID(),
                 CalendarUtil.formatDate(startYear, startMonth, startDay),
                 CalendarUtil.formatDate(endYear, endMonth, endDay), convertState)
@@ -312,9 +326,14 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
                         loading.dismiss();
 
                         Collections.sort(operationRecords);
+
+                        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(
+                                new OperationRecordDiffCallBack(operationRecordList, operationRecords), true);
+                        diffResult.dispatchUpdatesTo(operationRecordAdapter);
+
                         operationRecordList.clear();
                         operationRecordList.addAll(operationRecords);
-                        operationRecordAdapter.notifyDataSetChanged();
+                        //operationRecordAdapter.notifyDataSetChanged();
 
                         if (resultCount == 2){
                             saveOperationRecordUseCase.save(operationRecords).execute();
@@ -328,17 +347,15 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
                         }
                     }
 
+                    recyclerView.smoothScrollToPosition(0);
+
                 }
 
                 @Override
                 public void onError(Throwable e) {
-                    resultCount++;
-
-                    if (resultCount == 2){
-                        loading.dismiss();
-                        if (operationRecordList.size() == 0){
-                            showErrorDialog(ExceptionUtil.parseErrorMessage(e));
-                        }
+                    loading.dismiss();
+                    if (operationRecordList.size() == 0){
+                        showErrorDialog(ExceptionUtil.parseErrorMessage(e));
                     }
                 }
 
@@ -353,14 +370,90 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
     }
 
 
+    /**
+     * 监听修改申请提交成功事件
+     * @param event
+     */
     @Subscribe
     public void onSubmitModifyApplicationSuccess(SubmitModifyApplicationSuccess event){
         startSelect();
     }
 
+    /**
+     * 监听心跳
+     * @param event
+     */
+    @Subscribe
+    public void onHeartbeatSuccess(HeartbeatSuccess event){
+        refreshOperationRecord();
+    }
+
+    /**
+     * 监听添加/修改日报成功事件
+     * @param event
+     */
+    @Subscribe
+    public void onAddDayRecordSuccess(AddDayRecordSuccess event){
+        refreshOperationRecord();
+    }
+
+    private void refreshOperationRecord(){
+        int start = CalendarUtil.getDateInt(startYear, startMonth, startDay);
+        int end = CalendarUtil.getDateInt(endYear, endMonth, endDay);
+        if (start > end){
+            return;
+        }
+
+        if (disposable != null && !disposable.isDisposed()){
+            disposable.dispose();
+        }
+
+        disposable = getOperationRecordUseCase.get(ConstantUtil.worker.getWorkerID(),
+                CalendarUtil.formatDate(startYear, startMonth, startDay),
+                CalendarUtil.formatDate(endYear, endMonth, endDay), convertState)
+                .execute(getOperationRecordConsumer());
+    }
+
+    public Consumer<List<OperationRecord>> getOperationRecordConsumer() {
+
+        resultCount = 0;
+
+        if (operationRecordConsumer == null){
+            operationRecordConsumer = new Consumer<List<OperationRecord>>() {
+                @Override
+                public void accept(List<OperationRecord> operationRecords) throws Exception {
+                    if (operationRecords != null && operationRecords.size() > 0){
+
+                        Collections.sort(operationRecords);
+
+                        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(
+                                new OperationRecordDiffCallBack(operationRecordList, operationRecords), true);
+                        diffResult.dispatchUpdatesTo(operationRecordAdapter);
+
+                        operationRecordList.clear();
+                        operationRecordList.addAll(operationRecords);
+                        //operationRecordAdapter.notifyDataSetChanged();
+
+                        if (resultCount == 2){
+                            saveOperationRecordUseCase.save(operationRecords).execute();
+                        }
+
+                        recyclerView.smoothScrollToPosition(0);
+                    }
+                }
+            };
+        }
+        return operationRecordConsumer;
+    }
+
+
+
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (disposable != null && !disposable.isDisposed()){
+            disposable.dispose();
+        }
         EventBus.getDefault().unregister(this);
     }
 

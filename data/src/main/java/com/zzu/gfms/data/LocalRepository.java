@@ -431,11 +431,23 @@ public class LocalRepository {
             @Override
             public void subscribe(ObservableEmitter<List<OperationRecord>> e) throws Exception {
 
-                List<OperationRecord> operationRecords = SQLite.select()
-                        .from(OperationRecord.class)
-                        .where(OperationRecord_Table.workerID.eq(workerId))
-                        .and(OperationRecord_Table.day.between(startDate).and(endDate))
-                        .queryList();
+                List<OperationRecord> operationRecords;
+
+                if (ConvertState.OPERATION_RECORD_ALL.equals(convertState)){
+                    operationRecords = SQLite.select()
+                            .from(OperationRecord.class)
+                            .where(OperationRecord_Table.workerID.eq(workerId))
+                            .and(OperationRecord_Table.day.between(startDate).and(endDate))
+                            .queryList();
+                }else {
+                    operationRecords = SQLite.select()
+                            .from(OperationRecord.class)
+                            .where(OperationRecord_Table.workerID.eq(workerId))
+                            .and(OperationRecord_Table.day.between(startDate).and(endDate))
+                            .and(OperationRecord_Table.convertState.eq(convertState))
+                            .queryList();
+                }
+
                 e.onNext(operationRecords);
                 e.onComplete();
             }

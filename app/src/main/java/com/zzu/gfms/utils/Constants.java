@@ -21,5 +21,7 @@ public class Constants {
 
     public static final String DAY_RECORD_ID = "dayRecordId";
 
+    public static final String CONVERT_STATE = "convertState";
+
     public static final String JSON_OPERATION_RECORD = "opearation_record";
 }

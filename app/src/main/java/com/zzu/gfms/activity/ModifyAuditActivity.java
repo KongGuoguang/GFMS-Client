@@ -1,8 +1,8 @@
 package com.zzu.gfms.activity;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,19 +16,23 @@ import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.zzu.gfms.R;
 import com.zzu.gfms.adapter.DetailRecordAdapter;
+import com.zzu.gfms.adapter.DetailRecordDiffCallBack;
 import com.zzu.gfms.app.BaseActivity;
 import com.zzu.gfms.data.dbflow.DetailRecord;
 import com.zzu.gfms.data.dbflow.OperationRecord;
 import com.zzu.gfms.data.utils.ConvertState;
 import com.zzu.gfms.domain.GetDetailRecordsUseCase;
 import com.zzu.gfms.domain.SaveDetailRecordsUseCase;
+import com.zzu.gfms.event.AddDayRecordSuccess;
 import com.zzu.gfms.utils.Constants;
 import com.zzu.gfms.utils.ExceptionUtil;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
@@ -64,6 +68,7 @@ public class ModifyAuditActivity extends BaseActivity {
         initView();
         initUseCase();
         loadDetailRecords();
+        EventBus.getDefault().register(this);
     }
 
     private void initView(){
@@ -147,12 +152,12 @@ public class ModifyAuditActivity extends BaseActivity {
                         int month = Integer.parseInt(date.substring(5, 7));
                         int day = Integer.parseInt(date.substring(8, 10));
 
-                        intent.putExtra("year", year);
-                        intent.putExtra("month", month);
-                        intent.putExtra("day", day);
+                        intent.putExtra(Constants.YEAR, year);
+                        intent.putExtra(Constants.MONTH, month);
+                        intent.putExtra(Constants.DAY, day);
                     }
 
-                    intent.putExtra("dayRecordId", operationRecord.getDayRecordID());
+                    intent.putExtra(Constants.DAY_RECORD_ID, operationRecord.getDayRecordID());
 
                     startActivity(intent);
                 }
@@ -185,9 +190,12 @@ public class ModifyAuditActivity extends BaseActivity {
                         i++;
                         if (detailRecords != null && detailRecords.size() > 0){
                             loading.dismiss();
+                            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(
+                                    new DetailRecordDiffCallBack(detailRecordList, detailRecords), true);
+                            diffResult.dispatchUpdatesTo(adapter);
                             detailRecordList.clear();
                             detailRecordList.addAll(detailRecords);
-                            adapter.notifyDataSetChanged();
+                            //adapter.notifyDataSetChanged();
                             if (i == 2){
                                 saveDetailRecordsUseCase.save(detailRecords).execute();
                             }
@@ -196,9 +204,8 @@ public class ModifyAuditActivity extends BaseActivity {
 
                     @Override
                     public void onError(Throwable e) {
-                        i++;
-                        if (i == 2 && detailRecordList.size() == 0){
-                            loading.dismiss();
+                        loading.dismiss();
+                        if (detailRecordList.size() == 0){
                             showErrorDialog(ExceptionUtil.parseErrorMessage(e));
                         }
                     }
@@ -216,5 +223,16 @@ public class ModifyAuditActivity extends BaseActivity {
         if (disposable != null && !disposable.isDisposed()){
             disposable.dispose();
         }
+
+        EventBus.getDefault().unregister(this);
+    }
+
+    /**
+     * 监听添加/修改日报成功事件
+     * @param event
+     */
+    @Subscribe
+    public void onAddDayRecordSuccess(AddDayRecordSuccess event){
+        finish();
     }
 }

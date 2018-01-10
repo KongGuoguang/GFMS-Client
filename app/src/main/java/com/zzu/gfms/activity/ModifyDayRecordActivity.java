@@ -2,6 +2,7 @@ package com.zzu.gfms.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +13,7 @@ import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.zzu.gfms.R;
 import com.zzu.gfms.adapter.DetailRecordAdapter;
+import com.zzu.gfms.adapter.DetailRecordDiffCallBack;
 import com.zzu.gfms.app.BaseActivity;
 import com.zzu.gfms.data.bean.DayAndDetailRecords;
 import com.zzu.gfms.data.dbflow.DayRecord;
@@ -30,6 +32,7 @@ import com.zzu.gfms.event.AddDetailRecordFailed;
 import com.zzu.gfms.event.AddDetailRecordSuccess;
 import com.zzu.gfms.event.ModifyDetailRecord;
 import com.zzu.gfms.utils.ConstantUtil;
+import com.zzu.gfms.utils.Constants;
 import com.zzu.gfms.utils.ExceptionUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -82,10 +85,10 @@ public class ModifyDayRecordActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_modify_day_record);
         Intent intent = getIntent();
-        year = intent.getIntExtra("year", 0);
-        month = intent.getIntExtra("month", 0);
-        day = intent.getIntExtra("day", 0);
-        dayRecordId = intent.getStringExtra("dayRecordId");
+        year = intent.getIntExtra(Constants.YEAR, 0);
+        month = intent.getIntExtra(Constants.MONTH, 0);
+        day = intent.getIntExtra(Constants.DAY, 0);
+        dayRecordId = intent.getStringExtra(Constants.DAY_RECORD_ID);
         DecimalFormat decimalFormat = new DecimalFormat("00");
         date = String.valueOf(year) + "-" + decimalFormat.format(month) + "-" + decimalFormat.format(day);
         initView();
@@ -212,6 +215,11 @@ public class ModifyDayRecordActivity extends BaseActivity {
                         if (detailRecords != null && detailRecords.size() > 0) {
                             deleteAllDetailRecordDraftUseCase.delete(ConstantUtil.worker.getWorkerID(),
                                     date).execute();
+
+                            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(
+                                    new DetailRecordDiffCallBack(detailRecordList, detailRecords), true);
+                            diffResult.dispatchUpdatesTo(adapter);
+
                             totalCount = 0;
                             detailRecordList.clear();
 
@@ -220,7 +228,7 @@ public class ModifyDayRecordActivity extends BaseActivity {
                                 detailRecordList.add(detailRecord);
                                 saveDetailRecordDraft(detailRecord);
                             }
-                            adapter.notifyDataSetChanged();
+                            //adapter.notifyDataSetChanged();
                             totalWorkCount.setText(getString(R.string.work_count, totalCount));
                             loading.dismiss();
                         }
@@ -229,7 +237,9 @@ public class ModifyDayRecordActivity extends BaseActivity {
                     @Override
                     public void onError(Throwable e) {
                         loading.dismiss();
-                        showErrorDialog(ExceptionUtil.parseErrorMessage(e));
+                        if (detailRecordList.size() == 0){
+                            showErrorDialog(ExceptionUtil.parseErrorMessage(e));
+                        }
                     }
 
                     @Override
