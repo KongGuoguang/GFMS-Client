@@ -20,8 +20,15 @@ public class GfmsApplication extends Application implements MacrobioticDemand {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        //初始化数据仓库
         DataRepository.init(this);
+
         Utils.init(this);
+
+        //初始化全局异常处理
+        CrashHandler.getInstance().init();
+
         //启动进程保活
         MacrobioticSupport.runWithSchedule(this);
     }

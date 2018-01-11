@@ -106,11 +106,11 @@ class OkHttp3Util {
             if ("POST".equals(method)) {//打印post请求体
                 Buffer buffer = new Buffer();
                 request.body().writeTo(buffer);
-                LogUtils.d("OkHttpLog", String.format("发送请求:%s %n requestBody:%s",
+                LogUtils.file("OkHttpLog", String.format("发送请求:%s %n requestBody:%s",
                         request.url(), buffer.readUtf8()));
 
             } else {
-                LogUtils.d("OkHttpLog", String.format("发送请求:%s", request.url()));
+                LogUtils.file("OkHttpLog", String.format("发送请求:%s", request.url()));
             }
 
             long t1 = System.nanoTime();//请求发起的时间
@@ -123,7 +123,7 @@ class OkHttp3Util {
             //个新的response给应用层处理
             ResponseBody responseBody = response.peekBody(1024 * 1024);
 
-            LogUtils.d("OkHttpLog",
+            LogUtils.file("OkHttpLog",
                     String.format(Locale.CHINESE,"接收响应:%s %n" +
                                     "httpCode:%s %n" +
                                     "responseBody:%s %n" +

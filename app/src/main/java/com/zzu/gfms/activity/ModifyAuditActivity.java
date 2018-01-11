@@ -23,7 +23,7 @@ import com.zzu.gfms.data.dbflow.OperationRecord;
 import com.zzu.gfms.data.utils.ConvertState;
 import com.zzu.gfms.domain.GetDetailRecordsUseCase;
 import com.zzu.gfms.domain.SaveDetailRecordsUseCase;
-import com.zzu.gfms.event.AddDayRecordSuccess;
+import com.zzu.gfms.event.ModifyDayRecordSuccess;
 import com.zzu.gfms.utils.Constants;
 import com.zzu.gfms.utils.ExceptionUtil;
 
@@ -62,7 +62,7 @@ public class ModifyAuditActivity extends BaseActivity {
         try {
             operationRecord = gson.fromJson(json, OperationRecord.class);
         }catch (Exception e){
-            LogUtils.e(e.toString());
+            LogUtils.file(e.toString());
             return;
         }
         initView();
@@ -157,7 +157,7 @@ public class ModifyAuditActivity extends BaseActivity {
                         intent.putExtra(Constants.DAY, day);
                     }
 
-                    intent.putExtra(Constants.DAY_RECORD_ID, operationRecord.getDayRecordID());
+                    intent.putExtra(Constants.DAY_RECORD_ID, dayRecordId);
 
                     startActivity(intent);
                 }
@@ -228,11 +228,18 @@ public class ModifyAuditActivity extends BaseActivity {
     }
 
     /**
-     * 监听添加/修改日报成功事件
+     * 监听修改日报成功事件
      * @param event
      */
     @Subscribe
-    public void onAddDayRecordSuccess(AddDayRecordSuccess event){
+    public void onModifyDayRecordSuccess(ModifyDayRecordSuccess event){
+
+        if (dayRecordId == null || !dayRecordId.equals(event.getDayRecordId())){
+            return;
+        }
+
+        operationRecord.setDayRecordConvertState(ConvertState.DAY_RECORD_SUBMIT);
+        operationRecord.async().save();
         finish();
     }
 }

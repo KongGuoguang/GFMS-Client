@@ -22,7 +22,6 @@ public class HeartbeatService extends MacrobioticService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        LogUtils.d("HeartbeatService", "onStartCommand");
         EventBus.getDefault().post(new HeartbeatSuccess());
         return START_STICKY;
     }

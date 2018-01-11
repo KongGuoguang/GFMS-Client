@@ -28,6 +28,7 @@ import com.zzu.gfms.domain.GetOperationRecordUseCase;
 import com.zzu.gfms.domain.SaveOperationRecordUseCase;
 import com.zzu.gfms.event.AddDayRecordSuccess;
 import com.zzu.gfms.event.HeartbeatSuccess;
+import com.zzu.gfms.event.ModifyDayRecordSuccess;
 import com.zzu.gfms.event.SubmitModifyApplicationSuccess;
 import com.zzu.gfms.utils.CalendarUtil;
 import com.zzu.gfms.utils.ConstantUtil;
@@ -376,7 +377,7 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
      */
     @Subscribe
     public void onSubmitModifyApplicationSuccess(SubmitModifyApplicationSuccess event){
-        startSelect();
+        refreshOperationRecord();
     }
 
     /**
@@ -393,7 +394,7 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
      * @param event
      */
     @Subscribe
-    public void onAddDayRecordSuccess(AddDayRecordSuccess event){
+    public void onModifyDayRecordSuccess(ModifyDayRecordSuccess event){
         refreshOperationRecord();
     }
 

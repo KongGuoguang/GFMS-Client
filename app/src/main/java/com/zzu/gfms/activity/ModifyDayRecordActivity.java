@@ -27,9 +27,9 @@ import com.zzu.gfms.domain.GetDetailRecordsUseCase;
 import com.zzu.gfms.domain.ModifyDetailRecordDraftUseCase;
 import com.zzu.gfms.domain.SaveSingleDetailRecordDraftUseCase;
 import com.zzu.gfms.domain.SubmitDayRecordUseCase;
-import com.zzu.gfms.event.AddDayRecordSuccess;
 import com.zzu.gfms.event.AddDetailRecordFailed;
 import com.zzu.gfms.event.AddDetailRecordSuccess;
+import com.zzu.gfms.event.ModifyDayRecordSuccess;
 import com.zzu.gfms.event.ModifyDetailRecord;
 import com.zzu.gfms.utils.ConstantUtil;
 import com.zzu.gfms.utils.Constants;
@@ -356,7 +356,7 @@ public class ModifyDayRecordActivity extends BaseActivity {
                     public void onNext(DayAndDetailRecords dayAndDetailRecords) {
                         submitting.dismiss();
                         showToast("提交成功");
-                        EventBus.getDefault().post(new AddDayRecordSuccess());
+                        EventBus.getDefault().post(new ModifyDayRecordSuccess(dayRecordId));
                         deleteAllDetailRecordDraftUseCase.delete(ConstantUtil.worker.getWorkerID(),
                                 date).execute();
                         finish();

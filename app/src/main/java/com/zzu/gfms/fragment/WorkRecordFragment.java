@@ -27,6 +27,7 @@ import com.zzu.gfms.domain.GetDayRecordsUseCase;
 import com.zzu.gfms.domain.SaveDayRecordUseCase;
 import com.zzu.gfms.event.AddDayRecordSuccess;
 import com.zzu.gfms.event.HeartbeatSuccess;
+import com.zzu.gfms.event.ModifyDayRecordSuccess;
 import com.zzu.gfms.event.SubmitModifyApplicationSuccess;
 import com.zzu.gfms.utils.ConstantUtil;
 import com.zzu.gfms.utils.CalendarUtil;
@@ -139,7 +140,6 @@ public class WorkRecordFragment extends Fragment {
 
             @Override
             public void onRefresh() {
-                LogUtils.d("onRefresh");
                 isRefreshing = true;
                 loadDayRecordsOfMonth();
             }
@@ -270,11 +270,20 @@ public class WorkRecordFragment extends Fragment {
     }
 
     /**
-     * 监听添加/修改日报成功事件
+     * 监听添加日报成功事件
      * @param event
      */
     @Subscribe
     public void onAddDayRecordSuccess(AddDayRecordSuccess event){
+        loadDayRecordsOfMonth();
+    }
+
+    /**
+     * 监听修改日报成功事件
+     * @param event
+     */
+    @Subscribe
+    public void onModifyDayRecordSuccess(ModifyDayRecordSuccess event){
         loadDayRecordsOfMonth();
     }
 
