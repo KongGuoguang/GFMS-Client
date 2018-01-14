@@ -51,8 +51,8 @@ public class CalendarAdapter extends BaseAdapter {
         if (convertView == null){
             convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.calendar_picker_item, parent, false);
             viewHolder = new ViewHolder();
-            viewHolder.day = (TextView) convertView.findViewById(R.id.text_day);
-            viewHolder.right = (ImageView) convertView.findViewById(R.id.image_right);
+            viewHolder.day = convertView.findViewById(R.id.text_day);
+            viewHolder.right = convertView.findViewById(R.id.image_right);
             convertView.setTag(viewHolder);
         }else {
             viewHolder = (ViewHolder) convertView.getTag();

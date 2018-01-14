@@ -108,12 +108,12 @@ public class OperationRecordAdapter extends RecyclerView.Adapter<OperationRecord
 
         ViewHolder(View itemView) {
             super(itemView);
-            titleLayout = (RelativeLayout) itemView.findViewById(R.id.layout_title);
-            statusImage = (ImageView) itemView.findViewById(R.id.image_state);
-            statusText = (TextView) itemView.findViewById(R.id.text_state);
-            applyDateText = (TextView) itemView.findViewById(R.id.text_apply_date);
-            workDateText = (TextView) itemView.findViewById(R.id.text_work_date);
-            workCountText = (TextView) itemView.findViewById(R.id.text_work_count);
+            titleLayout = itemView.findViewById(R.id.layout_title);
+            statusImage = itemView.findViewById(R.id.image_state);
+            statusText = itemView.findViewById(R.id.text_state);
+            applyDateText = itemView.findViewById(R.id.text_apply_date);
+            workDateText = itemView.findViewById(R.id.text_work_date);
+            workCountText = itemView.findViewById(R.id.text_work_count);
         }
     }
 

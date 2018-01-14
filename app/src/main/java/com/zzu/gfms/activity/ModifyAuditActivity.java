@@ -72,7 +72,7 @@ public class ModifyAuditActivity extends BaseActivity {
     }
 
     private void initView(){
-        QMUITopBar topBar = (QMUITopBar) findViewById(R.id.top_bar);
+        QMUITopBar topBar = findViewById(R.id.top_bar);
         topBar.setTitle("申请详情");
         topBar.addLeftBackImageButton()
                 .setOnClickListener(new View.OnClickListener() {
@@ -87,12 +87,12 @@ public class ModifyAuditActivity extends BaseActivity {
         String convertState = operationRecord.getConvertState();
         dayRecordId = operationRecord.getDayRecordID();
 
-        TextView modifyCheckState = (TextView) findViewById(R.id.text_modify_check_state);
+        TextView modifyCheckState = findViewById(R.id.text_modify_check_state);
         String convertStateName = "审核状态：" + ConvertState.getConvertStateName(convertState);
         modifyCheckState.setText(convertStateName);
 
-        TextView modifyNotPassedReason = (TextView) findViewById(R.id.text_modify_not_passed_reason);
-        TextView modifyCheckDate = (TextView) findViewById(R.id.text_modify_check_date);
+        TextView modifyNotPassedReason = findViewById(R.id.text_modify_not_passed_reason);
+        TextView modifyCheckDate = findViewById(R.id.text_modify_check_date);
 
         switch (convertState){
             case ConvertState.OPERATION_RECORD_MODIFY_NOT_PASSED:
@@ -110,7 +110,7 @@ public class ModifyAuditActivity extends BaseActivity {
                 break;
         }
 
-        TextView applyDateText = (TextView) findViewById(R.id.text_apply_date);
+        TextView applyDateText = findViewById(R.id.text_apply_date);
         String applyTime = operationRecord.getApplyTime();
         if (!TextUtils.isEmpty(applyTime) && applyTime.length() > 10){
             applyTime = applyTime.substring(0, 10);
@@ -118,26 +118,26 @@ public class ModifyAuditActivity extends BaseActivity {
         String applyDate = "申请日期：" + applyTime;
         applyDateText.setText(applyDate);
 
-        TextView applyReason = (TextView) findViewById(R.id.text_apply_reason);
+        TextView applyReason = findViewById(R.id.text_apply_reason);
         String reason = "修改原因：" + operationRecord.getModifyReason();
         applyReason.setText(reason);
 
-        TextView workDateText = (TextView) findViewById(R.id.text_work_date);
+        TextView workDateText = findViewById(R.id.text_work_date);
         String workDate = "工作日期：" + operationRecord.getDay();
         workDateText.setText(workDate);
 
-        TextView workCountText = (TextView) findViewById(R.id.text_work_count);
+        TextView workCountText = findViewById(R.id.text_work_count);
         String workCount = "完成总量：" + operationRecord.getTotal() + "件";
         workCountText.setText(workCount);
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         adapter = new DetailRecordAdapter(detailRecordList, false);
         recyclerView.setAdapter(adapter);
 
-        TextView modifyDayRecord = (TextView) findViewById(R.id.text_modify_day_record);
+        TextView modifyDayRecord = findViewById(R.id.text_modify_day_record);
         if (ConvertState.DAY_RECORD_MODIFY_PASSED.equals(operationRecord.getDayRecordConvertState())){
             dayRecordId = operationRecord.getCopyNewDayRecordID();
             modifyDayRecord.setVisibility(View.VISIBLE);

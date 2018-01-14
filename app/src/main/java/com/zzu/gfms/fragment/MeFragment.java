@@ -44,16 +44,16 @@ public class MeFragment extends Fragment implements View.OnClickListener{
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        QMUITopBar topBar = (QMUITopBar) view.findViewById(R.id.top_bar);
+        QMUITopBar topBar = view.findViewById(R.id.top_bar);
         topBar.setTitle("我的信息");
 
-        TextView loginName = (TextView) view.findViewById(R.id.text_login_name);
+        TextView loginName = view.findViewById(R.id.text_login_name);
         loginName.setText(ConstantUtil.worker.getUserName());
 
-        TextView name = (TextView) view.findViewById(R.id.text_name);
+        TextView name = view.findViewById(R.id.text_name);
         name.setText(ConstantUtil.worker.getName());
 
-        TextView sex = (TextView) view.findViewById(R.id.text_sex);
+        TextView sex = view.findViewById(R.id.text_sex);
         sex.setText(ConstantUtil.worker.getSex());
 
         View modifyPassword = view.findViewById(R.id.view_modify_password);
@@ -65,7 +65,7 @@ public class MeFragment extends Fragment implements View.OnClickListener{
         View aboutAndHelp = view.findViewById(R.id.view_about_and_help);
         aboutAndHelp.setOnClickListener(this);
 
-        TextView logout = (TextView) view.findViewById(R.id.text_logout);
+        TextView logout = view.findViewById(R.id.text_logout);
         logout.setOnClickListener(this);
     }
 

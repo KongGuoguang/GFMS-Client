@@ -48,10 +48,10 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void initView(){
-        userNameEdit = (EditText) findViewById(R.id.edit_text_user_name);
+        userNameEdit = findViewById(R.id.edit_text_user_name);
         userNameEdit.setText(DataRepository.getUserName());
 
-        passwordEdit = (EditText) findViewById(R.id.edit_text_password);
+        passwordEdit = findViewById(R.id.edit_text_password);
         //passwordEdit.setText("123456");
         passwordEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override

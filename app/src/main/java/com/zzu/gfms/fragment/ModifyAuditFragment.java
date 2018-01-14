@@ -137,25 +137,25 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
     }
 
     private void initView(View view){
-        QMUITopBar topBar = (QMUITopBar) view.findViewById(R.id.top_bar);
+        QMUITopBar topBar = view.findViewById(R.id.top_bar);
         topBar.setTitle("申请记录");
 
-        startDateText = (TextView) view.findViewById(R.id.text_start_date);
-        selectStartDate = (TextView) view.findViewById(R.id.text_select_start_date);
+        startDateText = view.findViewById(R.id.text_start_date);
+        selectStartDate = view.findViewById(R.id.text_select_start_date);
         selectStartDate.setOnClickListener(this);
 
-        endDateText = (TextView) view.findViewById(R.id.text_end_date);
-        selectEndDate = (TextView) view.findViewById(R.id.text_select_end_date);
+        endDateText = view.findViewById(R.id.text_end_date);
+        selectEndDate = view.findViewById(R.id.text_select_end_date);
         selectEndDate.setOnClickListener(this);
 
-        convertStateText = (TextView) view.findViewById(R.id.text_convert_state);
-        selectConvertStateText  = (TextView) view.findViewById(R.id.text_select_convert_state);
+        convertStateText = view.findViewById(R.id.text_convert_state);
+        selectConvertStateText  = view.findViewById(R.id.text_select_convert_state);
         selectConvertStateText.setOnClickListener(this);
 
-        TextView select = (TextView) view.findViewById(R.id.text_select);
+        TextView select = view.findViewById(R.id.text_select);
         select.setOnClickListener(this);
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        recyclerView = view.findViewById(R.id.recycler_view);
         operationRecordAdapter = new OperationRecordAdapter(operationRecordList);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(operationRecordAdapter);

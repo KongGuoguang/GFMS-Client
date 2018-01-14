@@ -63,10 +63,10 @@ public class SimpleDetailRecordAdapter extends RecyclerView.Adapter<SimpleDetail
 
         ViewHolder(View itemView) {
             super(itemView);
-            workDate = (TextView) itemView.findViewById(R.id.text_work_date);
-            workCount = (TextView) itemView.findViewById(R.id.text_work_count);
-            clothesType = (TextView) itemView.findViewById(R.id.text_clothes_type);
-            workType = (TextView) itemView.findViewById(R.id.text_work_type);
+            workDate = itemView.findViewById(R.id.text_work_date);
+            workCount = itemView.findViewById(R.id.text_work_count);
+            clothesType = itemView.findViewById(R.id.text_clothes_type);
+            workType = itemView.findViewById(R.id.text_work_type);
         }
     }
 

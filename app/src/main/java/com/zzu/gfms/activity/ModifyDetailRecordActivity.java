@@ -44,7 +44,7 @@ public class ModifyDetailRecordActivity extends BaseActivity {
     }
 
     private void initView(){
-        QMUITopBar topBar = (QMUITopBar) findViewById(R.id.top_bar);
+        QMUITopBar topBar = findViewById(R.id.top_bar);
         topBar.addLeftBackImageButton()
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -53,13 +53,13 @@ public class ModifyDetailRecordActivity extends BaseActivity {
                     }
                 });
         topBar.setTitle("日报编辑");
-        TextView clothesTypeText = (TextView) findViewById(R.id.text_clothes_type);
+        TextView clothesTypeText = findViewById(R.id.text_clothes_type);
         clothesTypeText.setText(ConstantUtil.getClothesName(clothesId));
 
-        TextView workTypeText = (TextView) findViewById(R.id.text_work_type);
+        TextView workTypeText = findViewById(R.id.text_work_type);
         workTypeText.setText(ConstantUtil.getWorkName(workTypeId));
 
-        workCount = (EditText) findViewById(R.id.edit_work_count);
+        workCount = findViewById(R.id.edit_work_count);
         workCount.setText(String.valueOf(count));
     }
 

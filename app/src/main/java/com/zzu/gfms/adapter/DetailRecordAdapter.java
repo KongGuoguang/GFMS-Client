@@ -98,10 +98,10 @@ public class DetailRecordAdapter extends RecyclerView.Adapter<DetailRecordAdapte
 
         ViewHolder(View itemView) {
             super(itemView);
-            workType = (TextView) itemView.findViewById(R.id.text_work_type);
-            clothesType = (TextView) itemView.findViewById(R.id.text_clothes_type);
-            count = (TextView) itemView.findViewById(R.id.text_count);
-            dustbin = (ImageView) itemView.findViewById(R.id.image_dustbin);
+            workType = itemView.findViewById(R.id.text_work_type);
+            clothesType = itemView.findViewById(R.id.text_clothes_type);
+            count = itemView.findViewById(R.id.text_count);
+            dustbin = itemView.findViewById(R.id.image_dustbin);
             if (deleteable){
                 dustbin.setVisibility(View.VISIBLE);
             }else {

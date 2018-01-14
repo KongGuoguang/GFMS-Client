@@ -53,7 +53,7 @@ public class ModifyPwdActivity extends BaseActivity {
     }
 
     private void initView(){
-        QMUITopBar topBar = (QMUITopBar) findViewById(R.id.top_bar);
+        QMUITopBar topBar = findViewById(R.id.top_bar);
         topBar.setTitle("修改密码");
         topBar.addLeftBackImageButton()
                 .setOnClickListener(new View.OnClickListener() {
@@ -63,9 +63,9 @@ public class ModifyPwdActivity extends BaseActivity {
                     }
                 });
 
-        oldPwdEdTx = (EditText) findViewById(R.id.edit_old_pwd);
+        oldPwdEdTx = findViewById(R.id.edit_old_pwd);
 
-        newPwdEdTx = (EditText) findViewById(R.id.edit_new_pwd);
+        newPwdEdTx = findViewById(R.id.edit_new_pwd);
         newPwdEdTx.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -102,7 +102,7 @@ public class ModifyPwdActivity extends BaseActivity {
             }
         });
 
-        confirmPwdEdTx = (EditText) findViewById(R.id.edit_confirm_pwd);
+        confirmPwdEdTx = findViewById(R.id.edit_confirm_pwd);
         confirmPwdEdTx.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -139,7 +139,7 @@ public class ModifyPwdActivity extends BaseActivity {
             }
         });
 
-        confirmButton = (TextView) findViewById(R.id.text_confirm);
+        confirmButton = findViewById(R.id.text_confirm);
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

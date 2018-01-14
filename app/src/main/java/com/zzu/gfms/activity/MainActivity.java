@@ -10,6 +10,7 @@ import android.os.Bundle;
 
 import com.qmuiteam.qmui.widget.QMUITabSegment;
 import com.zzu.gfms.R;
+import com.zzu.gfms.app.BaseActivity;
 import com.zzu.gfms.data.dbflow.ClothesType;
 import com.zzu.gfms.data.dbflow.WorkType;
 import com.zzu.gfms.domain.GetClothesTypeUseCase;
@@ -32,7 +33,7 @@ import java.util.List;
 
 import io.reactivex.functions.Consumer;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private QMUITabSegment tabSegment;
 
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initTabs(){
-        tabSegment = (QMUITabSegment) findViewById(R.id.tabs);
+        tabSegment = findViewById(R.id.tabs);
         QMUITabSegment.Tab workRecord = new QMUITabSegment.Tab(
                 ContextCompat.getDrawable(this, R.mipmap.icon_work_record),null,
                 "工作记录",true);
@@ -85,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        viewPager = (ViewPager) findViewById(R.id.pager);
+        viewPager = findViewById(R.id.pager);
         viewPager.setAdapter(adapter);
         viewPager.setOffscreenPageLimit(3);
         tabSegment.setupWithViewPager(viewPager, false);

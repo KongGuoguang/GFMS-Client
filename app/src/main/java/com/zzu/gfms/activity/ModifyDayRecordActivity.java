@@ -98,13 +98,13 @@ public class ModifyDayRecordActivity extends BaseActivity {
     }
 
     private void initView() {
-        TextView dateText = (TextView) findViewById(R.id.text_month);
+        TextView dateText = findViewById(R.id.text_month);
         String dateStr = "工作日期：" + year + "年" + month + "月" + day + "日";
         dateText.setText(dateStr);
 
-        totalWorkCount = (TextView) findViewById(R.id.text_count);
+        totalWorkCount = findViewById(R.id.text_count);
 
-        QMUITopBar topBar = (QMUITopBar) findViewById(R.id.top_bar);
+        QMUITopBar topBar = findViewById(R.id.top_bar);
         topBar.setTitle("日报修改");
         topBar.addLeftBackImageButton()
                 .setOnClickListener(new View.OnClickListener() {
@@ -121,7 +121,7 @@ public class ModifyDayRecordActivity extends BaseActivity {
                     }
                 });
 
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());

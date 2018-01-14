@@ -130,34 +130,34 @@ public class WorkStatisticsFragment extends BaseFragment implements View.OnClick
     }
 
     private void initView(View view){
-        QMUITopBar topBar = (QMUITopBar) view.findViewById(R.id.top_bar);
+        QMUITopBar topBar = view.findViewById(R.id.top_bar);
         topBar.setTitle("工作查询统计");
 
-        startDateText = (TextView) view.findViewById(R.id.text_start_date);
-        selectStartDate = (TextView) view.findViewById(R.id.text_select_start_date);
+        startDateText = view.findViewById(R.id.text_start_date);
+        selectStartDate = view.findViewById(R.id.text_select_start_date);
         selectStartDate.setOnClickListener(this);
 
-        endDateText = (TextView) view.findViewById(R.id.text_end_date);
-        selectEndDate = (TextView) view.findViewById(R.id.text_select_end_date);
+        endDateText = view.findViewById(R.id.text_end_date);
+        selectEndDate = view.findViewById(R.id.text_select_end_date);
         selectEndDate.setOnClickListener(this);
 
-        clothesTypeText = (TextView) view.findViewById(R.id.text_clothes_type);
-        selectClothType = (TextView) view.findViewById(R.id.text_select_clothes);
+        clothesTypeText = view.findViewById(R.id.text_clothes_type);
+        selectClothType = view.findViewById(R.id.text_select_clothes);
         selectClothType.setOnClickListener(this);
 
-        workTypeText = (TextView) view.findViewById(R.id.text_work_type);
-        selectWorkType = (TextView) view.findViewById(R.id.text_select_work);
+        workTypeText = view.findViewById(R.id.text_work_type);
+        selectWorkType = view.findViewById(R.id.text_select_work);
         selectWorkType.setOnClickListener(this);
 
-        TextView select = (TextView) view.findViewById(R.id.text_select);
+        TextView select = view.findViewById(R.id.text_select);
         select.setOnClickListener(this);
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         simpleDetailRecordAdapter = new SimpleDetailRecordAdapter(detailRecordList);
         recyclerView.setAdapter(simpleDetailRecordAdapter);
 
-        workCountText = (TextView) view.findViewById(R.id.text_work_count);
+        workCountText = view.findViewById(R.id.text_work_count);
 
         loading = new QMUITipDialog.Builder(getActivity())
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
