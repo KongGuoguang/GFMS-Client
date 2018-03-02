@@ -212,16 +212,23 @@ public class WorkStatisticsFragment extends BaseFragment implements View.OnClick
         if (selectStartDatePopup == null){
             selectStartDatePopup = new QMUIPopup(getActivity(), QMUIPopup.DIRECTION_BOTTOM);
             SpinnerDatePicker datePicker = new SpinnerDatePicker(getActivity());
-            datePicker.setOnDateChangedListener(new SpinnerDatePicker.OnDateChangedListener() {
+            datePicker.setOnButtonClickedListener(new SpinnerDatePicker.OnButtonClickedListener() {
                 @Override
-                public void onDateChanged(SpinnerDatePicker view, int year, int month, int day) {
+                public void onConfirm(int year, int month, int day) {
+                    selectStartDatePopup.dismiss();
                     String date = year + "年" + month + "月" + day + "日";
                     startDateText.setText(date);
                     startYear = year;
                     startMonth = month;
                     startDay = day;
                 }
+
+                @Override
+                public void onCancel() {
+                    selectStartDatePopup.dismiss();
+                }
             });
+
             selectStartDatePopup.setContentView(datePicker);
             selectStartDatePopup.setAnimStyle(QMUIPopup.ANIM_GROW_FROM_CENTER);
         }
@@ -236,16 +243,23 @@ public class WorkStatisticsFragment extends BaseFragment implements View.OnClick
         if (selectEndDatePopup == null){
             selectEndDatePopup = new QMUIPopup(getActivity(), QMUIPopup.DIRECTION_BOTTOM);
             SpinnerDatePicker datePicker = new SpinnerDatePicker(getActivity());
-            datePicker.setOnDateChangedListener(new SpinnerDatePicker.OnDateChangedListener() {
+            datePicker.setOnButtonClickedListener(new SpinnerDatePicker.OnButtonClickedListener() {
                 @Override
-                public void onDateChanged(SpinnerDatePicker view, int year, int month, int day) {
+                public void onConfirm(int year, int month, int day) {
+                    selectEndDatePopup.dismiss();
                     String date = year + "年" + month + "月" + day + "日";
                     endDateText.setText(date);
                     endYear = year;
                     endMonth = month;
                     endDay = day;
                 }
+
+                @Override
+                public void onCancel() {
+                    selectEndDatePopup.dismiss();
+                }
             });
+
             selectEndDatePopup.setContentView(datePicker);
             selectEndDatePopup.setAnimStyle(QMUIPopup.ANIM_GROW_FROM_CENTER);
         }
@@ -260,13 +274,20 @@ public class WorkStatisticsFragment extends BaseFragment implements View.OnClick
         if (selectClothesTypePopup == null){
             selectClothesTypePopup = new QMUIPopup(getActivity(), QMUIPopup.DIRECTION_BOTTOM);
             ClothesTypePicker clothesTypePicker = new ClothesTypePicker(getActivity());
-            clothesTypePicker.setOnClothesSelectedListener(new ClothesTypePicker.OnClothesSelectedListener() {
+            clothesTypePicker.setOnButtonClickedListener(new ClothesTypePicker.OnButtonClickedListener() {
                 @Override
-                public void onClothesSelected(ClothesType clothesType) {
+                public void onConfirm(ClothesType clothesType) {
+                    selectClothesTypePopup.dismiss();
                     clothesTypeText.setText(clothesType.getName());
                     clothesId = clothesType.getClothesID();
                 }
+
+                @Override
+                public void onCancel() {
+                    selectClothesTypePopup.dismiss();
+                }
             });
+
             selectClothesTypePopup.setContentView(clothesTypePicker);
             selectClothesTypePopup.setAnimStyle(QMUIPopup.ANIM_GROW_FROM_CENTER);
         }

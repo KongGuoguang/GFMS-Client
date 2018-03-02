@@ -5,8 +5,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.NumberPicker;
+import android.widget.TextView;
 
 import com.zzu.gfms.R;
 import com.zzu.gfms.data.dbflow.ClothesType;
@@ -22,7 +24,7 @@ import java.util.List;
  * Summary:
  */
 
-public class ClothesTypePicker extends FrameLayout {
+public class ClothesTypePicker extends FrameLayout implements View.OnClickListener{
 
     private NumberPicker fatherPicker;
 
@@ -33,6 +35,18 @@ public class ClothesTypePicker extends FrameLayout {
     private List<ClothesType> childClothesTypes;
 
     private OnClothesSelectedListener onClothesSelectedListener;
+
+    private ClothesType clothesType;
+
+    private OnButtonClickedListener onButtonClickedListener;
+
+    public void setFatherPicker(NumberPicker fatherPicker) {
+        this.fatherPicker = fatherPicker;
+    }
+
+    public void setOnButtonClickedListener(OnButtonClickedListener onButtonClickedListener) {
+        this.onButtonClickedListener = onButtonClickedListener;
+    }
 
     public ClothesTypePicker(@NonNull Context context) {
         super(context);
@@ -53,6 +67,12 @@ public class ClothesTypePicker extends FrameLayout {
         childPicker.setOnValueChangedListener(onValueChangeListener);
         ViewUtil.setNumberPickerDividerColor(context, fatherPicker, childPicker);
         initFatherPicker();
+
+        TextView confirm = findViewById(R.id.tv_confirm);
+        confirm.setOnClickListener(this);
+
+        TextView cancel = findViewById(R.id.tv_cancel);
+        cancel.setOnClickListener(this);
     }
 
 
@@ -65,9 +85,9 @@ public class ClothesTypePicker extends FrameLayout {
                 fatherClothesNames[i] = fatherClothesTypes.get(i).getName();
             }
             fatherPicker.setOnValueChangedListener(onValueChangeListener);
-            fatherPicker.setDisplayedValues(fatherClothesNames);
             fatherPicker.setMinValue(0);
             fatherPicker.setMaxValue(size -1);
+            fatherPicker.setDisplayedValues(fatherClothesNames);
             fatherPicker.setWrapSelectorWheel(false);
             fatherPicker.setValue(0);
             initChildPicker(0);
@@ -82,13 +102,17 @@ public class ClothesTypePicker extends FrameLayout {
             for (int i = 0; i < size; i++){
                 childClothesNames[i] = childClothesTypes.get(i).getName();
             }
-            childPicker.setDisplayedValues(childClothesNames);
+            childPicker.setDisplayedValues(null);//解决数组越界问题
             childPicker.setMinValue(0);
             childPicker.setMaxValue(size -1);
+            childPicker.setDisplayedValues(childClothesNames);
             childPicker.setWrapSelectorWheel(false);
             childPicker.setValue(0);
+
+            clothesType = childClothesTypes.get(0);
             if (onClothesSelectedListener != null)
-                onClothesSelectedListener.onClothesSelected(childClothesTypes.get(0));
+                onClothesSelectedListener.onClothesSelected(clothesType);
+
         }
     }
 
@@ -106,6 +130,18 @@ public class ClothesTypePicker extends FrameLayout {
         }
     };
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.tv_confirm:
+                onButtonClickedListener.onConfirm(clothesType);
+                break;
+            case R.id.tv_cancel:
+                onButtonClickedListener.onCancel();
+                break;
+        }
+    }
+
     public interface OnClothesSelectedListener{
         void onClothesSelected(ClothesType clothesType);
     }
@@ -116,5 +152,12 @@ public class ClothesTypePicker extends FrameLayout {
                 onClothesSelectedListener != null){
             onClothesSelectedListener.onClothesSelected(childClothesTypes.get(0));
         }
+    }
+
+    public interface OnButtonClickedListener{
+
+        void onConfirm(ClothesType clothesType);
+
+        void onCancel();
     }
 }

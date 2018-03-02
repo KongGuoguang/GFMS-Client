@@ -21,6 +21,8 @@ public class CalendarDay {
 
     private boolean today;
 
+    private boolean afterToday;
+
     private boolean hasWorkRecord;
 
     private DayRecord dayRecord;
@@ -78,6 +80,14 @@ public class CalendarDay {
         this.today = today;
     }
 
+    public boolean isAfterToday() {
+        return afterToday;
+    }
+
+    public void setAfterToday(boolean afterToday) {
+        this.afterToday = afterToday;
+    }
+
     public DayRecord getDayRecord() {
         return dayRecord;
     }
@@ -94,6 +104,7 @@ public class CalendarDay {
                 ", day=" + day +
                 ", currentMonth=" + currentMonth +
                 ", today=" + today +
+                ", afterToday=" + afterToday +
                 ", hasWorkRecord=" + hasWorkRecord +
                 ", dayRecord=" + dayRecord +
                 '}';

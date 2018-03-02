@@ -148,7 +148,13 @@ public class CalendarUtil {
 
     public static List<CalendarDay> getAllDays(Calendar calendar){
 
-        boolean isCurrentMonth = getMonth(Calendar.getInstance()) == getMonth(calendar);
+        Calendar current = Calendar.getInstance();
+        int currentYear = getYear(current);
+        int currentMonth = getMonth(current);
+        int currentDay = getDayOfMonth(current);
+
+        boolean isCurrentMonth = currentYear == getYear(calendar) &&
+                currentMonth == getMonth(calendar);
 
         List<CalendarDay> allCalendarDays = new ArrayList<>();
         int year = getYear(calendar);
@@ -173,6 +179,12 @@ public class CalendarUtil {
             if (isCurrentMonth && i == dayOfMonth){
                 calendarDay.setToday(true);
             }
+
+            if (getDateInt(year, month, i) > getDateInt(currentYear, currentMonth, currentDay)){
+                calendarDay.setAfterToday(true);
+            }
+
+
             allCalendarDays.add(calendarDay);
         }
 

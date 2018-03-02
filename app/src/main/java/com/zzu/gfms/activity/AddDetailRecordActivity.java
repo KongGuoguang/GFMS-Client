@@ -80,13 +80,20 @@ public class AddDetailRecordActivity extends BaseActivity {
         if (selectClothesTypePopup == null){
             selectClothesTypePopup = new QMUIPopup(this, QMUIPopup.DIRECTION_BOTTOM);
             ClothesTypePicker clothesTypePicker = new ClothesTypePicker(this);
-            clothesTypePicker.setOnClothesSelectedListener(new ClothesTypePicker.OnClothesSelectedListener() {
+            clothesTypePicker.setOnButtonClickedListener(new ClothesTypePicker.OnButtonClickedListener() {
                 @Override
-                public void onClothesSelected(ClothesType clothesType) {
+                public void onConfirm(ClothesType clothesType) {
+                    selectClothesTypePopup.dismiss();
                     clothesTypeText.setText(clothesType.getName());
                     detailRecord.setClothesID(clothesType.getClothesID());
                 }
+
+                @Override
+                public void onCancel() {
+                    selectClothesTypePopup.dismiss();
+                }
             });
+
             selectClothesTypePopup.setContentView(clothesTypePicker);
             selectClothesTypePopup.setAnimStyle(QMUIPopup.ANIM_GROW_FROM_CENTER);
         }

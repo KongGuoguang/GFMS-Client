@@ -104,6 +104,12 @@
         <item name="android:background">@color/bar_divider</item>
     </style>
 
+    <style name="CommonVerticalDividerLine">
+        <item name="android:layout_width">1px</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/bar_divider</item>
+    </style>
+
     <style name="CommonItem">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">40dp</item>

@@ -5,8 +5,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.DatePicker;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.zzu.gfms.R;
 import com.zzu.gfms.utils.CalendarUtil;
@@ -21,7 +23,7 @@ import java.util.Calendar;
  * Summary:
  */
 
-public class SpinnerDatePicker extends FrameLayout{
+public class SpinnerDatePicker extends FrameLayout implements View.OnClickListener{
 
 
     public SpinnerDatePicker(@NonNull Context context) {
@@ -39,6 +41,12 @@ public class SpinnerDatePicker extends FrameLayout{
     private int monthOfYear;
 
     private int dayOfMonth;
+
+    private OnButtonClickedListener onButtonClickedListener;
+
+    public void setOnButtonClickedListener(OnButtonClickedListener onButtonClickedListener) {
+        this.onButtonClickedListener = onButtonClickedListener;
+    }
 
     private void init(Context context){
         Calendar calendar = Calendar.getInstance();
@@ -60,6 +68,12 @@ public class SpinnerDatePicker extends FrameLayout{
                                 notifyDateChanged();
                             }
                         });
+
+        TextView confirm = findViewById(R.id.tv_confirm);
+        confirm.setOnClickListener(this);
+
+        TextView cancel = findViewById(R.id.tv_cancel);
+        cancel.setOnClickListener(this);
     }
 
     private OnDateChangedListener onDateChangedListener;
@@ -72,6 +86,18 @@ public class SpinnerDatePicker extends FrameLayout{
     private void notifyDateChanged(){
         if (onDateChangedListener != null){
             onDateChangedListener.onDateChanged(SpinnerDatePicker.this, year, monthOfYear, dayOfMonth);
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.tv_confirm:
+                onButtonClickedListener.onConfirm(year, monthOfYear, dayOfMonth);
+                break;
+            case R.id.tv_cancel:
+                onButtonClickedListener.onCancel();
+                break;
         }
     }
 
@@ -91,5 +117,12 @@ public class SpinnerDatePicker extends FrameLayout{
          * @param day  The dayOfMonth of the monthOfYear that was set.
          */
         void onDateChanged(SpinnerDatePicker view, int year, int month, int day);
+    }
+
+    public interface OnButtonClickedListener{
+
+        void onConfirm(int year, int month, int day);
+
+        void onCancel();
     }
 }

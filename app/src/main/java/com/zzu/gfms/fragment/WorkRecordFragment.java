@@ -157,6 +157,10 @@ public class WorkRecordFragment extends Fragment {
                     return;
                 }
 
+                if (calendarDay.isAfterToday()){
+                    return;
+                }
+
                 Intent intent = new Intent();
                 intent.putExtra(Constants.YEAR, calendarDay.getYear());
                 intent.putExtra(Constants.MONTH, calendarDay.getMonth());
@@ -322,9 +326,12 @@ public class WorkRecordFragment extends Fragment {
         if (selectMonthPopup == null){
             selectMonthPopup = new QMUIPopup(getActivity(), QMUIPopup.DIRECTION_BOTTOM);
             MonthPicker monthPicker = new MonthPicker(getActivity());
-            monthPicker.setOnMonthChangedListener(new MonthPicker.OnMonthChangedListener() {
+            monthPicker.setOnButtonClickedListener(new MonthPicker.OnButtonClickedListener() {
                 @Override
-                public void onMonthChanged(MonthPicker view, int year, int month) {
+                public void onConfirm(int year, int month) {
+
+                    selectMonthPopup.dismiss();
+
                     currentYear = year;
                     currenMonth = month;
                     calendar.set(currentYear, currenMonth -1, currentDay);
@@ -342,7 +349,13 @@ public class WorkRecordFragment extends Fragment {
                     }
                     loadDayRecordsOfMonth();
                 }
+
+                @Override
+                public void onCancel() {
+                    selectMonthPopup.dismiss();
+                }
             });
+
             selectMonthPopup.setContentView(monthPicker);
             selectMonthPopup.setAnimStyle(QMUIPopup.ANIM_GROW_FROM_CENTER);
         }

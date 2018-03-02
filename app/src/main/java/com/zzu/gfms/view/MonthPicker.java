@@ -10,8 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.zzu.gfms.R;
+import com.zzu.gfms.utils.CalendarUtil;
 import com.zzu.gfms.utils.ViewUtil;
 
 import java.lang.reflect.Field;
@@ -24,7 +26,7 @@ import java.util.Calendar;
  * Summary:
  */
 
-public class MonthPicker extends FrameLayout {
+public class MonthPicker extends FrameLayout implements View.OnClickListener{
     public MonthPicker(@NonNull Context context) {
         super(context);
         init(context);
@@ -35,22 +37,43 @@ public class MonthPicker extends FrameLayout {
         init(context);
     }
 
+    private int mYear, mMonth;
+
+    private OnButtonClickedListener onButtonClickedListener;
+
+    public void setOnButtonClickedListener(OnButtonClickedListener onButtonClickedListener) {
+        this.onButtonClickedListener = onButtonClickedListener;
+    }
+
     private void init(Context context){
         Calendar calendar = Calendar.getInstance();
+        mYear = CalendarUtil.getYear(calendar);
+        mMonth = CalendarUtil.getMonth(calendar);
         LayoutInflater.from(context).inflate(R.layout.view_date_picker, this, true);
-        DatePicker datePicker = (DatePicker) findViewById(R.id.date_picker);
+        DatePicker datePicker = findViewById(R.id.date_picker);
         hideDay(datePicker);
         datePicker.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
         ViewUtil.setDatePickerDividerColor(context, datePicker);
-        datePicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH), new DatePicker.OnDateChangedListener() {
+        datePicker.init(mYear, mMonth - 1, calendar.get(Calendar.DAY_OF_MONTH),
+                new DatePicker.OnDateChangedListener() {
                     @Override
                     public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+
+                        mYear = year;
+
+                        mMonth = monthOfYear + 1;
+
                         if (onMonthChangedListener != null){
                             onMonthChangedListener.onMonthChanged(MonthPicker.this, year, monthOfYear+1);
                         }
                     }
                 });
+
+        TextView confirm = findViewById(R.id.tv_confirm);
+        confirm.setOnClickListener(this);
+
+        TextView cancel = findViewById(R.id.tv_cancel);
+        cancel.setOnClickListener(this);
     }
 
     private void hideDay(DatePicker mDatePicker) {
@@ -92,6 +115,18 @@ public class MonthPicker extends FrameLayout {
         this.onMonthChangedListener = onMonthChangedListener;
     }
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.tv_confirm:
+                onButtonClickedListener.onConfirm(mYear, mMonth);
+                break;
+            case R.id.tv_cancel:
+                onButtonClickedListener.onCancel();
+                break;
+        }
+    }
+
     /**
      * The callback used to indicate the user changes\d the date.
      */
@@ -107,4 +142,11 @@ public class MonthPicker extends FrameLayout {
          */
         void onMonthChanged(MonthPicker view, int year, int month);
     }
+
+    public interface OnButtonClickedListener{
+        void onConfirm(int year, int month);
+        void onCancel();
+    }
+
+
 }

@@ -13,4 +13,7 @@
 
     </NumberPicker>
 
+    <include
+        layout="@layout/layout_confirm_cancel_button"/>
+
 </LinearLayout>
