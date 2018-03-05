@@ -281,11 +281,17 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
         if (selectConvertStatePopup == null){
             selectConvertStatePopup = new QMUIPopup(getActivity(), QMUIPopup.DIRECTION_BOTTOM);
             ConvertStatePicker picker = new ConvertStatePicker(getActivity());
-            picker.setOnConvertStateSelectedListener(new ConvertStatePicker.OnConvertStateSelectedListener() {
+            picker.setOnButtonClickedListener(new ConvertStatePicker.OnButtonClickedListener() {
                 @Override
-                public void onConvertStateSelected(ConvertStatePicker convertStatePicker, String convertState) {
+                public void onConfirm(String convertState) {
+                    selectConvertStatePopup.dismiss();
                     ModifyAuditFragment.this.convertState = convertState;
                     convertStateText.setText(ConvertState.getConvertStateName(convertState));
+                }
+
+                @Override
+                public void onCancel() {
+                    selectConvertStatePopup.dismiss();
                 }
             });
             selectConvertStatePopup.setContentView(picker);

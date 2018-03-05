@@ -40,10 +40,6 @@ public class ClothesTypePicker extends FrameLayout implements View.OnClickListen
 
     private OnButtonClickedListener onButtonClickedListener;
 
-    public void setFatherPicker(NumberPicker fatherPicker) {
-        this.fatherPicker = fatherPicker;
-    }
-
     public void setOnButtonClickedListener(OnButtonClickedListener onButtonClickedListener) {
         this.onButtonClickedListener = onButtonClickedListener;
     }

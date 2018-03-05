@@ -5,10 +5,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.NumberPicker;
+import android.widget.TextView;
 
 import com.zzu.gfms.R;
+import com.zzu.gfms.data.dbflow.ClothesType;
 import com.zzu.gfms.data.dbflow.WorkType;
 import com.zzu.gfms.utils.ConstantUtil;
 import com.zzu.gfms.utils.ViewUtil;
@@ -22,11 +25,19 @@ import java.util.List;
  * Summary:
  */
 
-public class WorkTypePicker extends FrameLayout {
+public class WorkTypePicker extends FrameLayout implements View.OnClickListener{
 
     private List<WorkType> workTypes;
 
     private OnWorkSelectedListener onWorkSelectedListener;
+
+    private WorkType workType;
+
+    private OnButtonClickedListener onButtonClickedListener;
+
+    public void setOnButtonClickedListener(OnButtonClickedListener onButtonClickedListener) {
+        this.onButtonClickedListener = onButtonClickedListener;
+    }
 
     public WorkTypePicker(@NonNull Context context) {
         super(context);
@@ -63,9 +74,13 @@ public class WorkTypePicker extends FrameLayout {
             }
         }
 
+        TextView confirm = findViewById(R.id.tv_confirm);
+        confirm.setOnClickListener(this);
+
+        TextView cancel = findViewById(R.id.tv_cancel);
+        cancel.setOnClickListener(this);
+
     }
-
-
 
     public void setOnWorkSelectedListener(OnWorkSelectedListener listener){
         onWorkSelectedListener = listener;
@@ -80,10 +95,31 @@ public class WorkTypePicker extends FrameLayout {
             if (onWorkSelectedListener != null){
                 onWorkSelectedListener.onWorkSelected(WorkTypePicker.this, workTypes.get(newVal));
             }
+
+            workType = workTypes.get(newVal);
         }
     };
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.tv_confirm:
+                onButtonClickedListener.onConfirm(workType);
+                break;
+            case R.id.tv_cancel:
+                onButtonClickedListener.onCancel();
+                break;
+        }
+    }
+
     public interface OnWorkSelectedListener{
         void onWorkSelected(WorkTypePicker workTypePicker, WorkType workType);
+    }
+
+    public interface OnButtonClickedListener{
+
+        void onConfirm(WorkType workType);
+
+        void onCancel();
     }
 }

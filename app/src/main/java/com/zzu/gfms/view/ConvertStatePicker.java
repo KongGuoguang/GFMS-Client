@@ -5,10 +5,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.NumberPicker;
+import android.widget.TextView;
 
 import com.zzu.gfms.R;
+import com.zzu.gfms.data.dbflow.ClothesType;
 import com.zzu.gfms.data.utils.ConvertState;
 import com.zzu.gfms.utils.ViewUtil;
 /**
@@ -18,7 +21,9 @@ import com.zzu.gfms.utils.ViewUtil;
  * Summary:
  */
 
-public class ConvertStatePicker extends FrameLayout {
+public class ConvertStatePicker extends FrameLayout implements View.OnClickListener{
+
+    private String convertState;
 
     private String[] convertStates = new String[]{
             ConvertState.OPERATION_RECORD_ALL,
@@ -37,9 +42,16 @@ public class ConvertStatePicker extends FrameLayout {
             if (onConvertStateSelectedListener != null){
                 onConvertStateSelectedListener.onConvertStateSelected(ConvertStatePicker.this, convertStates[newVal]);
             }
+
+            convertState = convertStates[newVal];
         }
     };
 
+    private OnButtonClickedListener onButtonClickedListener;
+
+    public void setOnButtonClickedListener(OnButtonClickedListener onButtonClickedListener) {
+        this.onButtonClickedListener = onButtonClickedListener;
+    }
 
     public ConvertStatePicker(@NonNull Context context) {
         super(context);
@@ -70,6 +82,12 @@ public class ConvertStatePicker extends FrameLayout {
         if (onConvertStateSelectedListener != null){
             onConvertStateSelectedListener.onConvertStateSelected(this, convertStates[0]);
         }
+
+        TextView confirm = findViewById(R.id.tv_confirm);
+        confirm.setOnClickListener(this);
+
+        TextView cancel = findViewById(R.id.tv_cancel);
+        cancel.setOnClickListener(this);
     }
 
     public void setOnConvertStateSelectedListener(OnConvertStateSelectedListener onConvertStateSelectedListener) {
@@ -79,7 +97,26 @@ public class ConvertStatePicker extends FrameLayout {
         }
     }
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.tv_confirm:
+                onButtonClickedListener.onConfirm(convertState);
+                break;
+            case R.id.tv_cancel:
+                onButtonClickedListener.onCancel();
+                break;
+        }
+    }
+
     public interface OnConvertStateSelectedListener{
         void onConvertStateSelected(ConvertStatePicker convertStatePicker,String convertState);
+    }
+
+    public interface OnButtonClickedListener{
+
+        void onConfirm(String convertState);
+
+        void onCancel();
     }
 }

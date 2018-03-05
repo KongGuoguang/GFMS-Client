@@ -104,13 +104,20 @@ public class AddDetailRecordActivity extends BaseActivity {
         if (selectWorkTypePopup == null){
             selectWorkTypePopup = new QMUIPopup(this, QMUIPopup.DIRECTION_BOTTOM);
             WorkTypePicker workTypePicker = new WorkTypePicker(this);
-            workTypePicker.setOnWorkSelectedListener(new WorkTypePicker.OnWorkSelectedListener() {
+            workTypePicker.setOnButtonClickedListener(new WorkTypePicker.OnButtonClickedListener() {
                 @Override
-                public void onWorkSelected(WorkTypePicker workTypePicker, WorkType workType) {
+                public void onConfirm(WorkType workType) {
+                    selectWorkTypePopup.dismiss();
                     workTypeText.setText(workType.getName());
                     detailRecord.setWorkTypeID(workType.getWorkTypeID());
                 }
+
+                @Override
+                public void onCancel() {
+                    selectWorkTypePopup.dismiss();
+                }
             });
+
             selectWorkTypePopup.setContentView(workTypePicker);
             selectWorkTypePopup.setAnimStyle(QMUIPopup.ANIM_GROW_FROM_CENTER);
         }
