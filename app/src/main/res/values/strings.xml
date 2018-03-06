@@ -19,7 +19,9 @@
     <string name="old_pwd">原  密  码：</string>
     <string name="new_pwd">新  密  码：</string>
     <string name="confirm_pwd">确认密码：</string>
-    <string name="tips">提示：\n点击日期填写工作日报\n点击年月修改日期\n只能填写今天之前的工作日报</string>
+    <string name="tips_work_record">提示：\n点击日期填写工作日报\n点击年月修改日期\n只能填写今天之前的工作日报</string>
     <string name="confirm">确定</string>
     <string name="cancel">取消</string>
+    <string name="tips_add_day_record">提交日报后如需修改，需提请修改审核，请核对无误后提交！</string>
+    <string name="tips_no_select_result">无查询结果！</string>
 </resources>

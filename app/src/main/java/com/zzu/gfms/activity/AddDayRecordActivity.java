@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
+import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.zzu.gfms.R;
 import com.zzu.gfms.adapter.DetailRecordAdapter;
@@ -49,6 +51,7 @@ public class AddDayRecordActivity extends BaseActivity {
     private int year, month, day;
     private String date;
     private TextView totalWorkCount;
+    private TextView tips;
     private RecyclerView recyclerView;
 
 
@@ -94,6 +97,8 @@ public class AddDayRecordActivity extends BaseActivity {
         dateText.setText(dateStr);
 
         totalWorkCount = findViewById(R.id.text_count);
+
+        tips = findViewById(R.id.text_tips);
 
         QMUITopBar topBar = findViewById(R.id.top_bar);
         topBar.setTitle("日报填写");
@@ -176,6 +181,7 @@ public class AddDayRecordActivity extends BaseActivity {
                             }
                             adapter.notifyDataSetChanged();
                             totalWorkCount.setText(getString(R.string.work_count, totalCount));
+                            tips.setVisibility(View.VISIBLE);
                         }
                     }
                 });
@@ -209,6 +215,7 @@ public class AddDayRecordActivity extends BaseActivity {
         detailRecordList.add(detailRecord);
         totalCount = totalCount + detailRecord.getCount();
         totalWorkCount.setText(getString(R.string.work_count, totalCount));
+        tips.setVisibility(View.VISIBLE);
 
         adapter.notifyItemInserted(detailRecordList.size()-1);
         recyclerView.smoothScrollToPosition(detailRecordList.size()-1);
@@ -237,8 +244,10 @@ public class AddDayRecordActivity extends BaseActivity {
         totalCount = totalCount - detailRecord.getCount();
         if (totalCount == 0){
             totalWorkCount.setText("");
+            tips.setVisibility(View.GONE);
         }else {
             totalWorkCount.setText(getString(R.string.work_count, totalCount));
+            tips.setVisibility(View.VISIBLE);
         }
         adapter.notifyItemRangeChanged(position, detailRecordList.size() - position);
     }
@@ -255,6 +264,7 @@ public class AddDayRecordActivity extends BaseActivity {
 
         totalCount = totalCount - detailRecord.getCount() + modifyDetailRecord.getCount();
         totalWorkCount.setText(getString(R.string.work_count, totalCount));
+        tips.setVisibility(View.VISIBLE);
 
         detailRecord.setCount(modifyDetailRecord.getCount());
         adapter.notifyItemChanged(modifyDetailRecord.getPosition());
@@ -271,46 +281,65 @@ public class AddDayRecordActivity extends BaseActivity {
             showErrorDialog("请至少添加一条记录！");
             return;
         }
-        loading.show();
-        dayRecord.setTotal(totalCount);
-        dayRecord.setWorkerID(ConstantUtil.worker.getWorkerID());
-        dayRecord.setDay(date);
-        dayRecord.setConvertState(ConvertState.DAY_RECORD_SUBMIT);
 
-        DayAndDetailRecords dayAndDetailRecords = new DayAndDetailRecords();
-        dayAndDetailRecords.setDayRecord(dayRecord);
-        dayAndDetailRecords.setDetailRecords(detailRecordList);
-        dayAndDetailRecords.setType(1);
-
-        submitDayRecordUseCase
-                .commit(dayAndDetailRecords)
-                .execute(new Observer<DayAndDetailRecords>() {
+        new QMUIDialog.MessageDialogBuilder(this)
+                .setTitle("提示")
+                .setMessage("是否确认提交？")
+                .addAction("是", new QMUIDialogAction.ActionListener() {
                     @Override
-                    public void onSubscribe(Disposable d) {
-                        submitDayRecordDisposable = d;
-                    }
+                    public void onClick(QMUIDialog dialog, int index) {
+                        dialog.dismiss();
+                        loading.show();
+                        dayRecord.setTotal(totalCount);
+                        dayRecord.setWorkerID(ConstantUtil.worker.getWorkerID());
+                        dayRecord.setDay(date);
+                        dayRecord.setConvertState(ConvertState.DAY_RECORD_SUBMIT);
 
+                        DayAndDetailRecords dayAndDetailRecords = new DayAndDetailRecords();
+                        dayAndDetailRecords.setDayRecord(dayRecord);
+                        dayAndDetailRecords.setDetailRecords(detailRecordList);
+                        dayAndDetailRecords.setType(1);
+
+                        submitDayRecordUseCase
+                                .commit(dayAndDetailRecords)
+                                .execute(new Observer<DayAndDetailRecords>() {
+                                    @Override
+                                    public void onSubscribe(Disposable d) {
+                                        submitDayRecordDisposable = d;
+                                    }
+
+                                    @Override
+                                    public void onNext(DayAndDetailRecords dayAndDetailRecords) {
+                                        loading.dismiss();
+                                        showToast("提交成功");
+                                        EventBus.getDefault().post(new AddDayRecordSuccess());
+                                        deleteAllDetailRecordDraftUseCase.delete(ConstantUtil.worker.getWorkerID(),
+                                                date).execute();
+                                        finish();
+                                    }
+
+                                    @Override
+                                    public void onError(Throwable e) {
+                                        loading.dismiss();
+                                        showErrorDialog(ExceptionUtil.parseErrorMessage(e));
+                                    }
+
+                                    @Override
+                                    public void onComplete() {
+
+                                    }
+                                });
+                    }
+                })
+                .addAction("否", new QMUIDialogAction.ActionListener() {
                     @Override
-                    public void onNext(DayAndDetailRecords dayAndDetailRecords) {
-                        loading.dismiss();
-                        showToast("提交成功");
-                        EventBus.getDefault().post(new AddDayRecordSuccess());
-                        deleteAllDetailRecordDraftUseCase.delete(ConstantUtil.worker.getWorkerID(),
-                                date).execute();
-                        finish();
+                    public void onClick(QMUIDialog dialog, int index) {
+                        dialog.dismiss();
                     }
+                })
+                .show();
 
-                    @Override
-                    public void onError(Throwable e) {
-                        loading.dismiss();
-                        showErrorDialog(ExceptionUtil.parseErrorMessage(e));
-                    }
 
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
     }
 
     @Override

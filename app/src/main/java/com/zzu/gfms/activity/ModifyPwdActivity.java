@@ -177,7 +177,7 @@ public class ModifyPwdActivity extends BaseActivity {
                 if (newPwdEdTx.getText().length() < 6 ) {
                     showToast("密码由6-20位字母、数字或其组合组成");
                     clearFocus();
-                    newPwdEdTx.setText("");
+                    //newPwdEdTx.setText("");
                     newPwdEdTx.requestFocus();
                     return -1;
                 }
@@ -193,14 +193,14 @@ public class ModifyPwdActivity extends BaseActivity {
                 if (confirmPwdEdTx.getText().length() < 6 ) {
                     showToast("密码由6-20位字母、数字或其组合组成");
                     clearFocus();
-                    confirmPwdEdTx.setText("");
+                    //confirmPwdEdTx.setText("");
                     confirmPwdEdTx.requestFocus();
                     return -1;
                 }
                 if ( !confirmPwdEdTx.getText().toString().equals(newPwdEdTx.getText().toString())){
                     showToast("新密码两次输入不一致");
                     clearFocus();
-                    confirmPwdEdTx.setText("");
+                    //confirmPwdEdTx.setText("");
                     confirmPwdEdTx.requestFocus();
                     return -1;
                 }

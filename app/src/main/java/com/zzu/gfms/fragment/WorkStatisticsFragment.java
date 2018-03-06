@@ -5,18 +5,20 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.util.DiffUtil;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.qmuiteam.qmui.widget.popup.QMUIPopup;
 import com.zzu.gfms.R;
 import com.zzu.gfms.adapter.DetailRecordDiffCallBack;
+import com.zzu.gfms.adapter.HorizontalPageLayoutManager;
+import com.zzu.gfms.adapter.PagingScrollHelper;
 import com.zzu.gfms.adapter.SimpleDetailRecordAdapter;
 import com.zzu.gfms.app.BaseFragment;
 import com.zzu.gfms.data.dbflow.ClothesType;
@@ -93,6 +95,8 @@ public class WorkStatisticsFragment extends BaseFragment implements View.OnClick
 
     private RecyclerView recyclerView;
 
+    private TextView tips;
+
     private SimpleDetailRecordAdapter simpleDetailRecordAdapter;
 
     private QMUITipDialog loading;
@@ -108,6 +112,8 @@ public class WorkStatisticsFragment extends BaseFragment implements View.OnClick
     private Disposable disposable;
 
     private int resultCount;
+
+    private PagingScrollHelper scrollHelper = new PagingScrollHelper();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -152,10 +158,15 @@ public class WorkStatisticsFragment extends BaseFragment implements View.OnClick
         TextView select = view.findViewById(R.id.text_select);
         select.setOnClickListener(this);
 
+        tips = view.findViewById(R.id.text_tips);
+
         recyclerView = view.findViewById(R.id.recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setLayoutManager(new HorizontalPageLayoutManager(10, 1));
         simpleDetailRecordAdapter = new SimpleDetailRecordAdapter(detailRecordList);
         recyclerView.setAdapter(simpleDetailRecordAdapter);
+        recyclerView.setHorizontalScrollBarEnabled(true);
+        scrollHelper.setUpRecycleView(recyclerView);
 
         workCountText = view.findViewById(R.id.text_work_count);
 
@@ -339,10 +350,10 @@ public class WorkStatisticsFragment extends BaseFragment implements View.OnClick
         simpleDetailRecordAdapter.notifyDataSetChanged();
         workCountText.setText("");
 
-        if (detailRecordList.size() > 0){
-            detailRecordList.clear();
-            simpleDetailRecordAdapter.notifyDataSetChanged();
-        }
+//        if (detailRecordList.size() > 0){
+//            detailRecordList.clear();
+//            simpleDetailRecordAdapter.notifyDataSetChanged();
+//        }
 
         if (disposable != null && !disposable.isDisposed()){
             disposable.dispose();
@@ -369,6 +380,7 @@ public class WorkStatisticsFragment extends BaseFragment implements View.OnClick
                     resultCount++;
                     if (detailRecords != null && detailRecords.size() > 0){
                         loading.dismiss();
+                        tips.setVisibility(View.GONE);
                         Collections.sort(detailRecords);
 
                         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DetailRecordDiffCallBack(detailRecordList, detailRecords));
@@ -394,10 +406,12 @@ public class WorkStatisticsFragment extends BaseFragment implements View.OnClick
 
                     if (resultCount == 2 && detailRecordList.size() == 0){
                         loading.dismiss();
-                        showErrorDialog("该段日期内没有数据，请重新选择");
+                        tips.setVisibility(View.VISIBLE);
+                        //showErrorDialog("该段日期内没有数据，请重新选择");
                     }
 
                     recyclerView.smoothScrollToPosition(0);
+                    scrollHelper.scrollToPosition(0);
 
                 }
 

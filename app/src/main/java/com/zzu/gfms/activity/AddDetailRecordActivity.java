@@ -108,6 +108,7 @@ public class AddDetailRecordActivity extends BaseActivity {
                 @Override
                 public void onConfirm(WorkType workType) {
                     selectWorkTypePopup.dismiss();
+                    if (workType == null) return;
                     workTypeText.setText(workType.getName());
                     detailRecord.setWorkTypeID(workType.getWorkTypeID());
                 }

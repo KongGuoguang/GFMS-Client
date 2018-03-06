@@ -19,8 +19,10 @@ import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.qmuiteam.qmui.widget.popup.QMUIPopup;
 import com.zzu.gfms.R;
 import com.zzu.gfms.activity.ModifyAuditActivity;
+import com.zzu.gfms.adapter.HorizontalPageLayoutManager;
 import com.zzu.gfms.adapter.OperationRecordAdapter;
 import com.zzu.gfms.adapter.OperationRecordDiffCallBack;
+import com.zzu.gfms.adapter.PagingScrollHelper;
 import com.zzu.gfms.app.BaseFragment;
 import com.zzu.gfms.data.dbflow.OperationRecord;
 import com.zzu.gfms.data.utils.ConvertState;
@@ -113,6 +115,8 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
 
     private Gson gson;
 
+    private PagingScrollHelper scrollHelper = new PagingScrollHelper();
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -157,8 +161,12 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
 
         recyclerView = view.findViewById(R.id.recycler_view);
         operationRecordAdapter = new OperationRecordAdapter(operationRecordList);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        //recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setLayoutManager(new HorizontalPageLayoutManager(4, 1));
         recyclerView.setAdapter(operationRecordAdapter);
+        recyclerView.setHorizontalScrollBarEnabled(true);
+        scrollHelper.setUpRecycleView(recyclerView);
+
         operationRecordAdapter.setOnItemClickListener(new OperationRecordAdapter.OnItemClickListener() {
             @Override
             public void onItemClickListener(int position) {
@@ -368,6 +376,7 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
                     }
 
                     recyclerView.smoothScrollToPosition(0);
+                    scrollHelper.scrollToPosition(0);
 
                 }
 

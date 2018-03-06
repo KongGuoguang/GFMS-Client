@@ -68,6 +68,7 @@ public class WorkTypePicker extends FrameLayout implements View.OnClickListener{
                 numberPicker.setMaxValue(size -1);
                 numberPicker.setWrapSelectorWheel(false);
                 numberPicker.setValue(0);
+                workType = workTypes.get(0);
                 if (onWorkSelectedListener != null){
                     onWorkSelectedListener.onWorkSelected(this, workTypes.get(0));
                 }
