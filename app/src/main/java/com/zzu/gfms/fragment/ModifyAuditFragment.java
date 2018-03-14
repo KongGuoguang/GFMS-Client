@@ -95,6 +95,8 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
 
     private RecyclerView recyclerView;
 
+    private TextView tips;
+
     private List<OperationRecord> operationRecordList = new ArrayList<>();
 
     private OperationRecordAdapter operationRecordAdapter;
@@ -158,6 +160,8 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
 
         TextView select = view.findViewById(R.id.text_select);
         select.setOnClickListener(this);
+
+        tips = view.findViewById(R.id.text_tips);
 
         recyclerView = view.findViewById(R.id.recycler_view);
         operationRecordAdapter = new OperationRecordAdapter(operationRecordList);
@@ -353,6 +357,8 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
 
                         loading.dismiss();
 
+                        tips.setVisibility(View.GONE);
+
                         Collections.sort(operationRecords);
 
                         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(
@@ -371,7 +377,8 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
                     if (resultCount == 2){
                         loading.dismiss();
                         if (operationRecordList.size() == 0){
-                            showErrorDialog("没有数据，请重新选择查询条件");
+                            //showErrorDialog("没有数据，请重新选择查询条件");
+                            tips.setVisibility(View.VISIBLE);
                         }
                     }
 
@@ -414,7 +421,7 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
      */
     @Subscribe
     public void onHeartbeatSuccess(HeartbeatSuccess event){
-        refreshOperationRecord();
+        //refreshOperationRecord();
     }
 
     /**
@@ -423,7 +430,7 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
      */
     @Subscribe
     public void onModifyDayRecordSuccess(ModifyDayRecordSuccess event){
-        refreshOperationRecord();
+        //refreshOperationRecord();
     }
 
     private void refreshOperationRecord(){

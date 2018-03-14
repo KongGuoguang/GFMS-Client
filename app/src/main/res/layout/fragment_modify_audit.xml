@@ -107,17 +107,31 @@
         android:layout_marginTop="10dp"
         android:text="查询" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="10dp"
-        android:scrollbars="horizontal"
-        android:fadeScrollbars="false"
-        android:scrollbarThumbHorizontal="@drawable/bg_scrollbar"
-        android:scrollbarSize="4dp">
+        android:layout_height="match_parent">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:scrollbars="horizontal"
+            android:fadeScrollbars="false"
+            android:scrollbarThumbHorizontal="@drawable/bg_scrollbar"
+            android:scrollbarSize="4dp">
 
-    </android.support.v7.widget.RecyclerView>
+        </android.support.v7.widget.RecyclerView>
+
+        <TextView
+            android:id="@+id/text_tips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tips_no_select_result"
+            android:layout_centerInParent="true"
+            android:visibility="gone"/>
+    </RelativeLayout>
+
+
 
 
 
