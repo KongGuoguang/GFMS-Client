@@ -1,6 +1,7 @@
 package com.zzu.gfms.data.dbflow;
 
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
@@ -164,10 +165,48 @@ public class OperationRecord extends BaseModel implements Comparable<OperationRe
     @Override
     public int compareTo(@NonNull OperationRecord o) {
 
-        int date1 = DateUtil.getDateInt(day);
+        int checkDate1, checkDate2, applyDate1, applyDate2;
 
-        int date2 = DateUtil.getDateInt(o.getDay());
+        if (TextUtils.isEmpty(checkTime) || checkTime.length() < 10){
+            checkDate1 = 0;
+        }else {
+            checkDate1 = DateUtil.getDateInt(checkTime.substring(0, 10));
+        }
 
-        return date2 - date1;
+        if (TextUtils.isEmpty(o.checkTime) || o.checkTime.length() < 10){
+            checkDate2 = 0;
+        }else {
+            checkDate2 = DateUtil.getDateInt(o.checkTime.substring(0, 10));
+        }
+
+        if (checkDate1 != checkDate2){
+            return checkDate2 - checkDate1;
+        }else {
+            if (TextUtils.isEmpty(applyTime) || applyTime.length() < 10){
+                applyDate1 = 0;
+            }else {
+                applyDate1 = DateUtil.getDateInt(applyTime.substring(0, 10));
+            }
+
+            if (TextUtils.isEmpty(o.applyTime) || o.applyTime.length() < 10){
+                applyDate2 = 0;
+            }else {
+                applyDate2 = DateUtil.getDateInt(o.applyTime.substring(0, 10));
+            }
+
+            if (applyDate1 != applyDate2){
+                return applyDate2 - applyDate1;
+            }else {
+                int date1 = DateUtil.getDateInt(day);
+
+                int date2 = DateUtil.getDateInt(o.day);
+
+                return date2 - date1;
+            }
+
+
+        }
+
+
     }
 }

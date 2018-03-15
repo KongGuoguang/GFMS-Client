@@ -69,6 +69,9 @@ public class ClothesTypePicker extends FrameLayout implements View.OnClickListen
 
         TextView cancel = findViewById(R.id.tv_cancel);
         cancel.setOnClickListener(this);
+
+        TextView reset = findViewById(R.id.tv_reset);
+        reset.setOnClickListener(this);
     }
 
 
@@ -135,6 +138,9 @@ public class ClothesTypePicker extends FrameLayout implements View.OnClickListen
             case R.id.tv_cancel:
                 onButtonClickedListener.onCancel();
                 break;
+            case R.id.tv_reset:
+                onButtonClickedListener.onReset();
+                break;
         }
     }
 
@@ -155,5 +161,7 @@ public class ClothesTypePicker extends FrameLayout implements View.OnClickListen
         void onConfirm(ClothesType clothesType);
 
         void onCancel();
+
+        void onReset();
     }
 }

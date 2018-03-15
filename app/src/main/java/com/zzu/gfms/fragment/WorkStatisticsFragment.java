@@ -237,6 +237,17 @@ public class WorkStatisticsFragment extends BaseFragment implements View.OnClick
                 public void onCancel() {
                     selectStartDatePopup.dismiss();
                 }
+
+                @Override
+                public void onReset() {
+                    selectStartDatePopup.dismiss();
+                    startDateText.setText("");
+                    Calendar calendar = Calendar.getInstance();
+                    startYear = CalendarUtil.getYear(calendar) - 1;
+                    calendar.set(Calendar.YEAR, startYear);
+                    startMonth = CalendarUtil.getMonth(calendar);
+                    startDay = CalendarUtil.getDayOfMonth(calendar);
+                }
             });
 
             selectStartDatePopup.setContentView(datePicker);
@@ -268,6 +279,16 @@ public class WorkStatisticsFragment extends BaseFragment implements View.OnClick
                 public void onCancel() {
                     selectEndDatePopup.dismiss();
                 }
+
+                @Override
+                public void onReset() {
+                    selectEndDatePopup.dismiss();
+                    endDateText.setText("");
+                    Calendar calendar = Calendar.getInstance();
+                    endYear = CalendarUtil.getYear(calendar);
+                    endMonth = CalendarUtil.getMonth(calendar);
+                    endDay = CalendarUtil.getDayOfMonth(calendar);
+                }
             });
 
             selectEndDatePopup.setContentView(datePicker);
@@ -296,6 +317,13 @@ public class WorkStatisticsFragment extends BaseFragment implements View.OnClick
                 public void onCancel() {
                     selectClothesTypePopup.dismiss();
                 }
+
+                @Override
+                public void onReset() {
+                    selectClothesTypePopup.dismiss();
+                    clothesTypeText.setText("");
+                    clothesId = 0;
+                }
             });
 
             selectClothesTypePopup.setContentView(clothesTypePicker);
@@ -322,6 +350,13 @@ public class WorkStatisticsFragment extends BaseFragment implements View.OnClick
                 @Override
                 public void onCancel() {
                     selectWorkTypePopup.dismiss();
+                }
+
+                @Override
+                public void onReset() {
+                    selectWorkTypePopup.dismiss();
+                    workTypeText.setText("");
+                    workTypeId = 0;
                 }
             });
 

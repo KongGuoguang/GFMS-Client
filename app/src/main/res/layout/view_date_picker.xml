@@ -13,6 +13,6 @@
     </DatePicker>
 
     <include
-        layout="@layout/layout_confirm_cancel_button"/>
+        layout="@layout/layout_confirm_reset_cancel_button"/>
 
 </LinearLayout>

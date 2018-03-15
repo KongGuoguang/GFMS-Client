@@ -8,12 +8,12 @@
         android:id="@+id/picker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp">
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp">
 
     </NumberPicker>
 
     <include
-        layout="@layout/layout_confirm_cancel_button"/>
+        layout="@layout/layout_confirm_reset_cancel_button"/>
 
 </LinearLayout>

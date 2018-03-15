@@ -88,6 +88,9 @@ public class ConvertStatePicker extends FrameLayout implements View.OnClickListe
 
         TextView cancel = findViewById(R.id.tv_cancel);
         cancel.setOnClickListener(this);
+
+        TextView reset = findViewById(R.id.tv_reset);
+        reset.setOnClickListener(this);
     }
 
     public void setOnConvertStateSelectedListener(OnConvertStateSelectedListener onConvertStateSelectedListener) {
@@ -106,6 +109,9 @@ public class ConvertStatePicker extends FrameLayout implements View.OnClickListe
             case R.id.tv_cancel:
                 onButtonClickedListener.onCancel();
                 break;
+            case R.id.tv_reset:
+                onButtonClickedListener.onReset();
+                break;
         }
     }
 
@@ -118,5 +124,7 @@ public class ConvertStatePicker extends FrameLayout implements View.OnClickListe
         void onConfirm(String convertState);
 
         void onCancel();
+
+        void onReset();
     }
 }

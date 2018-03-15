@@ -76,6 +76,9 @@ public class AddDetailRecordActivity extends BaseActivity {
         }
     }
 
+    /**
+     * 选择衣服类型
+     */
     private void selectClothesType(){
         if (selectClothesTypePopup == null){
             selectClothesTypePopup = new QMUIPopup(this, QMUIPopup.DIRECTION_BOTTOM);
@@ -92,6 +95,13 @@ public class AddDetailRecordActivity extends BaseActivity {
                 public void onCancel() {
                     selectClothesTypePopup.dismiss();
                 }
+
+                @Override
+                public void onReset() {
+                    selectClothesTypePopup.dismiss();
+                    clothesTypeText.setText("");
+                    detailRecord.setClothesID(0);
+                }
             });
 
             selectClothesTypePopup.setContentView(clothesTypePicker);
@@ -100,6 +110,9 @@ public class AddDetailRecordActivity extends BaseActivity {
         selectClothesTypePopup.show(clothesTypeText);
     };
 
+    /**
+     * 选择工作类型
+     */
     private void selectWorkType(){
         if (selectWorkTypePopup == null){
             selectWorkTypePopup = new QMUIPopup(this, QMUIPopup.DIRECTION_BOTTOM);
@@ -116,6 +129,13 @@ public class AddDetailRecordActivity extends BaseActivity {
                 @Override
                 public void onCancel() {
                     selectWorkTypePopup.dismiss();
+                }
+
+                @Override
+                public void onReset() {
+                    selectWorkTypePopup.dismiss();
+                    workTypeText.setText("");
+                    detailRecord.setWorkTypeID(0);
                 }
             });
 

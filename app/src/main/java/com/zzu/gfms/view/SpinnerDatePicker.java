@@ -74,6 +74,9 @@ public class SpinnerDatePicker extends FrameLayout implements View.OnClickListen
 
         TextView cancel = findViewById(R.id.tv_cancel);
         cancel.setOnClickListener(this);
+
+        TextView reset = findViewById(R.id.tv_reset);
+        reset.setOnClickListener(this);
     }
 
     private OnDateChangedListener onDateChangedListener;
@@ -97,6 +100,9 @@ public class SpinnerDatePicker extends FrameLayout implements View.OnClickListen
                 break;
             case R.id.tv_cancel:
                 onButtonClickedListener.onCancel();
+                break;
+            case R.id.tv_reset:
+                onButtonClickedListener.onReset();
                 break;
         }
     }
@@ -124,5 +130,7 @@ public class SpinnerDatePicker extends FrameLayout implements View.OnClickListen
         void onConfirm(int year, int month, int day);
 
         void onCancel();
+
+        void onReset();
     }
 }

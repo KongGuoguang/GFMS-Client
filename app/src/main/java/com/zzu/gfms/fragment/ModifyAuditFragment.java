@@ -247,6 +247,17 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
                 public void onCancel() {
                     selectStartDatePopup.dismiss();
                 }
+
+                @Override
+                public void onReset() {
+                    selectStartDatePopup.dismiss();
+                    startDateText.setText("");
+                    Calendar calendar = Calendar.getInstance();
+                    startYear = CalendarUtil.getYear(calendar) - 1;
+                    calendar.set(Calendar.YEAR, startYear);
+                    startMonth = CalendarUtil.getMonth(calendar);
+                    startDay = CalendarUtil.getDayOfMonth(calendar);
+                }
             });
             selectStartDatePopup.setContentView(datePicker);
             selectStartDatePopup.setAnimStyle(QMUIPopup.ANIM_GROW_FROM_CENTER);
@@ -277,6 +288,16 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
                 public void onCancel() {
                     selectEndDatePopup.dismiss();
                 }
+
+                @Override
+                public void onReset() {
+                    selectEndDatePopup.dismiss();
+                    endDateText.setText("");
+                    Calendar calendar = Calendar.getInstance();
+                    endYear = CalendarUtil.getYear(calendar);
+                    endMonth = CalendarUtil.getMonth(calendar);
+                    endDay = CalendarUtil.getDayOfMonth(calendar);
+                }
             });
 
             selectEndDatePopup.setContentView(datePicker);
@@ -304,6 +325,13 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
                 @Override
                 public void onCancel() {
                     selectConvertStatePopup.dismiss();
+                }
+
+                @Override
+                public void onReset() {
+                    selectConvertStatePopup.dismiss();
+                    ModifyAuditFragment.this.convertState = ConvertState.OPERATION_RECORD_ALL;
+                    convertStateText.setText("");
                 }
             });
             selectConvertStatePopup.setContentView(picker);
@@ -412,7 +440,10 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
      */
     @Subscribe
     public void onSubmitModifyApplicationSuccess(SubmitModifyApplicationSuccess event){
-        refreshOperationRecord();
+        if (operationRecordList.size() > 0){
+            refreshOperationRecord();
+        }
+
     }
 
     /**
@@ -421,7 +452,9 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
      */
     @Subscribe
     public void onHeartbeatSuccess(HeartbeatSuccess event){
-        //refreshOperationRecord();
+        if (operationRecordList.size() > 0){
+            refreshOperationRecord();
+        }
     }
 
     /**
@@ -430,7 +463,9 @@ public class ModifyAuditFragment extends BaseFragment implements View.OnClickLis
      */
     @Subscribe
     public void onModifyDayRecordSuccess(ModifyDayRecordSuccess event){
-        //refreshOperationRecord();
+        if (operationRecordList.size() > 0){
+            refreshOperationRecord();
+        }
     }
 
     private void refreshOperationRecord(){

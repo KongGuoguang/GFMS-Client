@@ -49,7 +49,7 @@ public class MonthPicker extends FrameLayout implements View.OnClickListener{
         Calendar calendar = Calendar.getInstance();
         mYear = CalendarUtil.getYear(calendar);
         mMonth = CalendarUtil.getMonth(calendar);
-        LayoutInflater.from(context).inflate(R.layout.view_date_picker, this, true);
+        LayoutInflater.from(context).inflate(R.layout.view_month_picker, this, true);
         DatePicker datePicker = findViewById(R.id.date_picker);
         hideDay(datePicker);
         datePicker.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);

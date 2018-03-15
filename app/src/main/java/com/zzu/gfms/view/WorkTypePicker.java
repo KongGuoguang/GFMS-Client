@@ -81,6 +81,9 @@ public class WorkTypePicker extends FrameLayout implements View.OnClickListener{
         TextView cancel = findViewById(R.id.tv_cancel);
         cancel.setOnClickListener(this);
 
+        TextView reset = findViewById(R.id.tv_reset);
+        reset.setOnClickListener(this);
+
     }
 
     public void setOnWorkSelectedListener(OnWorkSelectedListener listener){
@@ -110,6 +113,9 @@ public class WorkTypePicker extends FrameLayout implements View.OnClickListener{
             case R.id.tv_cancel:
                 onButtonClickedListener.onCancel();
                 break;
+            case R.id.tv_reset:
+                onButtonClickedListener.onReset();
+                break;
         }
     }
 
@@ -122,5 +128,7 @@ public class WorkTypePicker extends FrameLayout implements View.OnClickListener{
         void onConfirm(WorkType workType);
 
         void onCancel();
+
+        void onReset();
     }
 }
